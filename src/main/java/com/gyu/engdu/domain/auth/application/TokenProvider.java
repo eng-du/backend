@@ -5,7 +5,7 @@ import java.util.Date;
 
 public interface TokenProvider {
 
-  public String createRawAccessToken(Long userId, Role role, Date issuedAt);
+  String createRawAccessToken(Long userId, Role role, Date issuedAt);
 
-  public String createRawRefreshToken(Long userId, Date issuedAt);
+  String createRawRefreshToken(Long userId, Date issuedAt);
 }
