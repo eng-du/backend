@@ -76,11 +76,11 @@ class JwtTokenParserTest {
     //given
     Instant before14DaysInstant = Instant.now().minus(Duration.ofDays(14));
     Date before14Days = Date.from(before14DaysInstant);
-    String rawAccessToken = tokenProvider.createRawRefreshToken(1L, before14Days);
+    String rawRefreshTokenToken = tokenProvider.createRawRefreshToken(1L, before14Days);
 
     //when
     CustomException ex = assertThrows(CustomException.class, () -> {
-      tokenParser.parseRoleFromAccessToken(rawAccessToken);
+      tokenParser.parseUserIdFromToken(rawRefreshTokenToken);
     });
 
     // then
