@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
   // 기타 예외 처리
   @ExceptionHandler(Exception.class)
   protected ResponseEntity<ErrorResponseEntity> handleCustomException(Exception e) {
-    log.error("알 수 없는 예외 발생", e,e.getCause());
+    log.error("알 수 없는 예외 발생 {}", e.toString(), e);
     return ErrorResponseEntity.toResponseEntity(ErrorCode.UNKNOWN_ERROR);
   }
 }
