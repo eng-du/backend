@@ -1,6 +1,6 @@
 package com.gyu.engdu.domain.auth.application;
 
-import com.gyu.engdu.domain.auth.application.dto.AuthTokenServiceResponse;
+import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.domain.AccessToken;
 import com.gyu.engdu.domain.auth.domain.RefreshToken;
 import com.gyu.engdu.domain.user.domain.Role;
