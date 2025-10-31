@@ -10,7 +10,7 @@ public enum ErrorCode {
 
   //User
 
-  //AUTH,
+  //Auth,
   JWT_INVALID(HttpStatus.UNAUTHORIZED,"AUTH-001","토큰의 형식이 알맞지 않습니다."),
   JWT_EXPIRED(HttpStatus.UNAUTHORIZED,"AUTH-002","만료된 토큰입니다."),
   JWT_NOT_PROVIDED(HttpStatus.UNAUTHORIZED,"AUTH-003","토큰이 입력되지 않았습니다"),
@@ -20,6 +20,11 @@ public enum ErrorCode {
   ACCESS_DENIED(HttpStatus.FORBIDDEN,"AUTH-007","권한이 없습니다."),
   REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND,"AUTH-008","리프레시 토큰이 존재하지 않습니다."),
   REFRESH_TOKEN_EARLY_ACCESS(HttpStatus.INTERNAL_SERVER_ERROR,"AUTH-009","리프레시 토큰이 예상보다 빨리 접근되었습니다."),
+
+  //Engdu
+  ENGDU_GENERATE_4XX(HttpStatus.BAD_REQUEST,"ENGDU-001","LLM API 연결에 문제가 발생했습니다."),
+  ENGDU_GENERATE_5XX(HttpStatus.INTERNAL_SERVER_ERROR,"ENGDU-002","LLM API 연결에 문제가 발생했습니다."),
+
 
   //Other Error
   UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"UNKNOWN-001","알 수 없는 에러입니다.");
