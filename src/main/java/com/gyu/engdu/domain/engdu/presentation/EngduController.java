@@ -7,6 +7,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +32,8 @@ public class EngduController {
     return ResponseEntity.created(location).build();
   }
 
-  @DeleteMapping
-  public ResponseEntity<Void> deleteEngdu(@RequestBody DeleteEngduRequest request) {
-    Long engduId = request.engduId();
+  @DeleteMapping("/{engduId}")
+  public ResponseEntity<Void> deleteEngdu(@PathVariable("engduId") Long engduId) {
     deleteEngduService.delete(1L, engduId);
     return ResponseEntity.noContent().build();
   }
