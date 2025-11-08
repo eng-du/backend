@@ -2,8 +2,6 @@ package com.gyu.engdu.domain.engdu.application;
 
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +16,7 @@ public class DeleteEngduService {
 
   public void delete(Long userId, Long engduId) {
     Engdu engdu = engduQueryService.findExistingEngdu(engduId);
-    Long engduOwnerId = engdu.getUserId();
-    validateEngduOwnerShip(userId, engduOwnerId);
+    engdu.validateOwner(userId);
     engduRepository.delete(engdu);
-  }
-
-  private void validateEngduOwnerShip(Long userId, Long engduUserId) {
-    if(!engduUserId.equals(userId)){
-      throw new CustomException(ErrorCode.ENGDU_FORBIDDEN_ACCESS);
-    }
   }
 }
