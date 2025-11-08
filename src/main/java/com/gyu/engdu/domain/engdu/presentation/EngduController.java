@@ -1,10 +1,13 @@
 package com.gyu.engdu.domain.engdu.presentation;
 
 import com.gyu.engdu.domain.engdu.application.CreateEngduService;
+import com.gyu.engdu.domain.engdu.application.DeleteEngduService;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EngduController {
 
   private final CreateEngduService createEngduService;
+  private final DeleteEngduService deleteEngduService;
 
   @PostMapping
   public ResponseEntity<Void> createEngdu(@RequestBody CreateEngduRequest request) {
@@ -26,5 +30,11 @@ public class EngduController {
     URI location = URI.create("/api/v1/engdu/%d".formatted(engduId));
 
     return ResponseEntity.created(location).build();
+  }
+
+  @DeleteMapping("/{engduId}")
+  public ResponseEntity<Void> deleteEngdu(@PathVariable("engduId") Long engduId) {
+    deleteEngduService.delete(1L, engduId);
+    return ResponseEntity.noContent().build();
   }
 }
