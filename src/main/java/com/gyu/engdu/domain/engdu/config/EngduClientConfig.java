@@ -24,7 +24,7 @@ public class EngduClientConfig {
 
     //응답까지 90초의 타임아웃 시간을 둔다.
     JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(jdk);
-    factory.setReadTimeout(Duration.ofSeconds(90));
+    factory.setReadTimeout(Duration.ofSeconds(500));
 
     return RestClient.builder()
         .baseUrl("https://api.openai.com/v1")
