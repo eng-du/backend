@@ -1,11 +1,7 @@
 package com.gyu.engdu.domain.engdu.presentation;
 
 import com.gyu.engdu.domain.engdu.application.CreateEngduService;
-<<<<<<< HEAD
-import com.gyu.engdu.domain.engdu.presentation.dto.response.CreateEngduRequest;
-=======
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
->>>>>>> b3bb71f (feat: 잉듀 생성 컨트롤러, 서비스 구현)
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +19,11 @@ public class EngduController {
 
   @PostMapping
   public ResponseEntity<Void> createEngdu(@RequestBody CreateEngduRequest request) {
+    Long userId = 1L;
     String topic = request.topic();
     String level = request.level();
-    Long userId = createEngduService.create(topic, level);
-    URI location = URI.create("/api/v1/engdu/%d".formatted(userId));
+    Long engduId = createEngduService.create(userId, topic, level);
+    URI location = URI.create("/api/v1/engdu/%d".formatted(engduId));
 
     return ResponseEntity.created(location).build();
   }
