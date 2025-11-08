@@ -4,8 +4,9 @@ import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class Question {
 
   private Boolean isCorrected = false;
 
-  @Embedded
+  @Enumerated(EnumType.STRING)
   private Category category;
 
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
