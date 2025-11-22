@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EngduRepository extends JpaRepository<Engdu, Long> {
 
-  Page<Engdu> findAllByUserIdAndIsAllSolved(Long userId, Boolean isAllSovled, Pageable pageable);
+  Page<Engdu> findAllByUserIdAndIsAllSolved(Long userId, Boolean isAllSolved, Pageable pageable);
 
-  Page<Engdu> findALlByUserId(Long userId, Pageable pageable);
+  Page<Engdu> findAllByUserId(Long userId, Pageable pageable);
 }

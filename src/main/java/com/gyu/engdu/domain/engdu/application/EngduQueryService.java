@@ -44,7 +44,7 @@ public class EngduQueryService {
 
       default -> {
         return engduRepository
-            .findALlByUserId(userId, pageable)
+            .findAllByUserId(userId, pageable)
             .map(EngduSummaryResponse::from);
       }
     }
