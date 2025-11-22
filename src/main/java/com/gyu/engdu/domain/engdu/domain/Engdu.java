@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -30,6 +31,12 @@ public class Engdu {
   private String title;
 
   private String topic;
+
+  private Integer solvedCount = 0;
+
+  private Boolean isAllSolved = false;
+
+  private LocalDateTime createdAt;
 
   @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
   private List<Question> questions = new ArrayList<>();
