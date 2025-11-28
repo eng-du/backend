@@ -34,7 +34,7 @@ public class Engdu {
 
   private Integer solvedCount = 0;
 
-  private Boolean isAllSolved = false;
+  private Boolean isAllSolved = Boolean.FALSE;
 
   private LocalDateTime createdAt;
 
@@ -44,11 +44,6 @@ public class Engdu {
   @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
   private List<Article> articles = new ArrayList<>();
 
-  public void validateOwner(Long userId) {
-    if (!this.userId.equals(userId)) {
-      throw new CustomException(ErrorCode.ENGDU_FORBIDDEN_ACCESS);
-    }
-  }
   private Engdu(Long userId, String title, String topic) {
     this.userId = userId;
     this.title = title;
@@ -57,5 +52,35 @@ public class Engdu {
 
   public static Engdu of(Long userId, String title, String topic) {
     return new Engdu(userId, title, topic);
+  }
+
+  public void validateOwner(Long userId) {
+    if (!this.userId.equals(userId)) {
+      throw new CustomException(ErrorCode.ENGDU_FORBIDDEN_ACCESS);
+    }
+  }
+
+  public boolean submission(Long questionId, Byte userAnswer) {
+    Question question = findQuestion(questionId);
+    boolean isAnswered = question.solve(userAnswer);
+    if (isAnswered) {
+      increaseSolvedCount();
+    }
+    return isAnswered;
+  }
+
+  private Question findQuestion(Long questionId) {
+    return getQuestions().stream()
+        .filter(q -> q.getId().equals(questionId))
+        .findFirst()
+        .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_FORBIDDEN_ACCESS));
+  }
+
+  private void increaseSolvedCount() {
+    this.solvedCount++;
+
+    if (this.solvedCount == this.questions.size()) {
+      this.isAllSolved = Boolean.TRUE;
+    }
   }
 }
