@@ -1,6 +1,8 @@
 package com.gyu.engdu.domain.engdu.domain;
 
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
+import com.gyu.engdu.exception.CustomException;
+import com.gyu.engdu.exception.ErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -39,7 +41,7 @@ public class Question {
 
   private String content;
 
-  private Boolean isCorrected = false;
+  private Boolean isCorrected = Boolean.FALSE;
 
   @Enumerated(EnumType.STRING)
   private Category category;
@@ -61,5 +63,25 @@ public class Question {
   public void setEngdu(Engdu engdu) {
     this.engdu = engdu;
     engdu.getQuestions().add(this);
+  }
+
+  public boolean solve(Byte userAnswer) {
+    if (this.isCorrected) {
+      throw new CustomException(ErrorCode.QUESTION_ALREADY_SOLVED);
+    }
+
+    boolean isAnswered = checkAnswer(userAnswer);
+    if (isAnswered) {
+      changeCorrectedStatus();
+    }
+    return isAnswered;
+  }
+
+  private boolean checkAnswer(Byte userAnswer) {
+    return this.answer.equals(userAnswer);
+  }
+
+  private void changeCorrectedStatus() {
+    this.isCorrected = Boolean.TRUE;
   }
 }
