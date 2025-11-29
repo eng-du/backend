@@ -28,6 +28,10 @@ public enum ErrorCode {
   ENGDU_NOT_FOUND(HttpStatus.NOT_FOUND, "ENGDU-003", "잉듀가 존재하지 않습니다."),
   ENGDU_FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "ENGDU-004", "사용자의 잉듀가 아닙니다."),
 
+  //Question
+  QUESTION_FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "QUESTION-001", "해당 잉듀가 갖고있는 문제가 아닙니다."),
+  QUESTION_ALREADY_SOLVED(HttpStatus.BAD_REQUEST, "QUESTION-002", "이미 해결한 문제입니다."),
+
   //Other Error
   UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN-001", "알 수 없는 에러입니다.");
 

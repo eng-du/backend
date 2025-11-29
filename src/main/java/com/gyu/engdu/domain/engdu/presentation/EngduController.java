@@ -3,11 +3,14 @@ package com.gyu.engdu.domain.engdu.presentation;
 import com.gyu.engdu.domain.engdu.application.CreateEngduService;
 import com.gyu.engdu.domain.engdu.application.DeleteEngduService;
 import com.gyu.engdu.domain.engdu.application.EngduQueryService;
+import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
+import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +33,7 @@ public class EngduController {
   private final CreateEngduService createEngduService;
   private final DeleteEngduService deleteEngduService;
   private final EngduQueryService engduQueryService;
+  private final SolveQuestionService solveQuestionService;
 
   @PostMapping
   public ResponseEntity<Void> createEngdu(@RequestBody CreateEngduRequest request) {
@@ -68,5 +72,16 @@ public class EngduController {
   ) {
     Long userId = 1L;
     return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
+  }
+  
+  @PostMapping("/{engduId}/question/{questionId}/submission")
+  public ResponseEntity<SubmissionEngduResponse> submissionEngdu(
+      @PathVariable("engduId") Long engduId,
+      @PathVariable("questionId") Long questionId,
+      @RequestBody SubmissionEngduRequest req
+  ) {
+    Long userId = 1L;
+    boolean isAnswered = solveQuestionService.solve(userId, engduId, questionId, req.userAnswer());
+    return ResponseEntity.ok(new SubmissionEngduResponse(isAnswered));
   }
 }
