@@ -7,6 +7,7 @@ import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
@@ -65,6 +66,14 @@ public class EngduController {
     return ResponseEntity.ok(responses);
   }
 
+  @GetMapping("/{engduId}")
+  public ResponseEntity<EngduDetailResponse> readDetailEngdu(
+      @PathVariable("engduId") Long engduId
+  ) {
+    Long userId = 1L;
+    return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
+  }
+  
   @PostMapping("/{engduId}/question/{questionId}/submission")
   public ResponseEntity<SubmissionEngduResponse> submissionEngdu(
       @PathVariable("engduId") Long engduId,
