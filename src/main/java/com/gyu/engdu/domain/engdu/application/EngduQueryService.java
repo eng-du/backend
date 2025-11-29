@@ -4,6 +4,7 @@ import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.exception.CustomException;
 import com.gyu.engdu.exception.ErrorCode;
@@ -27,7 +28,8 @@ public class EngduQueryService {
         .orElseThrow(() -> new CustomException(ErrorCode.ENGDU_NOT_FOUND));
   }
 
-  public Page<EngduSummaryResponse> searchEngdu(Long userId, Integer pageNum, Integer size, EngduSortKey sortKey,
+  public Page<EngduSummaryResponse> searchEngdu(Long userId, Integer pageNum, Integer size,
+      EngduSortKey sortKey,
       Sort.Direction direction, SolvedFilter solvedFilter) {
     Pageable pageable = PageRequest.of(
         pageNum,
@@ -35,8 +37,8 @@ public class EngduQueryService {
         Sort.by(direction, sortKey.getProperty())
     );
 
-    switch (solvedFilter){
-      case TRUE,FALSE -> {
+    switch (solvedFilter) {
+      case TRUE, FALSE -> {
         return engduRepository
             .findAllByUserIdAndIsAllSolved(userId, solvedFilter.getProperty(), pageable)
             .map(EngduSummaryResponse::from);
@@ -49,4 +51,11 @@ public class EngduQueryService {
       }
     }
   }
+
+  public EngduDetailResponse findDetailEngdu(Long userId, Long engduId) {
+    Engdu engdu = this.findExistingEngdu(engduId);
+    engdu.validateOwner(userId);
+    return EngduDetailResponse.fromEntity(engdu);
+  }
+
 }
