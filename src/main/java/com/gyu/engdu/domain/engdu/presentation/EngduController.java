@@ -6,6 +6,7 @@ import com.gyu.engdu.domain.engdu.application.EngduQueryService;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +60,13 @@ public class EngduController {
     Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, pageNum, size,
         sortKey, direction, solvedFilter);
     return ResponseEntity.ok(responses);
+  }
+
+  @GetMapping("/{engduId}")
+  public ResponseEntity<EngduDetailResponse> readDetailEngdu(
+      @PathVariable("engduId") Long engduId
+  ) {
+    Long userId = 1L;
+    return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
   }
 }
