@@ -7,15 +7,17 @@ import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
-import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
+import com.gyu.engdu.security.JwtUserDetails;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +38,11 @@ public class EngduController {
   private final SolveQuestionService solveQuestionService;
 
   @PostMapping
-  public ResponseEntity<Void> createEngdu(@RequestBody CreateEngduRequest request) {
-    Long userId = 1L;
+  public ResponseEntity<Void> createEngdu(
+      @RequestBody CreateEngduRequest request,
+      @AuthenticationPrincipal JwtUserDetails userDetails
+  ) {
+    Long userId = userDetails.getUserId();
     String topic = request.topic();
     String level = request.level();
     Long engduId = createEngduService.create(userId, topic, level);
@@ -47,8 +52,12 @@ public class EngduController {
   }
 
   @DeleteMapping("/{engduId}")
-  public ResponseEntity<Void> deleteEngdu(@PathVariable("engduId") Long engduId) {
-    deleteEngduService.delete(1L, engduId);
+  public ResponseEntity<Void> deleteEngdu(
+      @PathVariable("engduId") Long engduId,
+      @AuthenticationPrincipal JwtUserDetails userDetails
+  ) {
+    Long userId = userDetails.getUserId();
+    deleteEngduService.delete(userId, engduId);
     return ResponseEntity.noContent().build();
   }
 
@@ -58,9 +67,10 @@ public class EngduController {
       @RequestParam(name = "size", defaultValue = "6") Integer size,
       @RequestParam(name = "sortKey", defaultValue = "CREATED_AT") EngduSortKey sortKey,
       @RequestParam(name = "direction", defaultValue = "DESC") Sort.Direction direction,
-      @RequestParam(name = "isSolved", defaultValue = "ALL") SolvedFilter solvedFilter
+      @RequestParam(name = "isSolved", defaultValue = "ALL") SolvedFilter solvedFilter,
+      @AuthenticationPrincipal JwtUserDetails userDetails
   ) {
-    Long userId = 1L;
+    Long userId = userDetails.getUserId();
     Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, pageNum, size,
         sortKey, direction, solvedFilter);
     return ResponseEntity.ok(responses);
@@ -68,19 +78,21 @@ public class EngduController {
 
   @GetMapping("/{engduId}")
   public ResponseEntity<EngduDetailResponse> readDetailEngdu(
-      @PathVariable("engduId") Long engduId
+      @PathVariable("engduId") Long engduId,
+      @AuthenticationPrincipal JwtUserDetails userDetails
   ) {
-    Long userId = 1L;
+    Long userId = userDetails.getUserId();
     return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
   }
-  
+
   @PostMapping("/{engduId}/question/{questionId}/submission")
   public ResponseEntity<SubmissionEngduResponse> submissionEngdu(
       @PathVariable("engduId") Long engduId,
       @PathVariable("questionId") Long questionId,
-      @RequestBody SubmissionEngduRequest req
+      @RequestBody SubmissionEngduRequest req,
+      @AuthenticationPrincipal JwtUserDetails userDetails
   ) {
-    Long userId = 1L;
+    Long userId = userDetails.getUserId();
     boolean isAnswered = solveQuestionService.solve(userId, engduId, questionId, req.userAnswer());
     return ResponseEntity.ok(new SubmissionEngduResponse(isAnswered));
   }
