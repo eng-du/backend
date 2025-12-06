@@ -11,7 +11,6 @@ import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduReques
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
-import com.gyu.engdu.security.JwtUserDetails;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,9 +39,8 @@ public class EngduController {
   @PostMapping
   public ResponseEntity<Void> createEngdu(
       @RequestBody CreateEngduRequest request,
-      @AuthenticationPrincipal JwtUserDetails userDetails
+      @AuthenticationPrincipal(expression = "userId") Long userId
   ) {
-    Long userId = userDetails.getUserId();
     String topic = request.topic();
     String level = request.level();
     Long engduId = createEngduService.create(userId, topic, level);
@@ -54,9 +52,8 @@ public class EngduController {
   @DeleteMapping("/{engduId}")
   public ResponseEntity<Void> deleteEngdu(
       @PathVariable("engduId") Long engduId,
-      @AuthenticationPrincipal JwtUserDetails userDetails
+      @AuthenticationPrincipal(expression = "userId") Long userId
   ) {
-    Long userId = userDetails.getUserId();
     deleteEngduService.delete(userId, engduId);
     return ResponseEntity.noContent().build();
   }
@@ -68,9 +65,8 @@ public class EngduController {
       @RequestParam(name = "sortKey", defaultValue = "CREATED_AT") EngduSortKey sortKey,
       @RequestParam(name = "direction", defaultValue = "DESC") Sort.Direction direction,
       @RequestParam(name = "isSolved", defaultValue = "ALL") SolvedFilter solvedFilter,
-      @AuthenticationPrincipal JwtUserDetails userDetails
+      @AuthenticationPrincipal(expression = "userId") Long userId
   ) {
-    Long userId = userDetails.getUserId();
     Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, pageNum, size,
         sortKey, direction, solvedFilter);
     return ResponseEntity.ok(responses);
@@ -79,9 +75,8 @@ public class EngduController {
   @GetMapping("/{engduId}")
   public ResponseEntity<EngduDetailResponse> readDetailEngdu(
       @PathVariable("engduId") Long engduId,
-      @AuthenticationPrincipal JwtUserDetails userDetails
+      @AuthenticationPrincipal(expression = "userId") Long userId
   ) {
-    Long userId = userDetails.getUserId();
     return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
   }
 
@@ -90,9 +85,8 @@ public class EngduController {
       @PathVariable("engduId") Long engduId,
       @PathVariable("questionId") Long questionId,
       @RequestBody SubmissionEngduRequest req,
-      @AuthenticationPrincipal JwtUserDetails userDetails
+      @AuthenticationPrincipal(expression = "userId") Long userId
   ) {
-    Long userId = userDetails.getUserId();
     boolean isAnswered = solveQuestionService.solve(userId, engduId, questionId, req.userAnswer());
     return ResponseEntity.ok(new SubmissionEngduResponse(isAnswered));
   }
