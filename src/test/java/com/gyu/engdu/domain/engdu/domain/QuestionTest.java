@@ -75,7 +75,7 @@ class QuestionTest {
 
   }
 
-  private Question createQuestion(Byte answer, Boolean isCorrected) {
+  private Question createQuestion(byte answer, boolean isCorrected) {
     return Question.builder()
         .answer(answer)
         .isCorrected(isCorrected)
