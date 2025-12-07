@@ -20,6 +20,7 @@ import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,11 +38,11 @@ public class Question {
   @JoinColumn(name = "engdu_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
   private Engdu engdu;
 
-  private Byte answer;
+  private byte answer;
 
   private String content;
 
-  private Boolean isCorrected = Boolean.FALSE;
+  private boolean isCorrected;
 
   @Enumerated(EnumType.STRING)
   private Category category;
@@ -49,15 +50,23 @@ public class Question {
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
   private List<Choice> choices = new ArrayList<>();
 
-  private Question(Byte answer, String content, Category category, Engdu engdu) {
+  @Builder
+  private Question(byte answer, String content, Category category, boolean isCorrected) {
     this.answer = answer;
     this.content = content;
     this.category = category;
-    setEngdu(engdu);
+    this.isCorrected = isCorrected;
   }
 
-  public static Question of(Byte answer, String content, Category category, Engdu engdu) {
-    return new Question(answer, content, category, engdu);
+  public static Question of(byte answer, String content, Category category, Engdu engdu) {
+    Question question = Question.builder()
+        .answer(answer)
+        .content(content)
+        .category(category)
+        .isCorrected(false)
+        .build();
+    question.setEngdu(engdu);
+    return question;
   }
 
   public void setEngdu(Engdu engdu) {
@@ -65,23 +74,23 @@ public class Question {
     engdu.getQuestions().add(this);
   }
 
-  public boolean solve(Byte userAnswer) {
+  public boolean solve(byte userAnswer) {
     if (this.isCorrected) {
       throw new CustomException(ErrorCode.QUESTION_ALREADY_SOLVED);
     }
 
     boolean isAnswered = checkAnswer(userAnswer);
     if (isAnswered) {
-      changeCorrectedStatus();
+      markCorrected();
     }
     return isAnswered;
   }
 
-  private boolean checkAnswer(Byte userAnswer) {
-    return this.answer.equals(userAnswer);
+  private boolean checkAnswer(byte userAnswer) {
+    return this.answer == userAnswer;
   }
 
-  private void changeCorrectedStatus() {
-    this.isCorrected = Boolean.TRUE;
+  private void markCorrected() {
+    this.isCorrected = true;
   }
 }
