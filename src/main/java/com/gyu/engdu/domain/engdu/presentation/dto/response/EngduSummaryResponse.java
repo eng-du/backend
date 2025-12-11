@@ -18,7 +18,7 @@ public record EngduSummaryResponse(
         engdu.getTopic(),
         engdu.getSolvedCount(),
         engdu.getQuestions().size(),
-        engdu.getIsAllSolved(),
+        engdu.isAllSolved(),
         engdu.getCreatedAt()
     );
   }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,9 +33,9 @@ public class Engdu {
 
   private String topic;
 
-  private Integer solvedCount = 0;
+  private int solvedCount = 0;
 
-  private Boolean isAllSolved = Boolean.FALSE;
+  private boolean isAllSolved;
 
   private LocalDateTime createdAt;
 
@@ -44,14 +45,21 @@ public class Engdu {
   @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
   private List<Article> articles = new ArrayList<>();
 
-  private Engdu(Long userId, String title, String topic) {
+  @Builder
+  private Engdu(Long userId, String title, String topic, boolean isAllSolved) {
     this.userId = userId;
     this.title = title;
     this.topic = topic;
+    this.isAllSolved = isAllSolved;
   }
 
   public static Engdu of(Long userId, String title, String topic) {
-    return new Engdu(userId, title, topic);
+    return Engdu.builder()
+        .userId(userId)
+        .title(title)
+        .topic(topic)
+        .isAllSolved(false)
+        .build();
   }
 
   public void validateOwner(Long userId) {
