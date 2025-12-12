@@ -84,7 +84,7 @@ class EngduTest {
     assertThat(result).isTrue();
   }
 
-  @DisplayName("오답을 제출하면 solvedCount는 유지되고 false를 발환한다.")
+  @DisplayName("오답을 제출하면 solvedCount는 유지되고 false를 반환한다.")
   @Test
   void submission2(){
     //given
