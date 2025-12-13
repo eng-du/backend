@@ -60,7 +60,7 @@ public class EngduController {
 
   @GetMapping
   public ResponseEntity<Page<EngduSummaryResponse>> searchEngdu(
-      @RequestParam(name = "page", defaultValue = "1") Integer pageNum,
+      @RequestParam(name = "page", defaultValue = "0") Integer pageNum,
       @RequestParam(name = "size", defaultValue = "6") Integer size,
       @RequestParam(name = "sortKey", defaultValue = "CREATED_AT") EngduSortKey sortKey,
       @RequestParam(name = "direction", defaultValue = "DESC") Sort.Direction direction,
