@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.user.domain;
 
+import com.gyu.engdu.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
         columnNames = {"sub"}
     )})
 
-public class User {
+public class User extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

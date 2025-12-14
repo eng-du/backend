@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.engdu.domain;
 
+import com.gyu.engdu.domain.BaseEntity;
 import com.gyu.engdu.exception.CustomException;
 import com.gyu.engdu.exception.ErrorCode;
 import jakarta.persistence.CascadeType;
@@ -9,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Engdu {
+public class Engdu extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +36,6 @@ public class Engdu {
   private int solvedCount = 0;
 
   private boolean isAllSolved;
-
-  private LocalDateTime createdAt;
 
   @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
   private List<Question> questions = new ArrayList<>();

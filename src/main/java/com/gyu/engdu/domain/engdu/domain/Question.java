@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.engdu.domain;
 
+import com.gyu.engdu.domain.BaseEntity;
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import com.gyu.engdu.exception.CustomException;
 import com.gyu.engdu.exception.ErrorCode;
@@ -27,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question {
+public class Question extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
