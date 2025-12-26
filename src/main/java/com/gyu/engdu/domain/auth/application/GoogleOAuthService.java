@@ -25,6 +25,7 @@ public class GoogleOAuthService {
   private final OAuthClient oAuthClient;
   private final CreateUserService createUserService;
   private final UserQueryService userQueryService;
+  private final PersistTokenService persistTokenService;
 
   public AuthTokenServiceResponse signUp(String code) {
 
@@ -41,8 +42,10 @@ public class GoogleOAuthService {
           return createUserService.create(sub, userInfo.getEmail());
         });
 
-    //TODO: 리프레시 토큰 DB 저장
-    return createTokenService.createAuthToken(user.getId(), user.getRole(), new Date());
+    AuthTokenServiceResponse authToken = createTokenService.createAuthToken(user.getId(),
+        user.getRole(), new Date());
+    persistTokenService.persistRefreshToken(authToken.refreshToken());
+    return authToken;
   }
 
   /**

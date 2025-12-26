@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Date;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +22,16 @@ public class RefreshToken extends Token {
 
   Long userId;
 
-  private RefreshToken(Long userId, String rawToken) {
+  @Column(name = "created_at")
+  Date createdAt;
+
+  private RefreshToken(Long userId, String rawToken, Date createdAt) {
     this.userId = userId;
     this.rawToken = rawToken;
+    this.createdAt = createdAt;
   }
 
-  public static RefreshToken of(Long userId, String rawToken) {
-    return new RefreshToken(userId, rawToken);
+  public static RefreshToken of(Long userId, String rawToken, Date createdAt) {
+    return new RefreshToken(userId, rawToken, createdAt);
   }
 }

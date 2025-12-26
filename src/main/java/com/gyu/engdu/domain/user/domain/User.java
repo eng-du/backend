@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,6 +40,7 @@ public class User extends BaseEntity {
   @Enumerated(value = EnumType.STRING)
   private Role role;
 
+  @Builder
   private User(String email, Role role, String sub) {
     this.email = email;
     this.role = role;
@@ -46,7 +48,11 @@ public class User extends BaseEntity {
   }
 
   public static User of(String email, Role role, String sub) {
-    return new User(email, role, sub);
+    return User.builder()
+        .email(email)
+        .role(role)
+        .sub(sub)
+        .build();
   }
 
 }
