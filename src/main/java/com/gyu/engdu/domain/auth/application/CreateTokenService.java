@@ -27,6 +27,6 @@ public class CreateTokenService {
 
   private RefreshToken createRefreshToken(Long userId, Date issuedAt) {
     String rawRefreshToken = tokenProvider.createRawRefreshToken(userId, issuedAt);
-    return RefreshToken.of(userId, rawRefreshToken);
+    return RefreshToken.of(userId, rawRefreshToken, issuedAt);
   }
 }
