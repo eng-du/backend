@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
   //User
+  USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-001", "사용자가 존재하지 않습니다."),
 
   //Auth,
   JWT_INVALID(HttpStatus.UNAUTHORIZED, "AUTH-001", "토큰의 형식이 알맞지 않습니다."),
