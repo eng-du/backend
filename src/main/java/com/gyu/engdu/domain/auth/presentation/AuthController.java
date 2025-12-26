@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+  private static final long REFRESH_TOKEN_MAX_AGE_SECONDS = 14 * 24 * 60 * 60;
   private final GoogleOAuthService googleOAuthService;
   private final ReissueTokenService reissueTokenService;
 
@@ -40,9 +41,8 @@ public class AuthController {
   @GetMapping("/signup/oauth")
   public ResponseEntity<AuthTokenResponse> loginByGoogle(@RequestParam("code") String code) {
     AuthTokenServiceResponse authTokenServiceResponse = googleOAuthService.signUp(code);
-    long maxAge = 60 * 60 * 24 * 14;
     ResponseCookie cookie = createCookie(authTokenServiceResponse.refreshToken().getRawToken(),
-        maxAge);
+        REFRESH_TOKEN_MAX_AGE_SECONDS);
     AuthTokenResponse authTokenResponse = AuthTokenResponse.from(authTokenServiceResponse);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -53,16 +53,15 @@ public class AuthController {
   public ResponseEntity<AuthTokenResponse> reissue(
       @CookieValue("refresh-token") String refreshToken) {
     AuthTokenServiceResponse authTokenServiceResponse = reissueTokenService.reissue(refreshToken, new Date());
-    long maxAge = 60 * 60 * 24 * 14;
     ResponseCookie cookie = createCookie(authTokenServiceResponse.refreshToken().getRawToken(),
-        maxAge);
+        REFRESH_TOKEN_MAX_AGE_SECONDS);
     AuthTokenResponse authTokenResponse = AuthTokenResponse.from(authTokenServiceResponse);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
         .body(authTokenResponse);
   }
 
-  public ResponseCookie createCookie(String rawRefreshToken, long maxAgeSeconds) {
+  private ResponseCookie createCookie(String rawRefreshToken, long maxAgeSeconds) {
     return ResponseCookie.from("refresh-token", rawRefreshToken)
         .httpOnly(true)
         .secure(true)
