@@ -120,8 +120,8 @@ class EngduQueryServiceTest {
     // given
     Long userId = 1L;
     Engdu engdu = createEngdu(userId, "Detailed Title", false);
-    createQuestion(engdu, (byte) 1, "Question Content1", Category.GRAMMAR, true);
-    createQuestion(engdu, (byte) 2, "Question Content2", Category.VOCA, false);
+    Question question1 = createQuestion(engdu, (byte) 1, "Question Content1", Category.GRAMMAR, true);
+    Question question2 = createQuestion(engdu, (byte) 2, "Question Content2", Category.VOCA, false);
 
     engduRepository.save(engdu);
 
@@ -133,8 +133,8 @@ class EngduQueryServiceTest {
     assertThat(response.questions()).hasSize(2)
         .extracting("questionId", "answer", "content")
         .containsExactlyInAnyOrder(
-            tuple(1L, 1, "Question Content1"),
-            tuple(2L, null, "Question Content2"));
+            tuple(question1.getId(), 1, "Question Content1"),
+            tuple(question2.getId(), null, "Question Content2"));
   }
 
   private Engdu createEngdu(Long userId, String title, boolean isAllSolved) {
