@@ -1,11 +1,15 @@
 package com.gyu.engdu.domain.engdu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
+import com.gyu.engdu.domain.engdu.domain.Question;
+import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -110,6 +114,29 @@ class EngduQueryServiceTest {
     assertThat(result.getContent().get(0).title()).isEqualTo("title2");
   }
 
+  @DisplayName("잉듀 상세 정보를 조회하여 질문 목록을 조회할 수 있다.")
+  @Test
+  void findDetailEngdu() {
+    // given
+    Long userId = 1L;
+    Engdu engdu = createEngdu(userId, "Detailed Title", false);
+    Question question1 = createQuestion(engdu, (byte) 1, "Question Content1", Category.GRAMMAR, true);
+    Question question2 = createQuestion(engdu, (byte) 2, "Question Content2", Category.VOCA, false);
+
+    engduRepository.save(engdu);
+
+    // when
+    EngduDetailResponse response = engduQueryService.findDetailEngdu(userId, engdu.getId());
+
+    // then
+    assertThat(response.engduId()).isEqualTo(engdu.getId());
+    assertThat(response.questions()).hasSize(2)
+        .extracting("questionId", "answer", "content")
+        .containsExactlyInAnyOrder(
+            tuple(question1.getId(), 1, "Question Content1"),
+            tuple(question2.getId(), null, "Question Content2"));
+  }
+
   private Engdu createEngdu(Long userId, String title, boolean isAllSolved) {
     return Engdu.builder()
         .userId(userId)
@@ -117,5 +144,16 @@ class EngduQueryServiceTest {
         .topic("topic")
         .isAllSolved(isAllSolved)
         .build();
+  }
+
+  private Question createQuestion(Engdu engdu, byte answer, String content, Category category, boolean isCorrected) {
+    Question question = Question.builder()
+        .answer(answer)
+        .content(content)
+        .category(category)
+        .isCorrected(isCorrected)
+        .build();
+    question.setEngdu(engdu);
+    return question;
   }
 }
