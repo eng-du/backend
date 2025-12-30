@@ -7,6 +7,7 @@ import com.gyu.engdu.domain.auth.presentation.dto.response.AuthTokenResponse;
 import java.net.URI;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -26,14 +27,14 @@ public class AuthController {
   private final GoogleOAuthService googleOAuthService;
   private final ReissueTokenService reissueTokenService;
 
+  @Value("${oauth.google.login-uri}")
+  private String loginUri;
+
   @GetMapping("/url")
   public ResponseEntity<Void> redirectGoogleLoginUrl() {
-    //String redirectUrl = "https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&response_type=code&access_type=offline&redirect_uri=https://www.ddeng-gu.shop/api/v1/login/oauth/signup&client_id=184642286173-vkd43ig36jr6ui7e4a5r01mtb81ehdo1.apps.googleusercontent.com";
-    String redirectUrl = "https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&response_type=code&access_type=offline&redirect_uri=http://localhost:8080/api/v1/auth/signup/oauth&client_id=184642286173-vkd43ig36jr6ui7e4a5r01mtb81ehdo1.apps.googleusercontent.com";
-
     return ResponseEntity
         .status(HttpStatus.TEMPORARY_REDIRECT)
-        .location(URI.create(redirectUrl))
+        .location(URI.create(loginUri))
         .build();
   }
 
