@@ -1,10 +1,8 @@
 package com.gyu.engdu.domain.engdu.presentation.dto.response;
 
 import com.gyu.engdu.domain.engdu.domain.Article;
-import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.Question;
-import java.util.Comparator;
 import java.util.List;
 
 public record EngduDetailResponse(
