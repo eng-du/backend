@@ -2,9 +2,11 @@ package com.gyu.engdu.domain.engdu.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gyu.engdu.domain.engdu.domain.Article;
+import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Choice;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.Question;
+
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import java.util.List;
 
@@ -12,26 +14,29 @@ import java.util.List;
 public record GeneratedEngduResponse(
     String title,
     List<ArticleDto> articles,
-    List<QuestionDto> questions
-) {
+    List<QuestionDto> questions) {
 
   public record ArticleDto(
-      String content,
-      String translation
-  ) {
+      List<ChunkDto> chunks) {
 
     public Article toEntity(Engdu engdu) {
-      return Article.of(this.content, this.translation, engdu);
+      Article article = Article.of(engdu);
+      chunks.forEach(chunk -> ArticleChunk.of(chunk.en(), chunk.kor(), article));
+      return article;
     }
 
+  }
+
+  public record ChunkDto(
+      String en,
+      String kor) {
   }
 
   public record QuestionDto(
       String content,
       String type,
       List<ChoiceDto> choices,
-      Byte answer
-  ) {
+      Byte answer) {
 
     public Question toEntity(Engdu engdu) {
       Category category = Category.valueOf(type);
@@ -44,8 +49,7 @@ public record GeneratedEngduResponse(
 
       Byte seq,
       String content,
-      String explanation
-  ) {
+      String explanation) {
 
     public Choice toEntity(Question question) {
       return Choice.of(this.content, this.explanation, this.seq, question);
