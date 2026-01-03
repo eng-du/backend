@@ -1,6 +1,7 @@
 package com.gyu.engdu.domain.engdu.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
@@ -11,6 +12,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,20 +33,15 @@ public class Article extends BaseEntity {
   @JoinColumn(name = "engdu_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
   private Engdu engdu;
 
-  @Column(length = 2000)
-  private String content;
+  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ArticleChunk> chunks = new ArrayList<>();
 
-  @Column(length = 2000)
-  private String translation;
-
-  private Article(String content, String translation, Engdu engdu) {
-    this.content = content;
-    this.translation = translation;
+  private Article(Engdu engdu) {
     setEngdu(engdu);
   }
 
-  public static Article of(String content, String translation, Engdu engdu) {
-    return new Article(content, translation, engdu);
+  public static Article of(Engdu engdu) {
+    return new Article(engdu);
   }
 
   public void setEngdu(Engdu engdu) {
