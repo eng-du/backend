@@ -12,6 +12,7 @@ public class LogoutService {
   private final RefreshTokenRepository refreshTokenRepository;
   private final TokenQueryService tokenQueryService;
 
+  @Transactional
   public void logout(String rawRefreshToken) {
     RefreshToken refreshToken = tokenQueryService.findExistingRefreshToken(rawRefreshToken);
     refreshTokenRepository.delete(refreshToken);
