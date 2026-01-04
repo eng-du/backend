@@ -5,8 +5,6 @@ import com.gyu.engdu.domain.auth.domain.RefreshToken;
 import com.gyu.engdu.domain.auth.domain.RefreshTokenRepository;
 import com.gyu.engdu.domain.user.application.UserQueryService;
 import com.gyu.engdu.domain.user.domain.User;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,9 +20,10 @@ public class ReissueTokenService {
   private final UserQueryService userQueryService;
   private final CreateTokenService createTokenService;
   private final PersistTokenService persistTokenService;
+  private final TokenQueryService tokenQueryService;
 
   public AuthTokenServiceResponse reissue(String rawRefreshToken, Date date) {
-    RefreshToken refreshToken = findExistingRefreshToken(rawRefreshToken);
+    RefreshToken refreshToken = tokenQueryService.findExistingRefreshToken(rawRefreshToken);
     Long userId = parseTokenService.extractUserId(refreshToken);
     User user = userQueryService.findExistingUser(userId);
     AuthTokenServiceResponse newAuthToken = createTokenService.createAuthToken(user.getId(),
@@ -34,8 +33,4 @@ public class ReissueTokenService {
     return newAuthToken;
   }
 
-  private RefreshToken findExistingRefreshToken(String rawToken) {
-    return refreshTokenRepository.findByRawToken(rawToken)
-        .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
-  }
 }
