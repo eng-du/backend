@@ -1,0 +1,19 @@
+package com.gyu.engdu.domain.auth.application;
+
+import com.gyu.engdu.domain.auth.domain.RefreshToken;
+import com.gyu.engdu.domain.auth.domain.RefreshTokenRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class LogoutService {
+
+  private final RefreshTokenRepository refreshTokenRepository;
+  private final TokenQueryService tokenQueryService;
+
+  public void logout(String rawRefreshToken) {
+    RefreshToken refreshToken = tokenQueryService.findExistingRefreshToken(rawRefreshToken);
+    refreshTokenRepository.delete(refreshToken);
+  }
+}

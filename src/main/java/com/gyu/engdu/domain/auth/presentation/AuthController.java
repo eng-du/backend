@@ -1,6 +1,7 @@
 package com.gyu.engdu.domain.auth.presentation;
 
 import com.gyu.engdu.domain.auth.application.GoogleOAuthService;
+import com.gyu.engdu.domain.auth.application.LogoutService;
 import com.gyu.engdu.domain.auth.application.ReissueTokenService;
 import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.presentation.dto.response.AuthTokenResponse;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +28,7 @@ public class AuthController {
   private static final long REFRESH_TOKEN_MAX_AGE_SECONDS = 14 * 24 * 60 * 60;
   private final GoogleOAuthService googleOAuthService;
   private final ReissueTokenService reissueTokenService;
+  private final LogoutService logoutService;
 
   @Value("${oauth.google.login-uri}")
   private String loginUri;
@@ -52,14 +55,25 @@ public class AuthController {
 
   @GetMapping("/reissue")
   public ResponseEntity<AuthTokenResponse> reissue(
-      @CookieValue("refresh-token") String refreshToken) {
-    AuthTokenServiceResponse authTokenServiceResponse = reissueTokenService.reissue(refreshToken, new Date());
+      @CookieValue("refresh-token") String refreshToken
+  ) {
+    AuthTokenServiceResponse authTokenServiceResponse = reissueTokenService.reissue(refreshToken,
+        new Date());
     ResponseCookie cookie = createCookie(authTokenServiceResponse.refreshToken().getRawToken(),
         REFRESH_TOKEN_MAX_AGE_SECONDS);
     AuthTokenResponse authTokenResponse = AuthTokenResponse.from(authTokenServiceResponse);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
         .body(authTokenResponse);
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(
+      @CookieValue("refresh-token") String refreshToken
+  ) {
+    logoutService.logout(refreshToken);
+    return ResponseEntity.noContent()
+        .build();
   }
 
   private ResponseCookie createCookie(String rawRefreshToken, long maxAgeSeconds) {
