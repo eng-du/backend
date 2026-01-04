@@ -1,6 +1,6 @@
 package com.gyu.engdu.domain.user.application;
 
-import com.gyu.engdu.domain.user.application.dto.reponse.UserSummaryResponse;
+import com.gyu.engdu.domain.user.application.dto.response.UserSummaryResponse;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
 import com.gyu.engdu.exception.CustomException;

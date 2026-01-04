@@ -1,4 +1,4 @@
-package com.gyu.engdu.domain.user.application.dto.reponse;
+package com.gyu.engdu.domain.user.application.dto.response;
 
 import com.gyu.engdu.domain.user.domain.User;
 

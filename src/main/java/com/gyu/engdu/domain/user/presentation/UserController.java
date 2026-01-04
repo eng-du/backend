@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.user.presentation;
 
 import com.gyu.engdu.domain.user.application.UserQueryService;
-import com.gyu.engdu.domain.user.application.dto.reponse.UserSummaryResponse;
+import com.gyu.engdu.domain.user.application.dto.response.UserSummaryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
