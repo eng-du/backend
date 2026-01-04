@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.user.application;
 
+import com.gyu.engdu.domain.user.application.dto.reponse.UserSummaryResponse;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
 import com.gyu.engdu.exception.CustomException;
@@ -21,5 +22,10 @@ public class UserQueryService {
   public User findExistingUser(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+  }
+
+  public UserSummaryResponse findSummaryUserInfo(Long userId) {
+    User user = findExistingUser(userId);
+    return UserSummaryResponse.fromEntity(user);
   }
 }
