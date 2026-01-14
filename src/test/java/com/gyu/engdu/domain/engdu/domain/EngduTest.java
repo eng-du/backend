@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
 import com.gyu.engdu.exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,41 @@ class EngduTest {
 
     //then
     assertThat(engdu.isAllSolved()).isFalse();
+  }
+
+  @DisplayName("잉듀 생성 시 기본 잉듀 좋아요 상태는 NONE 이다.")
+  @Test
+  void create2() {
+    //given
+    Long userId = 1L;
+    String title = "테스트 잉듀 제목";
+    String topic = "테스트 잉듀 주제";
+
+    //when
+    Engdu engdu = Engdu.of(userId, title, topic);
+
+    //then
+    assertThat(engdu.getLikeStatus()).isEqualTo(LikeStatus.NONE);
+  }
+
+  @DisplayName("잉듀의 좋아요 상태를 변경할 수 있다.")
+  @Test
+  void like() {
+    //given
+    Long userId = 1L;
+    Engdu likedEngdu = createEngdu(userId, "test title", "test topic",LikeStatus.LIKE);
+    Engdu noneEngdu = createEngdu(userId, "test title", "test topic",LikeStatus.NONE);
+    Engdu dislikedEngdu = createEngdu(userId, "test title", "test topic",LikeStatus.DISLIKE);
+
+    //when
+    likedEngdu.changeLikeStatus(LikeStatus.NONE);
+    noneEngdu.changeLikeStatus(LikeStatus.LIKE);
+    dislikedEngdu.changeLikeStatus(LikeStatus.LIKE);
+
+    //then
+    assertThat(likedEngdu.getLikeStatus()).isEqualTo(LikeStatus.NONE);
+    assertThat(noneEngdu.getLikeStatus()).isEqualTo(LikeStatus.LIKE);
+    assertThat(dislikedEngdu.getLikeStatus()).isEqualTo(LikeStatus.LIKE);
   }
 
   @DisplayName("사용자가 잉듀의 소유자가 아니라면, validateOwner 메서드는 예외를 발생시킨다.")
@@ -86,7 +122,7 @@ class EngduTest {
 
   @DisplayName("오답을 제출하면 solvedCount는 유지되고 false를 반환한다.")
   @Test
-  void submission2(){
+  void submission2() {
     //given
     Engdu engdu = createEngdu(1L, "test title", "test topic");
     Long question1Id = 1L;
@@ -154,6 +190,15 @@ class EngduTest {
         .userId(userId)
         .title(title)
         .topic(topic)
+        .build();
+  }
+
+  private Engdu createEngdu(Long userId, String title, String topic, LikeStatus likeStatus) {
+    return Engdu.builder()
+        .userId(userId)
+        .title(title)
+        .topic(topic)
+        .likeStatus(likeStatus)
         .build();
   }
 
