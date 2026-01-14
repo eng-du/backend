@@ -3,14 +3,17 @@ package com.gyu.engdu.domain.engdu.presentation;
 import com.gyu.engdu.domain.engdu.application.CreateEngduService;
 import com.gyu.engdu.domain.engdu.application.DeleteEngduService;
 import com.gyu.engdu.domain.engdu.application.EngduQueryService;
+import com.gyu.engdu.domain.engdu.application.LikeEngduService;
 import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
+import com.gyu.engdu.domain.engdu.presentation.dto.request.LikeEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
+import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,7 @@ public class EngduController {
   private final DeleteEngduService deleteEngduService;
   private final EngduQueryService engduQueryService;
   private final SolveQuestionService solveQuestionService;
+  private final LikeEngduService likeEngduService;
 
   @PostMapping
   public ResponseEntity<Void> createEngdu(
@@ -89,5 +93,15 @@ public class EngduController {
   ) {
     boolean isAnswered = solveQuestionService.solve(userId, engduId, questionId, req.userAnswer());
     return ResponseEntity.ok(new SubmissionEngduResponse(isAnswered));
+  }
+
+  @PostMapping("/{engduId}/like")
+  public ResponseEntity<Void> likeEngdu(
+      @PathVariable("engduId") Long engduId,
+      @RequestBody @Valid LikeEngduRequest req,
+      @AuthenticationPrincipal(expression = "userId") Long userId
+  ) {
+    likeEngduService.like(userId, engduId, req.likeStatus());
+    return ResponseEntity.ok().build();
   }
 }
