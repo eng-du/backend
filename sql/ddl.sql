@@ -28,6 +28,7 @@ CREATE TABLE `engdu` (
     `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     `is_all_solved` BIT(1) NOT NULL,
     `solved_count` INT NOT NULL,
+    `like_status` VARCHAR(255),
     `title` VARCHAR(255),
     `topic` VARCHAR(255),
     `user_id` BIGINT
