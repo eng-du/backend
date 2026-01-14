@@ -1,11 +1,14 @@
 package com.gyu.engdu.domain.engdu.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
+import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
 import com.gyu.engdu.exception.CustomException;
 import com.gyu.engdu.exception.ErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,6 +38,9 @@ public class Engdu extends BaseEntity {
 
   private int solvedCount = 0;
 
+  @Enumerated(EnumType.STRING)
+  private LikeStatus likeStatus;
+
   private boolean isAllSolved;
 
   @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
@@ -44,11 +50,13 @@ public class Engdu extends BaseEntity {
   private List<Article> articles = new ArrayList<>();
 
   @Builder
-  private Engdu(Long userId, String title, String topic, boolean isAllSolved) {
+  private Engdu(Long userId, String title, String topic, boolean isAllSolved,
+      LikeStatus likeStatus) {
     this.userId = userId;
     this.title = title;
     this.topic = topic;
     this.isAllSolved = isAllSolved;
+    this.likeStatus = likeStatus;
   }
 
   public static Engdu of(Long userId, String title, String topic) {
@@ -57,6 +65,7 @@ public class Engdu extends BaseEntity {
         .title(title)
         .topic(topic)
         .isAllSolved(false)
+        .likeStatus(LikeStatus.NONE)
         .build();
   }
 
@@ -73,6 +82,10 @@ public class Engdu extends BaseEntity {
       increaseSolvedCount();
     }
     return isAnswered;
+  }
+
+  public void changeLikeStatus(LikeStatus likeStatus) {
+    this.likeStatus = likeStatus;
   }
 
   private Question findQuestion(Long questionId) {
