@@ -13,6 +13,7 @@ import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduReques
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
+import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -94,11 +95,10 @@ public class EngduController {
     return ResponseEntity.ok(new SubmissionEngduResponse(isAnswered));
   }
 
-
-  @PostMapping("/{engduId}")
+  @PostMapping("/{engduId}/like")
   public ResponseEntity<Void> likeEngdu(
       @PathVariable("engduId") Long engduId,
-      @RequestBody LikeEngduRequest req,
+      @RequestBody @Valid LikeEngduRequest req,
       @AuthenticationPrincipal(expression = "userId") Long userId
   ) {
     likeEngduService.like(userId, engduId, req.likeStatus());
