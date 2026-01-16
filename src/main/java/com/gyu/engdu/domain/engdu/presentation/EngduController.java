@@ -9,6 +9,7 @@ import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduPageResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
 import java.net.URI;
@@ -39,8 +40,7 @@ public class EngduController {
   @PostMapping
   public ResponseEntity<Void> createEngdu(
       @RequestBody CreateEngduRequest request,
-      @AuthenticationPrincipal(expression = "userId") Long userId
-  ) {
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
     String topic = request.topic();
     String level = request.level();
     Long engduId = createEngduService.create(userId, topic, level);
@@ -52,31 +52,31 @@ public class EngduController {
   @DeleteMapping("/{engduId}")
   public ResponseEntity<Void> deleteEngdu(
       @PathVariable("engduId") Long engduId,
-      @AuthenticationPrincipal(expression = "userId") Long userId
-  ) {
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
     deleteEngduService.delete(userId, engduId);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping
-  public ResponseEntity<Page<EngduSummaryResponse>> searchEngdu(
+  public ResponseEntity<EngduPageResponse<EngduSummaryResponse>> searchEngdu(
       @RequestParam(name = "page", defaultValue = "0") Integer pageNum,
       @RequestParam(name = "size", defaultValue = "6") Integer size,
       @RequestParam(name = "sortKey", defaultValue = "CREATED_AT") EngduSortKey sortKey,
       @RequestParam(name = "direction", defaultValue = "DESC") Sort.Direction direction,
       @RequestParam(name = "isSolved", defaultValue = "ALL") SolvedFilter solvedFilter,
-      @AuthenticationPrincipal(expression = "userId") Long userId
-  ) {
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
+    // 클라이언트가 1번 페이지 조회하면 백엔드는 0번 페이지를 조회하도록 하기 위함.
+    pageNum = Math.max(0, pageNum - 1);
     Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, pageNum, size,
         sortKey, direction, solvedFilter);
-    return ResponseEntity.ok(responses);
+    boolean hasEngdu = engduQueryService.existsEngduByUserId(userId);
+    return ResponseEntity.ok(EngduPageResponse.from(responses, hasEngdu));
   }
 
   @GetMapping("/{engduId}")
   public ResponseEntity<EngduDetailResponse> readDetailEngdu(
       @PathVariable("engduId") Long engduId,
-      @AuthenticationPrincipal(expression = "userId") Long userId
-  ) {
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
     return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
   }
 
@@ -85,8 +85,7 @@ public class EngduController {
       @PathVariable("engduId") Long engduId,
       @PathVariable("questionId") Long questionId,
       @RequestBody SubmissionEngduRequest req,
-      @AuthenticationPrincipal(expression = "userId") Long userId
-  ) {
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
     boolean isAnswered = solveQuestionService.solve(userId, engduId, questionId, req.userAnswer());
     return ResponseEntity.ok(new SubmissionEngduResponse(isAnswered));
   }
