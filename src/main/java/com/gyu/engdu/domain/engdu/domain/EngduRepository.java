@@ -11,4 +11,6 @@ public interface EngduRepository extends JpaRepository<Engdu, Long> {
   Page<Engdu> findAllByUserIdAndIsAllSolved(Long userId, Boolean isAllSolved, Pageable pageable);
 
   Page<Engdu> findAllByUserId(Long userId, Pageable pageable);
+
+  boolean existsByUserId(Long userId);
 }
