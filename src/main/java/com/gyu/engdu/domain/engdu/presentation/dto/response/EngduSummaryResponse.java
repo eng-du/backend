@@ -4,6 +4,7 @@ import com.gyu.engdu.domain.engdu.domain.Engdu;
 import java.time.LocalDateTime;
 
 public record EngduSummaryResponse(
+    Long engduId,
     String title,
     String topic,
     Integer solvedCount,
@@ -14,6 +15,7 @@ public record EngduSummaryResponse(
 
   public static EngduSummaryResponse from(Engdu engdu) {
     return new EngduSummaryResponse(
+        engdu.getId(),
         engdu.getTitle(),
         engdu.getTopic(),
         engdu.getSolvedCount(),
