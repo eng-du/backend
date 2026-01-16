@@ -34,8 +34,7 @@ public class EngduQueryService {
     Pageable pageable = PageRequest.of(
         pageNum,
         size,
-        Sort.by(direction, sortKey.getProperty())
-    );
+        Sort.by(direction, sortKey.getProperty()));
 
     switch (solvedFilter) {
       case TRUE, FALSE -> {
@@ -58,4 +57,7 @@ public class EngduQueryService {
     return EngduDetailResponse.fromEntity(engdu);
   }
 
+  public boolean existsEngduByUserId(Long userId) {
+    return engduRepository.existsByUserId(userId);
+  }
 }
