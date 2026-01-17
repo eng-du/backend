@@ -41,17 +41,19 @@ public class User extends BaseEntity {
   private Role role;
 
   @Builder
-  private User(String email, Role role, String sub) {
+  private User(String email, Role role, String sub, String name) {
     this.email = email;
     this.role = role;
     this.sub = sub;
+    this.name = name;
   }
 
-  public static User of(String email, Role role, String sub) {
+  public static User of(String email, Role role, String sub, String name) {
     return User.builder()
         .email(email)
         .role(role)
         .sub(sub)
+        .name(name)
         .build();
   }
 

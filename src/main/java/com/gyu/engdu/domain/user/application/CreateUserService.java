@@ -13,9 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateUserService {
 
   private final UserRepository userRepository;
-
+  private final NameUserService nameUserService;
   public User create(String sub, String email) {
-    User user = User.of(email, Role.ROLE_USER, sub);
+    String name= nameUserService.getRandomName();
+    User user = User.of(email, Role.ROLE_USER, sub, name);
     userRepository.save(user);
     return user;
   }
