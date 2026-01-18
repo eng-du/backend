@@ -1,0 +1,8 @@
+# docker compose -f compose.yml -f compose.dev.yml up -d --build 를 사용하여 yml 덮어쓰기 가능
+services:
+  my-server:
+    image: ${IMAGE_NAME}:${IMAGE_TAG}
+    ports: #nginx의 접근만 허용한다. 외부에서 8080포트 접근을 차단한다.
+      - "127.0.0.1:8080:8080"
+    env_file:
+      - .env
