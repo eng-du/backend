@@ -3,10 +3,6 @@ spring:
     activate:
       on-profile: prod
 
-  mvc:
-    async:
-      request-timeout: 300s
-
   jpa:
     properties:
       hibernate:
