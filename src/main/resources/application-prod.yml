@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    properties:
+      hibernate:
+        show-sql: false
+        format_sql: false
+        highlight_sql: false
+        use_sql_comments: false
+    hibernate:
+      ddl-auto: none
+
+logging:
+  level:
+    root: INFO
+    com.gyu.engdu: INFO
+    org.springframework: INFO
+    org.hibernate: WARN
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF

@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+
+  mvc:
+    async:
+      #nginx도 최대 응답시간 5분의 설정을 가진다. LLM API 의 호출 시간이 불규칙적이기 때문.
+      request-timeout: 300s
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          batch_size: 100
+
+
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
+
+  api:
+    gpt-key: ${GPT_KEY}
+
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${OAUTH_REDIRECT_URI}
+    login-uri: https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&response_type=code&access_type=offline&redirect_uri=${oauth.google.redirect-uri}&client_id=${oauth.google.client-id}

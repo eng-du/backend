@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    root: INFO
+    com.gyu.engdu: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
