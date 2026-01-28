@@ -19,10 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-    @UniqueConstraint(
-        name = "unique_sub",
-        columnNames = {"sub"}
-    )})
+    @UniqueConstraint(name = "unique_sub", columnNames = {"sub"})})
 
 public class User extends BaseEntity {
 
@@ -33,6 +30,7 @@ public class User extends BaseEntity {
 
   private String email;
 
+  @Column(length = 30, nullable = false)
   private String name;
 
   private String sub;
@@ -57,4 +55,10 @@ public class User extends BaseEntity {
         .build();
   }
 
+  public void changeName(String newName) {
+    if (newName.length() > 30) {
+      throw new IllegalArgumentException("이름은 30자를 초과할 수 없습니다.");
+    }
+    this.name = newName;
+  }
 }
