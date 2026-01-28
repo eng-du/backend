@@ -70,8 +70,8 @@ public class EngduController {
       @RequestParam(name = "isSolved", defaultValue = "ALL") SolvedFilter solvedFilter,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
     // 클라이언트가 1번 페이지 조회하면 백엔드는 0번 페이지를 조회하도록 하기 위함.
-    pageNum = Math.max(0, pageNum - 1);
-    Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, pageNum, size,
+    int adjustedPage = Math.max(0, pageNum - 1);
+    Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, adjustedPage, size,
         sortKey, direction, solvedFilter);
     boolean hasEngdu = engduQueryService.existsEngduByUserId(userId);
     return ResponseEntity.ok(EngduPageResponse.from(responses, hasEngdu));
@@ -98,8 +98,7 @@ public class EngduController {
   public ResponseEntity<Void> likeEngdu(
       @PathVariable("engduId") Long engduId,
       @RequestBody @Valid LikeEngduRequest req,
-      @AuthenticationPrincipal(expression = "userId") Long userId
-  ) {
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
     likeEngduService.like(userId, engduId, req.likeStatus());
     return ResponseEntity.ok().build();
   }
