@@ -56,10 +56,10 @@ jobs:
             cd /home/${{ secrets.EC2_USER }}/engdu
 
             # (옵션) 레지스트리 로그인 필요 시
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-            docker compose -f compose.dev.yml pull
-            docker compose -f compose.dev.yml up -d
+            sudo docker compose -f compose.dev.yml pull
+            sudo docker compose -f compose.dev.yml up -d
 
             # (옵션) 안 쓰는 이미지 정리
-            docker image prune -f
+            sudo docker image prune -f
