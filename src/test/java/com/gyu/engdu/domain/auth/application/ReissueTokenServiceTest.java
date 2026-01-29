@@ -130,6 +130,7 @@ class ReissueTokenServiceTest {
   private User createUser(String email, Role role, String sub) {
     return User.builder()
         .email(email)
+        .name("test")
         .role(role)
         .sub(sub)
         .build();
