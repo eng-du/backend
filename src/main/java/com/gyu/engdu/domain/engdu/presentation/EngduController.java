@@ -10,12 +10,13 @@ import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.LikeEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
+import com.gyu.engdu.domain.engdu.presentation.dto.response.CreateEngduResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduPageResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
 import jakarta.validation.Valid;
-import java.net.URI;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -42,15 +43,14 @@ public class EngduController {
   private final LikeEngduService likeEngduService;
 
   @PostMapping
-  public ResponseEntity<Void> createEngdu(
+  public ResponseEntity<CreateEngduResponse> createEngdu(
       @RequestBody CreateEngduRequest request,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
     String topic = request.topic();
     String level = request.level();
     Long engduId = createEngduService.create(userId, topic, level);
-    URI location = URI.create("/api/v1/engdu/%d".formatted(engduId));
 
-    return ResponseEntity.created(location).build();
+    return ResponseEntity.ok(new CreateEngduResponse(engduId));
   }
 
   @DeleteMapping("/{engduId}")
