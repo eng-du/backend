@@ -85,6 +85,9 @@ public class Engdu extends BaseEntity {
   }
 
   public void changeLikeStatus(LikeStatus likeStatus) {
+    if (this.likeStatus != LikeStatus.NONE) {
+      throw new CustomException(ErrorCode.ENGDU_LIKE_ALREADY_PROCESSED);
+    }
     this.likeStatus = likeStatus;
   }
 
