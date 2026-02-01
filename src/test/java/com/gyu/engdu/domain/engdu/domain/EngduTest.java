@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 
 import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
 import com.gyu.engdu.exception.CustomException;
+import com.gyu.engdu.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,62 +20,74 @@ class EngduTest {
   @DisplayName("잉듀 생성 시 기본 잉듀 해결 상태는 false이다.")
   @Test
   void create() {
-    //given
+    // given
     Long userId = 1L;
     String title = "테스트 잉듀 제목";
     String topic = "테스트 잉듀 주제";
 
-    //when
+    // when
     Engdu engdu = Engdu.of(userId, title, topic);
 
-    //then
+    // then
     assertThat(engdu.isAllSolved()).isFalse();
   }
 
   @DisplayName("잉듀 생성 시 기본 잉듀 좋아요 상태는 NONE 이다.")
   @Test
   void create2() {
-    //given
+    // given
     Long userId = 1L;
     String title = "테스트 잉듀 제목";
     String topic = "테스트 잉듀 주제";
 
-    //when
+    // when
     Engdu engdu = Engdu.of(userId, title, topic);
 
-    //then
+    // then
     assertThat(engdu.getLikeStatus()).isEqualTo(LikeStatus.NONE);
   }
 
   @DisplayName("잉듀의 좋아요 상태를 변경할 수 있다.")
   @Test
   void like() {
-    //given
+    // given
     Long userId = 1L;
-    Engdu likedEngdu = createEngdu(userId, "test title", "test topic",LikeStatus.LIKE);
-    Engdu noneEngdu = createEngdu(userId, "test title", "test topic",LikeStatus.NONE);
-    Engdu dislikedEngdu = createEngdu(userId, "test title", "test topic",LikeStatus.DISLIKE);
+    Engdu noneEngdu = createEngdu(userId, "test title", "test topic", LikeStatus.NONE);
 
-    //when
-    likedEngdu.changeLikeStatus(LikeStatus.NONE);
+    // when
     noneEngdu.changeLikeStatus(LikeStatus.LIKE);
-    dislikedEngdu.changeLikeStatus(LikeStatus.LIKE);
 
-    //then
-    assertThat(likedEngdu.getLikeStatus()).isEqualTo(LikeStatus.NONE);
+    // then
     assertThat(noneEngdu.getLikeStatus()).isEqualTo(LikeStatus.LIKE);
-    assertThat(dislikedEngdu.getLikeStatus()).isEqualTo(LikeStatus.LIKE);
+  }
+
+  @DisplayName("이미 좋아요 상태가 결정된 잉듀는 상태를 변경할 수 없다.")
+  @Test
+  void cannotChangeLikeStatusOnceSet() {
+    // given
+    Long userId = 1L;
+    Engdu likedEngdu = createEngdu(userId, "test title", "test topic", LikeStatus.LIKE);
+    Engdu dislikedEngdu = createEngdu(userId, "test title", "test topic", LikeStatus.DISLIKE);
+
+    // when & then
+    assertThatThrownBy(() -> likedEngdu.changeLikeStatus(LikeStatus.NONE))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.ENGDU_LIKE_ALREADY_PROCESSED.getMessage());
+
+    assertThatThrownBy(() -> dislikedEngdu.changeLikeStatus(LikeStatus.LIKE))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.ENGDU_LIKE_ALREADY_PROCESSED.getMessage());
   }
 
   @DisplayName("사용자가 잉듀의 소유자가 아니라면, validateOwner 메서드는 예외를 발생시킨다.")
   @Test
   void validateNonOwnerId() {
-    //given
+    // given
     Long engduOwnerId = 1L;
     Long nonOwnerId = 2L;
     Engdu engdu = createEngdu(engduOwnerId, "test title", "test topic");
 
-    //when & then
+    // when & then
     assertThatThrownBy(() -> engdu.validateOwner(nonOwnerId))
         .isInstanceOf(CustomException.class)
         .hasMessage("사용자의 잉듀가 아닙니다.");
@@ -83,11 +96,11 @@ class EngduTest {
   @DisplayName("사용자가 잉듀의 소유자라면, validateOwner 메서드를 통과한다.")
   @Test
   void validateOwner() {
-    //given
+    // given
     Long engduOwnerId = 1L;
     Engdu engdu = createEngdu(engduOwnerId, "test title", "test topic");
 
-    //when & then
+    // when & then
     assertThatCode(() -> engdu.validateOwner(engduOwnerId))
         .doesNotThrowAnyException();
   }
@@ -95,7 +108,7 @@ class EngduTest {
   @DisplayName("정답을 제출하면 solvedCount를 1증가시키고 true를 반환한다.")
   @Test
   void submission() {
-    //given
+    // given
     Engdu engdu = createEngdu(1L, "test title", "test topic");
     Long question1Id = 1L;
     byte userAnswer = 1;
@@ -111,10 +124,10 @@ class EngduTest {
     engdu.getQuestions().add(question2);
     engdu.getQuestions().add(question3);
 
-    //when
+    // when
     boolean result = engdu.submission(question1Id, userAnswer);
 
-    //then
+    // then
     assertThat(engdu.isAllSolved()).isFalse();
     assertThat(engdu.getSolvedCount()).isEqualTo(1);
     assertThat(result).isTrue();
@@ -123,7 +136,7 @@ class EngduTest {
   @DisplayName("오답을 제출하면 solvedCount는 유지되고 false를 반환한다.")
   @Test
   void submission2() {
-    //given
+    // given
     Engdu engdu = createEngdu(1L, "test title", "test topic");
     Long question1Id = 1L;
     byte userAnswer = 2;
@@ -139,10 +152,10 @@ class EngduTest {
     engdu.getQuestions().add(question2);
     engdu.getQuestions().add(question3);
 
-    //when
+    // when
     boolean result = engdu.submission(question1Id, userAnswer);
 
-    //then
+    // then
     assertThat(engdu.isAllSolved()).isFalse();
     assertThat(engdu.getSolvedCount()).isZero();
     assertThat(result).isFalse();
@@ -151,7 +164,7 @@ class EngduTest {
   @DisplayName("모든 문제의 정답을 맞추면 모든 문제 해결 상태를 true로 변경하고 true를 반환한다.")
   @Test
   void submission3() {
-    //given
+    // given
     Engdu engdu = createEngdu(1L, "test title", "test topic");
     Long question1Id = 1L;
     Long question2Id = 2L;
@@ -176,10 +189,10 @@ class EngduTest {
     engdu.submission(question1Id, userAnswer);
     engdu.submission(question2Id, userAnswer);
 
-    //when
+    // when
     boolean result = engdu.submission(question3Id, userAnswer);
 
-    //then
+    // then
     assertThat(engdu.isAllSolved()).isTrue();
     assertThat(engdu.getSolvedCount()).isEqualTo(engdu.getQuestions().size());
     assertThat(result).isTrue();
