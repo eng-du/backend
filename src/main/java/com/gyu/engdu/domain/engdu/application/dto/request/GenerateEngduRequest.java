@@ -1,11 +1,15 @@
 package com.gyu.engdu.domain.engdu.application.dto.request;
 
+import com.gyu.engdu.domain.engdu.domain.enums.EngduCreationStep;
+
 public record GenerateEngduRequest(
     String topic,
-    String level
-) {
+    String level,
+    EngduCreationStep step,
+    String previousArticleContent) {
 
-  public static GenerateEngduRequest of(String topic, String level) {
-    return new GenerateEngduRequest(topic, level);
+  public static GenerateEngduRequest of(String topic, String level, EngduCreationStep step,
+      String previousArticleContent) {
+    return new GenerateEngduRequest(topic, level, step, previousArticleContent);
   }
 }
