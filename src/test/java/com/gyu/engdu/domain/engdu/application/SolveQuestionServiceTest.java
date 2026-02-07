@@ -121,7 +121,7 @@ class SolveQuestionServiceTest {
 
   private Engdu createEngdu(Long userId) {
     Engdu engdu = Engdu.builder()
-        .userId(1L)
+        .userId(userId)
         .topic("test topic")
         .build();
     return engdu;
