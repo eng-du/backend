@@ -38,6 +38,8 @@ public class Engdu extends BaseEntity {
 
   private int solvedCount = 0;
 
+  private String level;
+
   @Enumerated(EnumType.STRING)
   private LikeStatus likeStatus;
 
@@ -50,20 +52,20 @@ public class Engdu extends BaseEntity {
   private List<Article> articles = new ArrayList<>();
 
   @Builder
-  private Engdu(Long userId, String title, String topic, boolean isAllSolved,
+  private Engdu(Long userId, String topic, String level, boolean isAllSolved,
       LikeStatus likeStatus) {
     this.userId = userId;
-    this.title = title;
     this.topic = topic;
+    this.level = level;
     this.isAllSolved = isAllSolved;
     this.likeStatus = likeStatus;
   }
 
-  public static Engdu of(Long userId, String title, String topic) {
+  public static Engdu of(Long userId, String level, String topic) {
     return Engdu.builder()
         .userId(userId)
-        .title(title)
         .topic(topic)
+        .level(level)
         .isAllSolved(false)
         .likeStatus(LikeStatus.NONE)
         .build();
@@ -104,5 +106,13 @@ public class Engdu extends BaseEntity {
     if (this.solvedCount == this.questions.size()) {
       this.isAllSolved = Boolean.TRUE;
     }
+  }
+
+  public void changeTitle(String title) {
+    if (title.length() > 50) {
+      throw new CustomException(ErrorCode.ENGDU_TITLE_TOO_LONG);
+    }
+
+    this.title = title;
   }
 }
