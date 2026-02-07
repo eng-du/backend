@@ -30,6 +30,7 @@ CREATE TABLE `engdu` (
     `solved_count` INT NOT NULL,
     `like_status` VARCHAR(255),
     `title` VARCHAR(255),
+    `level` VARCHAR(255),
     `topic` VARCHAR(255),
     `user_id` BIGINT
 ) ENGINE=InnoDB;

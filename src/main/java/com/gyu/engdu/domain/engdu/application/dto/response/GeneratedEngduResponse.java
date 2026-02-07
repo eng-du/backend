@@ -13,23 +13,18 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record GeneratedEngduResponse(
     String title,
-    List<ArticleDto> articles,
+    ArticleDto article,
     List<QuestionDto> questions) {
 
   public record ArticleDto(
-      List<ChunkDto> chunks) {
+      List<List<String>> chunks) {
 
     public Article toEntity(Engdu engdu) {
       Article article = Article.of(engdu);
-      chunks.forEach(chunk -> ArticleChunk.of(chunk.en(), chunk.kor(), article));
+      chunks.forEach(chunk -> ArticleChunk.of(chunk.get(0), chunk.get(1), article));
       return article;
     }
 
-  }
-
-  public record ChunkDto(
-      String en,
-      String kor) {
   }
 
   public record QuestionDto(

@@ -44,9 +44,9 @@ class EngduQueryServiceTest {
     Sort.Direction direction = Direction.DESC;
     SolvedFilter solvedFilter = SolvedFilter.ALL;
 
-    Engdu engdu1 = createEngdu(userId, "title1", true);
-    Engdu engdu2 = createEngdu(userId, "title2", false);
-    Engdu engdu3 = createEngdu(userId, "title3", true);
+    Engdu engdu1 = createEngdu(userId, "topic1", true);
+    Engdu engdu2 = createEngdu(userId, "topic2", false);
+    Engdu engdu3 = createEngdu(userId, "topic3", true);
 
     engduRepository.saveAll(List.of(engdu1, engdu2, engdu3));
 
@@ -57,8 +57,8 @@ class EngduQueryServiceTest {
     // then
     assertThat(result.getContent()).hasSize(2);
     assertThat(result.getTotalElements()).isEqualTo(3);
-    assertThat(result.getContent().get(0).title()).isEqualTo("title3");
-    assertThat(result.getContent().get(1).title()).isEqualTo("title2");
+    assertThat(result.getContent().get(0).topic()).isEqualTo("topic3");
+    assertThat(result.getContent().get(1).topic()).isEqualTo("topic2");
   }
 
   @DisplayName("해결된 잉듀만 필터링하여 조회한다.")
@@ -72,9 +72,9 @@ class EngduQueryServiceTest {
     Sort.Direction direction = Direction.DESC;
     SolvedFilter solvedFilter = SolvedFilter.TRUE;
 
-    Engdu engdu1 = createEngdu(userId, "title1", true);
-    Engdu engdu2 = createEngdu(userId, "title2", false);
-    Engdu engdu3 = createEngdu(userId, "title3", true);
+    Engdu engdu1 = createEngdu(userId, "topic1", true);
+    Engdu engdu2 = createEngdu(userId, "topic2", false);
+    Engdu engdu3 = createEngdu(userId, "topic3", true);
 
     engduRepository.saveAll(List.of(engdu1, engdu2, engdu3));
 
@@ -84,8 +84,8 @@ class EngduQueryServiceTest {
 
     // then
     assertThat(result.getContent()).hasSize(2);
-    assertThat(result.getContent()).extracting("title")
-        .containsExactly("title3", "title1");
+    assertThat(result.getContent()).extracting("topic")
+        .containsExactly("topic3", "topic1");
   }
 
   @DisplayName("해결되지 않은 잉듀만 필터링하여 조회한다.")
@@ -99,9 +99,9 @@ class EngduQueryServiceTest {
     Sort.Direction direction = Direction.DESC;
     SolvedFilter solvedFilter = SolvedFilter.FALSE;
 
-    Engdu engdu1 = createEngdu(userId, "title1", true);
-    Engdu engdu2 = createEngdu(userId, "title2", false);
-    Engdu engdu3 = createEngdu(userId, "title3", true);
+    Engdu engdu1 = createEngdu(userId, "topic1", true);
+    Engdu engdu2 = createEngdu(userId, "topic2", false);
+    Engdu engdu3 = createEngdu(userId, "topic3", true);
 
     engduRepository.saveAll(List.of(engdu1, engdu2, engdu3));
 
@@ -111,7 +111,7 @@ class EngduQueryServiceTest {
 
     // then
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).title()).isEqualTo("title2");
+    assertThat(result.getContent().get(0).topic()).isEqualTo("topic2");
   }
 
   @DisplayName("잉듀 상세 정보를 조회하여 질문 목록을 조회할 수 있다.")
@@ -119,7 +119,7 @@ class EngduQueryServiceTest {
   void findDetailEngdu() {
     // given
     Long userId = 1L;
-    Engdu engdu = createEngdu(userId, "Detailed Title", false);
+    Engdu engdu = createEngdu(userId, "Detailed topic", false);
     Question question1 = createQuestion(engdu, (byte) 1, "Question Content1", Category.GRAMMAR, true);
     Question question2 = createQuestion(engdu, (byte) 2, "Question Content2", Category.VOCA, false);
 
@@ -137,11 +137,10 @@ class EngduQueryServiceTest {
             tuple(question2.getId(), null, "Question Content2"));
   }
 
-  private Engdu createEngdu(Long userId, String title, boolean isAllSolved) {
+  private Engdu createEngdu(Long userId, String topic, boolean isAllSolved) {
     return Engdu.builder()
         .userId(userId)
-        .title(title)
-        .topic("topic")
+        .topic(topic)
         .isAllSolved(isAllSolved)
         .build();
   }

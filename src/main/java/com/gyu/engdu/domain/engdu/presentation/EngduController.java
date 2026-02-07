@@ -7,16 +7,16 @@ import com.gyu.engdu.domain.engdu.application.LikeEngduService;
 import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
+import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduContentRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.LikeEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
-import com.gyu.engdu.domain.engdu.presentation.dto.response.CreateEngduResponse;
+import com.gyu.engdu.domain.engdu.application.dto.response.CreateEngduResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduPageResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -46,9 +46,21 @@ public class EngduController {
   public ResponseEntity<CreateEngduResponse> createEngdu(
       @RequestBody CreateEngduRequest request,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
-    String topic = request.topic();
-    String level = request.level();
-    Long engduId = createEngduService.create(userId, topic, level);
+    Long engduId = createEngduService.create(userId, request.level(), request.topic());
+
+    return ResponseEntity.ok(new CreateEngduResponse(engduId));
+  }
+
+  @PostMapping("/{engduId}/content")
+  public ResponseEntity<CreateEngduResponse> createEngduContent(
+      @PathVariable("engduId") Long engduId,
+      @RequestBody CreateEngduContentRequest request,
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
+
+    switch (request.step()) {
+      case INITIAL -> createEngduService.generateInitialContent(userId, engduId);
+      case COMPLETE -> createEngduService.generateNextContent(userId, engduId);
+    }
 
     return ResponseEntity.ok(new CreateEngduResponse(engduId));
   }

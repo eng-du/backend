@@ -44,7 +44,7 @@ public class Article extends BaseEntity {
     return new Article(engdu);
   }
 
-  public void setEngdu(Engdu engdu) {
+  private void setEngdu(Engdu engdu) {
     this.engdu = engdu;
     engdu.getArticles().add(this);
   }
