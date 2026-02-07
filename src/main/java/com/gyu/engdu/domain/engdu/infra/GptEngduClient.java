@@ -190,17 +190,14 @@ public class GptEngduClient implements EngduClient {
              - 사용자가 독해하기 쉽게 문장을 청크 단위로 나눠야한다. 문장 하나가 청크가 되는 것이 아닌 문장을 이루고있는 단어들을 나누어 청크로 만드는 것에 주의해라. 예를들어, 'Social media platformsemerged as powerful toolsfor connecting individualsacross geographical boundaries.' 문장이 있을 때 'Social media platform', 'emerged as powerful tools', 'for connecting individuals', 'across geographical boundaries.' 이렇게 4개의 청크로 나눌 수 있다.
              - 본문의 해석본도 적는다. 해석본은 한국어로 청크 단위로 작성해야한다. 말투는 서술형 평서문으로 작성해라.
 
-          2. 제목(title)을 작성해라.
-             - 본문의 내용에 알맞은 제목을 영어로 작성해라.
-
-          3. 질문(questions)을 만든다.
+          2. 질문(questions)을 만든다.
              - 질문은 총 2개를 만든다. 질문은 본문의 내용과 관련되어있다.
              - 문제 유형은 독해(내용 일치/불일치), 문법, 어휘(유의어/반의어) 등으로 다양하게 구성한다.
              - 질문의 선택지(choices)는 반드시 4개여야한다.
              - 질문의 문제 유형을 COMPREHENSION, VOCA, GRAMMAR 중 하나를 선택한다.
              - 해설은 본문의 내용을 기반으로해라. 정답:, 오답:과 같이 불필요한 말들은 제외한다.
 
-          4. 전체 결과는 다음과 같은 JSON 포맷을 따른다:
+          3. 전체 결과는 다음과 같은 JSON 포맷을 따른다:
              응답에는 불필요한 것을 제외하고 순수 JSON으로 준다.
 
         ```json
