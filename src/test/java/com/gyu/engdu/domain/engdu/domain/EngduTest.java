@@ -22,11 +22,11 @@ class EngduTest {
   void create() {
     // given
     Long userId = 1L;
-    String title = "테스트 잉듀 제목";
     String topic = "테스트 잉듀 주제";
+    String level = "BEGINNER";
 
     // when
-    Engdu engdu = Engdu.of(userId, title, topic);
+    Engdu engdu = Engdu.of(userId, level, topic);
 
     // then
     assertThat(engdu.isAllSolved()).isFalse();
@@ -37,11 +37,11 @@ class EngduTest {
   void create2() {
     // given
     Long userId = 1L;
-    String title = "테스트 잉듀 제목";
     String topic = "테스트 잉듀 주제";
+    String level = "BEGINNER";
 
     // when
-    Engdu engdu = Engdu.of(userId, title, topic);
+    Engdu engdu = Engdu.of(userId, level, topic);
 
     // then
     assertThat(engdu.getLikeStatus()).isEqualTo(LikeStatus.NONE);
@@ -52,7 +52,7 @@ class EngduTest {
   void like() {
     // given
     Long userId = 1L;
-    Engdu noneEngdu = createEngdu(userId, "test title", "test topic", LikeStatus.NONE);
+    Engdu noneEngdu = createEngdu(userId, "test topic", LikeStatus.NONE);
 
     // when
     noneEngdu.changeLikeStatus(LikeStatus.LIKE);
@@ -66,8 +66,8 @@ class EngduTest {
   void cannotChangeLikeStatusOnceSet() {
     // given
     Long userId = 1L;
-    Engdu likedEngdu = createEngdu(userId, "test title", "test topic", LikeStatus.LIKE);
-    Engdu dislikedEngdu = createEngdu(userId, "test title", "test topic", LikeStatus.DISLIKE);
+    Engdu likedEngdu = createEngdu(userId, "test topic", LikeStatus.LIKE);
+    Engdu dislikedEngdu = createEngdu(userId, "test topic", LikeStatus.DISLIKE);
 
     // when & then
     assertThatThrownBy(() -> likedEngdu.changeLikeStatus(LikeStatus.NONE))
@@ -85,7 +85,7 @@ class EngduTest {
     // given
     Long engduOwnerId = 1L;
     Long nonOwnerId = 2L;
-    Engdu engdu = createEngdu(engduOwnerId, "test title", "test topic");
+    Engdu engdu = createEngdu(engduOwnerId, "test topic");
 
     // when & then
     assertThatThrownBy(() -> engdu.validateOwner(nonOwnerId))
@@ -98,7 +98,7 @@ class EngduTest {
   void validateOwner() {
     // given
     Long engduOwnerId = 1L;
-    Engdu engdu = createEngdu(engduOwnerId, "test title", "test topic");
+    Engdu engdu = createEngdu(engduOwnerId, "test topic");
 
     // when & then
     assertThatCode(() -> engdu.validateOwner(engduOwnerId))
@@ -109,7 +109,7 @@ class EngduTest {
   @Test
   void submission() {
     // given
-    Engdu engdu = createEngdu(1L, "test title", "test topic");
+    Engdu engdu = createEngdu(1L, "test topic");
     Long question1Id = 1L;
     byte userAnswer = 1;
 
@@ -137,7 +137,7 @@ class EngduTest {
   @Test
   void submission2() {
     // given
-    Engdu engdu = createEngdu(1L, "test title", "test topic");
+    Engdu engdu = createEngdu(1L, "test topic");
     Long question1Id = 1L;
     byte userAnswer = 2;
 
@@ -165,7 +165,7 @@ class EngduTest {
   @Test
   void submission3() {
     // given
-    Engdu engdu = createEngdu(1L, "test title", "test topic");
+    Engdu engdu = createEngdu(1L, "test topic");
     Long question1Id = 1L;
     Long question2Id = 2L;
     Long question3Id = 3L;
@@ -198,19 +198,32 @@ class EngduTest {
     assertThat(result).isTrue();
   }
 
-  private Engdu createEngdu(Long userId, String title, String topic) {
+  @DisplayName("잉듀의 제목을 변경할 때 50자를 초과하면 예외가 발생한다.")
+  @Test
+  void changeTitle() {
+    // given
+    Engdu engdu = createEngdu(1L, "test topic");
+    String longTitle = "a".repeat(51);
+
+    // when & then
+    assertThatThrownBy(() -> engdu.changeTitle(longTitle))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.ENGDU_TITLE_TOO_LONG.getMessage());
+  }
+
+  private Engdu createEngdu(Long userId, String topic) {
     return Engdu.builder()
         .userId(userId)
-        .title(title)
         .topic(topic)
+        .level("BEGINNER")
         .build();
   }
 
-  private Engdu createEngdu(Long userId, String title, String topic, LikeStatus likeStatus) {
+  private Engdu createEngdu(Long userId, String topic, LikeStatus likeStatus) {
     return Engdu.builder()
         .userId(userId)
-        .title(title)
         .topic(topic)
+        .level("BEGINNER")
         .likeStatus(likeStatus)
         .build();
   }

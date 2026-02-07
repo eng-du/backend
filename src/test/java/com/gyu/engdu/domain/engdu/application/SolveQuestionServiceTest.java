@@ -51,7 +51,7 @@ class SolveQuestionServiceTest {
   @DisplayName("정답 제출 시 모든 잉듀의 문제를 해결했다면 모든 문제 해결 상태를 true로 변경한다.")
   @Test
   void solve2() {
-    //given
+    // given
     Long userId = 1L;
     byte userAnswer = 1;
     byte questionAnswer = 1;
@@ -67,11 +67,11 @@ class SolveQuestionServiceTest {
     solveQuestionService.solve(userId, engdu.getId(), question1.getId(), userAnswer);
     solveQuestionService.solve(userId, engdu.getId(), question2.getId(), userAnswer);
 
-    //when
+    // when
     boolean result = solveQuestionService.solve(userId, engdu.getId(), question3.getId(),
         userAnswer);
 
-    //then
+    // then
     assertThat(result).isTrue();
     assertThat(engdu.isAllSolved()).isTrue();
     assertThat(engdu.getSolvedCount()).isEqualTo(engdu.getQuestions().size());
@@ -120,7 +120,11 @@ class SolveQuestionServiceTest {
   }
 
   private Engdu createEngdu(Long userId) {
-    return Engdu.builder().userId(userId).title("title").topic("topic").build();
+    Engdu engdu = Engdu.builder()
+        .userId(1L)
+        .topic("test topic")
+        .build();
+    return engdu;
   }
 
   private Question createQuestion(byte answer, boolean isCorrected) {
