@@ -28,14 +28,6 @@ public record EngduPartResponse(
       ArticleResponse article,
       List<QuestionResponse> questions) {
 
-    public static Part fromEntity(Engdu engdu) {
-      return new Part(
-          ArticleResponse.fromEntity(engdu),
-          engdu.getQuestions().stream()
-              .map(QuestionResponse::fromEntity)
-              .toList());
-    }
-
     public static Part of(com.gyu.engdu.domain.engdu.domain.Article article,
         List<Question> questions) {
       return new Part(
@@ -47,14 +39,6 @@ public record EngduPartResponse(
   }
 
   public record ArticleResponse(List<ChunkResponse> chunks) {
-
-    public static ArticleResponse fromEntity(Engdu engdu) {
-      return new ArticleResponse(
-          engdu.getArticles().stream()
-              .flatMap(article -> article.getChunks().stream())
-              .map(ChunkResponse::fromEntity)
-              .toList());
-    }
 
     public static ArticleResponse of(com.gyu.engdu.domain.engdu.domain.Article article) {
       return new ArticleResponse(
