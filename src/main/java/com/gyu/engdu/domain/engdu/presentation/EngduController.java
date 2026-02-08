@@ -11,8 +11,9 @@ import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduContentReq
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.LikeEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduPartResponse;
 import com.gyu.engdu.domain.engdu.application.dto.response.CreateEngduResponse;
-import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduPageResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
@@ -51,18 +52,18 @@ public class EngduController {
     return ResponseEntity.ok(new CreateEngduResponse(engduId));
   }
 
-  @PostMapping("/{engduId}/content")
-  public ResponseEntity<CreateEngduResponse> createEngduContent(
+  @PostMapping("/{engduId}/part")
+  public ResponseEntity<EngduPartResponse> createEngduContent(
       @PathVariable("engduId") Long engduId,
       @RequestBody CreateEngduContentRequest request,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
 
-    switch (request.step()) {
-      case INITIAL -> createEngduService.generateInitialContent(userId, engduId);
-      case COMPLETE -> createEngduService.generateNextContent(userId, engduId);
-    }
+    EngduPartResponse response = switch (request.step()) {
+      case INITIAL -> createEngduService.generateInitialPart(userId, engduId);
+      case COMPLETE -> createEngduService.generateNextPart(userId, engduId);
+    };
 
-    return ResponseEntity.ok(new CreateEngduResponse(engduId));
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/{engduId}")

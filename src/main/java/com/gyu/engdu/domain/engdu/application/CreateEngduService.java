@@ -1,12 +1,15 @@
 package com.gyu.engdu.domain.engdu.application;
 
 import com.gyu.engdu.domain.engdu.application.dto.request.GenerateEngduRequest;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduPartResponse;
 import com.gyu.engdu.domain.engdu.application.dto.response.GeneratedEngduResponse;
+import com.gyu.engdu.domain.engdu.domain.Article;
 import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
 import com.gyu.engdu.domain.engdu.domain.Question;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduCreationStep;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +30,7 @@ public class CreateEngduService {
     return engdu.getId();
   }
 
-  public Long generateInitialContent(Long userId, Long engduId) {
+  public EngduPartResponse generateInitialPart(Long userId, Long engduId) {
     Engdu engdu = engduQueryService.findExistingEngdu(engduId);
     engdu.validateOwner(userId);
 
@@ -35,18 +38,15 @@ public class CreateEngduService {
         engdu.getTopic(),
         engdu.getLevel(),
         EngduCreationStep.INITIAL,
-        null
-    );
+        null);
 
     GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
 
     engdu.changeTitle(engduResponse.title());
-    saveContent(engdu, engduResponse);
-
-    return engdu.getId();
+    return saveAndFlushPart(engdu, engduResponse);
   }
 
-  public Long generateNextContent(Long userId, Long engduId) {
+  public EngduPartResponse generateNextPart(Long userId, Long engduId) {
     Engdu engdu = engduQueryService.findExistingEngdu(engduId);
     engdu.validateOwner(userId);
 
@@ -56,21 +56,27 @@ public class CreateEngduService {
         engdu.getTopic(),
         engdu.getLevel(),
         EngduCreationStep.COMPLETE,
-        previousArticleContent
-    );
+        previousArticleContent);
 
     GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
-    saveContent(engdu, engduResponse);
-
-    return engdu.getId();
+    return saveAndFlushPart(engdu, engduResponse);
   }
 
-  private void saveContent(Engdu engdu, GeneratedEngduResponse engduResponse) {
-    engduResponse.article().toEntity(engdu);
-    engduResponse.questions().forEach((questionDto) -> {
-      Question question = questionDto.toEntity(engdu);
-      questionDto.choices().forEach(choiceDto -> choiceDto.toEntity(question));
-    });
+  private EngduPartResponse saveAndFlushPart(Engdu engdu, GeneratedEngduResponse engduResponse) {
+    Article article = engduResponse.article().toEntity(engdu);
+
+    List<Question> questions = engduResponse.questions().stream()
+        .map(questionDto -> {
+          Question question = questionDto.toEntity(engdu);
+          questionDto.choices().forEach(choiceDto -> choiceDto.toEntity(question));
+          return question;
+        })
+        .toList();
+
+    //question Id를 받아오기 위해 flush 한다.
+    engduRepository.flush();
+
+    return EngduPartResponse.of(engdu, article, questions);
   }
 
   private String getPreviousArticleContent(Engdu engdu) {

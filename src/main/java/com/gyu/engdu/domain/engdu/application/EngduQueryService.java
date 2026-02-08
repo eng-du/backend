@@ -4,7 +4,7 @@ import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
-import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.exception.CustomException;
 import com.gyu.engdu.exception.ErrorCode;
