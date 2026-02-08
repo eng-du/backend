@@ -109,7 +109,7 @@ public class Engdu extends BaseEntity {
   }
 
   public void changeTitle(String title) {
-    if (title.length() > 50) {
+    if (title.length() > 150) {
       throw new CustomException(ErrorCode.ENGDU_TITLE_TOO_LONG);
     }
 

@@ -198,12 +198,12 @@ class EngduTest {
     assertThat(result).isTrue();
   }
 
-  @DisplayName("잉듀의 제목을 변경할 때 50자를 초과하면 예외가 발생한다.")
+  @DisplayName("잉듀의 제목을 변경할 때 150자를 초과하면 예외가 발생한다.")
   @Test
   void changeTitle() {
     // given
     Engdu engdu = createEngdu(1L, "test topic");
-    String longTitle = "a".repeat(51);
+    String longTitle = "a".repeat(151);
 
     // when & then
     assertThatThrownBy(() -> engdu.changeTitle(longTitle))
