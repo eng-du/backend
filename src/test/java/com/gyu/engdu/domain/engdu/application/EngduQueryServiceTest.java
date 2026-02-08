@@ -9,7 +9,7 @@ import com.gyu.engdu.domain.engdu.domain.Question;
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
-import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduDetailResponse;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -120,6 +120,9 @@ class EngduQueryServiceTest {
     // given
     Long userId = 1L;
     Engdu engdu = createEngdu(userId, "Detailed topic", false);
+
+    createArticle(engdu, List.of("Chunk1", "Chunk2"), List.of("한국어청크1", "한국어청크2"));
+
     Question question1 = createQuestion(engdu, (byte) 1, "Question Content1", Category.GRAMMAR, true);
     Question question2 = createQuestion(engdu, (byte) 2, "Question Content2", Category.VOCA, false);
 
@@ -130,11 +133,25 @@ class EngduQueryServiceTest {
 
     // then
     assertThat(response.engduId()).isEqualTo(engdu.getId());
-    assertThat(response.questions()).hasSize(2)
+    assertThat(response.parts()).hasSize(1);
+    assertThat(response.parts().get(0).questions()).hasSize(2)
         .extracting("questionId", "answer", "content")
         .containsExactlyInAnyOrder(
-            tuple(question1.getId(), 1, "Question Content1"),
+            tuple(question1.getId(), (byte) 1, "Question Content1"),
             tuple(question2.getId(), null, "Question Content2"));
+
+    assertThat(response.parts().get(0).article().chunks()).hasSize(2)
+        .extracting("en", "kor")
+        .containsExactly(
+            tuple("Chunk1", "한국어청크1"),
+            tuple("Chunk2", "한국어청크2"));
+  }
+
+  private void createArticle(Engdu engdu, List<String> ens, List<String> kors) {
+    com.gyu.engdu.domain.engdu.domain.Article article = com.gyu.engdu.domain.engdu.domain.Article.of(engdu);
+    for (int i = 0; i < ens.size(); i++) {
+      com.gyu.engdu.domain.engdu.domain.ArticleChunk.of(ens.get(i), kors.get(i), article);
+    }
   }
 
   private Engdu createEngdu(Long userId, String topic, boolean isAllSolved) {
