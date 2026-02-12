@@ -6,8 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
 import com.gyu.engdu.domain.engdu.domain.Question;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.engdu.exception.QuestionAlreadySolvedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,8 +114,7 @@ class SolveQuestionServiceTest {
     // when & then
     assertThatThrownBy(() -> solveQuestionService.solve(userId, engdu.getId(), question.getId(),
         userAnswer))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.QUESTION_ALREADY_SOLVED.getMessage());
+        .isInstanceOf(QuestionAlreadySolvedException.class);
   }
 
   private Engdu createEngdu(Long userId) {
