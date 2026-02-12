@@ -10,6 +10,10 @@ spring:
       #nginx도 최대 응답시간 5분의 설정을 가진다. LLM API 의 호출 시간이 불규칙적이기 때문.
       request-timeout: 300s
 
+  web:
+    resources:
+      add-mappings: false
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST}:3306/${DB_NAME}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=true
