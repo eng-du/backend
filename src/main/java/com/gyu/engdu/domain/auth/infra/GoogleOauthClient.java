@@ -1,10 +1,10 @@
 package com.gyu.engdu.domain.auth.infra;
 
 import com.gyu.engdu.domain.auth.application.OAuthClient;
+import com.gyu.engdu.domain.auth.exception.GoogleOAuth4xxException;
+import com.gyu.engdu.domain.auth.exception.GoogleOAuth5xxException;
 import com.gyu.engdu.domain.auth.infra.dto.response.GoogleOAuthToken;
 import com.gyu.engdu.domain.auth.infra.dto.response.GoogleUserInfo;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +33,7 @@ public class GoogleOauthClient implements OAuthClient {
 
   public GoogleOauthClient(
       @Qualifier("googleCodeClient") RestClient googleCodeClient,
-      @Qualifier("googleAccessTokenClient") RestClient googleAccessTokenClient
-  ) {
+      @Qualifier("googleAccessTokenClient") RestClient googleAccessTokenClient) {
     this.googleCodeClient = googleCodeClient;
     this.googleAccessTokenClient = googleAccessTokenClient;
   }
@@ -52,7 +51,7 @@ public class GoogleOauthClient implements OAuthClient {
     return requestUserInfoFromGoogle(accessToken);
   }
 
-  //OAuthToken을 받아오기 위해 정해진 Api 스펙대로 request body를 작성한다.
+  // OAuthToken을 받아오기 위해 정해진 Api 스펙대로 request body를 작성한다.
   private MultiValueMap<String, String> buildTokenRequestMap(String code) {
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("grant_type", "authorization_code");
@@ -88,11 +87,11 @@ public class GoogleOauthClient implements OAuthClient {
         .retrieve()
         .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
           log.error("Google OAuth 4XX error: {}", res.getStatusCode());
-          throw new CustomException(ErrorCode.GOOGLE_4XX);
+          throw new GoogleOAuth4xxException(res.getStatusCode().value());
         })
         .onStatus(HttpStatusCode::is5xxServerError, (req, res) -> {
           log.error("Google OAuth 5XX error: {}", res.getStatusCode());
-          throw new CustomException(ErrorCode.GOOGLE_5XX);
+          throw new GoogleOAuth5xxException(res.getStatusCode().value());
         })
         .body(GoogleOAuthToken.class);
   }

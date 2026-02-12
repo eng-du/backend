@@ -1,6 +1,7 @@
 package com.gyu.engdu.domain.user.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
+import com.gyu.engdu.domain.user.exception.UserNameTooLongException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-    @UniqueConstraint(name = "unique_sub", columnNames = {"sub"})})
+    @UniqueConstraint(name = "unique_sub", columnNames = { "sub" }) })
 
 public class User extends BaseEntity {
 
@@ -57,7 +58,7 @@ public class User extends BaseEntity {
 
   public void changeName(String newName) {
     if (newName.length() > 30) {
-      throw new IllegalArgumentException("이름은 30자를 초과할 수 없습니다.");
+      throw new UserNameTooLongException(this.id, newName);
     }
     this.name = newName;
   }
