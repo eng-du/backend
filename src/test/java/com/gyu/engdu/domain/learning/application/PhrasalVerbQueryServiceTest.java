@@ -6,8 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.gyu.engdu.domain.learning.application.dto.PhrasalVerbResponse;
 import com.gyu.engdu.domain.learning.domain.PhrasalVerb;
 import com.gyu.engdu.domain.learning.domain.PhrasalVerbRepository;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.learning.exception.PhrasalVerbNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,8 +30,7 @@ class PhrasalVerbQueryServiceTest {
 
         // when & then
         assertThatThrownBy(() -> phrasalVerbQueryService.getMaxId())
-            .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.PHRASAL_NOT_FOUND.getMessage());
+                .isInstanceOf(PhrasalVerbNotFoundException.class);
     }
 
     @Test
