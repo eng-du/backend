@@ -2,8 +2,7 @@ package com.gyu.engdu.domain.engdu.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.engdu.exception.QuestionAlreadySolvedException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -77,7 +76,7 @@ public class Question extends BaseEntity {
 
   public boolean solve(byte userAnswer) {
     if (this.isCorrected) {
-      throw new CustomException(ErrorCode.QUESTION_ALREADY_SOLVED);
+      throw new QuestionAlreadySolvedException(this.id);
     }
 
     boolean isAnswered = checkAnswer(userAnswer);

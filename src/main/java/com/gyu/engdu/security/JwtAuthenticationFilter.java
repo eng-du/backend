@@ -32,13 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 로그인 관련 요청은 JWT 검증을 하지 않음
     String requestPath = request.getRequestURI();
-    log.info("{} {}",request.getMethod(),requestPath);
+    log.info("{} {}", request.getMethod(), requestPath);
     if (requestPath.startsWith("/api/v1/login") || requestPath.startsWith("/favicon.ico")) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    //JWT 관련 에러를 처리하기 위함.
+    // JWT 관련 에러를 처리하기 위함.
     try {
       String token = getTokenAndValidateJwtRequest(request);
       Role role = tokenParser.parseRoleFromAccessToken(token);
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       request.setAttribute("errorCode", e.getErrorCode());
     }
 
-    //다음 필터로 넘어가기 위해 필수이다.
+    // 다음 필터로 넘어가기 위해 필수이다.
     filterChain.doFilter(request, response);
   }
 

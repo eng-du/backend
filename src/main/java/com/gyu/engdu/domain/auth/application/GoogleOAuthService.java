@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.application.dto.response.OAuthToken;
 import com.gyu.engdu.domain.auth.application.dto.response.OAuthUserInfo;
+import com.gyu.engdu.domain.auth.exception.InvalidIdTokenException;
 import com.gyu.engdu.domain.user.application.CreateUserService;
 import com.gyu.engdu.domain.user.application.UserQueryService;
 import com.gyu.engdu.domain.user.domain.User;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import java.util.Base64;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +28,14 @@ public class GoogleOAuthService {
 
   public AuthTokenServiceResponse signUp(String code) {
 
-    //sub 받아오고
+    // sub 받아오고
     OAuthToken oAuthToken = oAuthClient.exchangeCodeToOAuthToken(code);
     String sub = extractSubFromIdToken(oAuthToken.getIdToken());
 
-    //유저 Sub으로 조회
+    // 유저 Sub으로 조회
     User user = userQueryService.findUserBySub(sub)
         .orElseGet(() -> {
-          //기존의 회원이 존재하지 않는다면 구글 sub 기반으로 신규 회원 가입을 진행한다.
+          // 기존의 회원이 존재하지 않는다면 구글 sub 기반으로 신규 회원 가입을 진행한다.
           OAuthUserInfo userInfo = oAuthClient.exchangeAccessTokenToUserInfo(
               oAuthToken.getAccessToken());
           return createUserService.create(sub, userInfo.getEmail());
@@ -60,7 +59,7 @@ public class GoogleOAuthService {
 
       return node.get("sub").asText();
     } catch (JsonProcessingException e) {
-      throw new CustomException(ErrorCode.INVALID_ID_TOKEN);
+      throw new InvalidIdTokenException(e.getMessage());
     }
   }
 }

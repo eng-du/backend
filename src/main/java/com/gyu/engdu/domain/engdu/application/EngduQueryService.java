@@ -6,8 +6,7 @@ import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.engdu.exception.EngduNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +24,7 @@ public class EngduQueryService {
 
   public Engdu findExistingEngdu(Long id) {
     return engduRepository.findById(id)
-        .orElseThrow(() -> new CustomException(ErrorCode.ENGDU_NOT_FOUND));
+        .orElseThrow(() -> new EngduNotFoundException(id));
   }
 
   public Page<EngduSummaryResponse> searchEngdu(Long userId, Integer pageNum, Integer size,

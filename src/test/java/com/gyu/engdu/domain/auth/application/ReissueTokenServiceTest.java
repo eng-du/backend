@@ -6,11 +6,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.domain.RefreshToken;
 import com.gyu.engdu.domain.auth.domain.RefreshTokenRepository;
+import com.gyu.engdu.domain.auth.exception.JwtExpiredException;
+import com.gyu.engdu.domain.auth.exception.RefreshTokenNotFoundException;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -81,8 +81,7 @@ class ReissueTokenServiceTest {
     // when & then
     Date reIssueTime = Date.from(now.toInstant().plusSeconds(10L));
     assertThatThrownBy(() -> reissueTokenService.reissue(refreshToken.getRawToken(), reIssueTime))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.REFRESH_TOKEN_NOT_FOUND.getMessage());
+        .isInstanceOf(RefreshTokenNotFoundException.class);
   }
 
   @DisplayName("리프레시토큰이 유효기간을 초과하면 예외가 발생한다.")
@@ -101,8 +100,7 @@ class ReissueTokenServiceTest {
 
     // when & then
     assertThatThrownBy(() -> reissueTokenService.reissue(refreshToken.getRawToken(), new Date()))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.JWT_EXPIRED.getMessage());
+        .isInstanceOf(JwtExpiredException.class);
   }
 
   @DisplayName("이미 재발급에 사용한 리프레시토큰을 다시 재사용하면 예외가 발생한다.")
@@ -123,8 +121,7 @@ class ReissueTokenServiceTest {
 
     // when & then
     assertThatThrownBy(() -> reissueTokenService.reissue(refreshToken.getRawToken(), reIssueTime))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.REFRESH_TOKEN_NOT_FOUND.getMessage());
+        .isInstanceOf(RefreshTokenNotFoundException.class);
   }
 
   private User createUser(String email, Role role, String sub) {

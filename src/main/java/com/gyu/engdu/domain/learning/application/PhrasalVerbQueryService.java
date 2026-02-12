@@ -3,8 +3,7 @@ package com.gyu.engdu.domain.learning.application;
 import com.gyu.engdu.domain.learning.application.dto.PhrasalVerbResponse;
 import com.gyu.engdu.domain.learning.domain.PhrasalVerb;
 import com.gyu.engdu.domain.learning.domain.PhrasalVerbRepository;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.learning.exception.PhrasalVerbNotFoundException;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class PhrasalVerbQueryService {
     public Long getMaxId() {
         Long maxId = phrasalVerbRepository.findMaxId();
         if (maxId == null) {
-            throw new CustomException(ErrorCode.PHRASAL_NOT_FOUND);
+            throw new PhrasalVerbNotFoundException();
         }
         return maxId;
     }

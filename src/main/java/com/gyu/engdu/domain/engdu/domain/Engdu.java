@@ -2,8 +2,10 @@ package com.gyu.engdu.domain.engdu.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
 import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.engdu.exception.EngduForbiddenAccessException;
+import com.gyu.engdu.domain.engdu.exception.EngduLikeAlreadyProcessedException;
+import com.gyu.engdu.domain.engdu.exception.EngduTitleTooLongException;
+import com.gyu.engdu.domain.engdu.exception.QuestionForbiddenAccessException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,7 +75,7 @@ public class Engdu extends BaseEntity {
 
   public void validateOwner(Long userId) {
     if (!this.userId.equals(userId)) {
-      throw new CustomException(ErrorCode.ENGDU_FORBIDDEN_ACCESS);
+      throw new EngduForbiddenAccessException(userId, this.id, this.userId);
     }
   }
 
@@ -88,7 +90,7 @@ public class Engdu extends BaseEntity {
 
   public void changeLikeStatus(LikeStatus likeStatus) {
     if (this.likeStatus != LikeStatus.NONE) {
-      throw new CustomException(ErrorCode.ENGDU_LIKE_ALREADY_PROCESSED);
+      throw new EngduLikeAlreadyProcessedException(this.userId, this.id, this.likeStatus);
     }
     this.likeStatus = likeStatus;
   }
@@ -97,7 +99,7 @@ public class Engdu extends BaseEntity {
     return getQuestions().stream()
         .filter(q -> q.getId().equals(questionId))
         .findFirst()
-        .orElseThrow(() -> new CustomException(ErrorCode.QUESTION_FORBIDDEN_ACCESS));
+        .orElseThrow(() -> new QuestionForbiddenAccessException(this.id, questionId));
   }
 
   private void increaseSolvedCount() {
@@ -110,7 +112,7 @@ public class Engdu extends BaseEntity {
 
   public void changeTitle(String title) {
     if (title.length() > 150) {
-      throw new CustomException(ErrorCode.ENGDU_TITLE_TOO_LONG);
+      throw new EngduTitleTooLongException(this.userId, this.id, title.length());
     }
 
     this.title = title;

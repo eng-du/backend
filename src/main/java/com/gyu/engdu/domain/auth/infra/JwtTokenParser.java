@@ -1,9 +1,9 @@
 package com.gyu.engdu.domain.auth.infra;
 
 import com.gyu.engdu.domain.auth.application.TokenParser;
+import com.gyu.engdu.domain.auth.exception.JwtExpiredException;
+import com.gyu.engdu.domain.auth.exception.JwtInvalidException;
 import com.gyu.engdu.domain.user.domain.Role;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -30,7 +30,7 @@ public class JwtTokenParser implements TokenParser {
     return Long.valueOf(getAllClaimsFromToken(getSigningKey(), token).getSubject());
   }
 
-  //jwt 토큰의 유효시간이 지났거나 유효하지 않은 형식이라면 에러를 던진다.
+  // jwt 토큰의 유효시간이 지났거나 유효하지 않은 형식이라면 에러를 던진다.
   private Claims getAllClaimsFromToken(Key signingKey, String token) {
     try {
       return Jwts.parserBuilder()
@@ -39,9 +39,9 @@ public class JwtTokenParser implements TokenParser {
           .parseClaimsJws(token)
           .getBody();
     } catch (ExpiredJwtException e) {
-      throw new CustomException(ErrorCode.JWT_EXPIRED);
+      throw new JwtExpiredException();
     } catch (JwtException e) {
-      throw new CustomException(ErrorCode.JWT_INVALID);
+      throw new JwtInvalidException();
     }
   }
 }

@@ -7,8 +7,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.domain.engdu.exception.EngduForbiddenAccessException;
+import com.gyu.engdu.domain.engdu.exception.EngduLikeAlreadyProcessedException;
+import com.gyu.engdu.domain.engdu.exception.EngduTitleTooLongException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,12 +72,10 @@ class EngduTest {
 
     // when & then
     assertThatThrownBy(() -> likedEngdu.changeLikeStatus(LikeStatus.NONE))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.ENGDU_LIKE_ALREADY_PROCESSED.getMessage());
+        .isInstanceOf(EngduLikeAlreadyProcessedException.class);
 
     assertThatThrownBy(() -> dislikedEngdu.changeLikeStatus(LikeStatus.LIKE))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.ENGDU_LIKE_ALREADY_PROCESSED.getMessage());
+        .isInstanceOf(EngduLikeAlreadyProcessedException.class);
   }
 
   @DisplayName("사용자가 잉듀의 소유자가 아니라면, validateOwner 메서드는 예외를 발생시킨다.")
@@ -89,8 +88,7 @@ class EngduTest {
 
     // when & then
     assertThatThrownBy(() -> engdu.validateOwner(nonOwnerId))
-        .isInstanceOf(CustomException.class)
-        .hasMessage("사용자의 잉듀가 아닙니다.");
+        .isInstanceOf(EngduForbiddenAccessException.class);
   }
 
   @DisplayName("사용자가 잉듀의 소유자라면, validateOwner 메서드를 통과한다.")
@@ -207,8 +205,7 @@ class EngduTest {
 
     // when & then
     assertThatThrownBy(() -> engdu.changeTitle(longTitle))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.ENGDU_TITLE_TOO_LONG.getMessage());
+        .isInstanceOf(EngduTitleTooLongException.class);
   }
 
   private Engdu createEngdu(Long userId, String topic) {

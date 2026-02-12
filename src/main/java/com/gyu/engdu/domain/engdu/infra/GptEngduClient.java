@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gyu.engdu.domain.engdu.application.EngduClient;
 import com.gyu.engdu.domain.engdu.application.dto.request.GenerateEngduRequest;
 import com.gyu.engdu.domain.engdu.application.dto.response.GeneratedEngduResponse;
+import com.gyu.engdu.domain.engdu.exception.EngduGenerate4xxException;
+import com.gyu.engdu.domain.engdu.exception.EngduGenerate5xxException;
 import com.gyu.engdu.domain.engdu.infra.dto.response.OpenAiResponse;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -49,11 +49,11 @@ public class GptEngduClient implements EngduClient {
         .retrieve()
         .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
           log.error("Engdu Generate 4XX error: {}", res.getStatusCode());
-          throw new CustomException(ErrorCode.ENGDU_GENERATE_4XX);
+          throw new EngduGenerate4xxException(res.getStatusCode().value());
         })
         .onStatus(HttpStatusCode::is5xxServerError, (req, res) -> {
           log.error("Engdu Generate 5XX error: {}", res.getStatusCode());
-          throw new CustomException(ErrorCode.ENGDU_GENERATE_5XX);
+          throw new EngduGenerate5xxException(res.getStatusCode().value());
         })
         .body(OpenAiResponse.class);
 

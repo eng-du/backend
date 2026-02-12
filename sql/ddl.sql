@@ -75,6 +75,18 @@ CREATE TABLE `choice` (
     `seq` TINYINT,
     `question_id` BIGINT NOT NULL
 ) ENGINE=InnoDB;
+
+CREATE TABLE phrasal_verb (
+  phrasal_verb_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+  en VARCHAR(255) NOT NULL,
+  kor VARCHAR(255) NOT NULL,
+
+  example_sentence_en VARCHAR(1000) NOT NULL,
+  example_sentence_kor VARCHAR(1000) NOT NULL,
+
+  CONSTRAINT unique_phrasalverb_en UNIQUE (en)
+) ENGINE=InnoDB;
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
