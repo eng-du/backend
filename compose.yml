@@ -12,9 +12,11 @@ services:
 
   promtail:
     image: grafana/promtail:latest
+    env_file:
+      - .env
     volumes:
       # 로그 읽기 위치를 기록하는 파일을 위해 볼륨 설정 (재시작 시 중복 방지)
       - /tmp/positions:/tmp/positions
       - ./logs:/logs
       - ./promtail-config.yml:/etc/promtail/config.yml
-    command: -config.file=/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true
