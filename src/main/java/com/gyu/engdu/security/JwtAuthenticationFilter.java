@@ -32,7 +32,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 로그인 관련 요청은 JWT 검증을 하지 않음
     String requestPath = request.getRequestURI();
-    log.info("{} {}", request.getMethod(), requestPath);
+
+    // 액츄에이터 엔드포인트는 로깅 제외
+    if (!requestPath.startsWith("/actuator")) {
+      log.info("{} {}", request.getMethod(), requestPath);
+    }
+
     if (requestPath.startsWith("/api/v1/login") || requestPath.startsWith("/favicon.ico")) {
       filterChain.doFilter(request, response);
       return;
