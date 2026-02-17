@@ -2,7 +2,20 @@
 services:
   my-server:
     image: ${IMAGE_NAME}:${IMAGE_TAG}
+    volumes:
+      - ./logs:/logs
     ports: #nginx의 접근만 허용한다. 외부에서 8080포트 접근을 차단한다.
       - "127.0.0.1:8080:8080"
     env_file:
       - .env
+
+  promtail:
+    image: grafana/promtail:latest
+    env_file:
+      - .env
+    volumes:
+      # 로그 읽기 위치를 기록하는 파일을 위해 볼륨 설정 (재시작 시 중복 방지)
+      - /tmp/positions:/tmp/positions
+      - ./logs:/logs
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true

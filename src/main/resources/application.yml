@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: engdu
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
 
@@ -35,6 +38,18 @@ spring:
 
   api:
     gpt-key: ${GPT_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+    tags:
+      application: ${spring.application.name}
 
 oauth:
   google:
