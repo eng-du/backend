@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.user.application;
 
+import com.gyu.engdu.domain.user.application.dto.response.UserDetailResponse;
 import com.gyu.engdu.domain.user.application.dto.response.UserSummaryResponse;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
@@ -26,5 +27,10 @@ public class UserQueryService {
   public UserSummaryResponse findSummaryUserInfo(Long userId) {
     User user = findExistingUser(userId);
     return UserSummaryResponse.fromEntity(user);
+  }
+
+  public UserDetailResponse findDetailUserInfo(Long userId) {
+    User user = findExistingUser(userId);
+    return UserDetailResponse.fromEntity(user);
   }
 }
