@@ -3,6 +3,7 @@ package com.gyu.engdu.domain.user.presentation;
 import com.gyu.engdu.domain.user.application.ChangeUserNameService;
 import com.gyu.engdu.domain.user.application.DeleteUserService;
 import com.gyu.engdu.domain.user.application.UserQueryService;
+import com.gyu.engdu.domain.user.application.dto.response.UserDetailResponse;
 import com.gyu.engdu.domain.user.application.dto.response.UserSummaryResponse;
 import com.gyu.engdu.domain.user.presentation.dto.request.ChangeUserNameRequest;
 import jakarta.validation.Valid;
@@ -29,6 +30,12 @@ public class UserController {
   public ResponseEntity<UserSummaryResponse> readMySummaryInfo(
       @AuthenticationPrincipal(expression = "userId") Long userId) {
     return ResponseEntity.ok(userQueryService.findSummaryUserInfo(userId));
+  }
+
+  @GetMapping("/me/detail")
+  public ResponseEntity<UserDetailResponse> readMyDetailInfo(
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
+    return ResponseEntity.ok(userQueryService.findDetailUserInfo(userId));
   }
 
   @DeleteMapping("/withdrawal")
