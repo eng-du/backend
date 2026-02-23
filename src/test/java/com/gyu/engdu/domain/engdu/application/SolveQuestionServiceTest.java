@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
+import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.Question;
+import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.exception.QuestionAlreadySolvedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,8 +35,9 @@ class SolveQuestionServiceTest {
     byte userAnswer = 1;
     byte questionAnswer = 1;
     Engdu engdu = createEngdu(userId);
+    Part part = Part.of(PartType.INITIAL, engdu);
     Question question = createQuestion(questionAnswer, false);
-    question.setEngdu(engdu);
+    question.setPart(part);
 
     engduRepository.save(engdu);
 
@@ -55,12 +58,14 @@ class SolveQuestionServiceTest {
     byte userAnswer = 1;
     byte questionAnswer = 1;
     Engdu engdu = createEngdu(userId);
+    Part part = Part.of(PartType.INITIAL, engdu);
     Question question1 = createQuestion(questionAnswer, false);
     Question question2 = createQuestion(questionAnswer, false);
     Question question3 = createQuestion(questionAnswer, false);
-    question1.setEngdu(engdu);
-    question2.setEngdu(engdu);
-    question3.setEngdu(engdu);
+
+    question1.setPart(part);
+    question2.setPart(part);
+    question3.setPart(part);
 
     engduRepository.save(engdu);
     solveQuestionService.solve(userId, engdu.getId(), question1.getId(), userAnswer);
@@ -72,8 +77,9 @@ class SolveQuestionServiceTest {
 
     // then
     assertThat(result).isTrue();
+    assertThat(part.isAllSolved()).isTrue();
     assertThat(engdu.isAllSolved()).isTrue();
-    assertThat(engdu.getSolvedCount()).isEqualTo(engdu.getQuestions().size());
+    assertThat(engdu.getSolvedCount()).isEqualTo(3);
   }
 
   @DisplayName("오답 제출 시 solvedCount는 증가하지 않고 false를 반환한다.")
@@ -84,8 +90,9 @@ class SolveQuestionServiceTest {
     byte userAnswer = 1;
     byte questionAnswer = 2;
     Engdu engdu = createEngdu(userId);
+    Part part = Part.of(PartType.INITIAL, engdu);
     Question question = createQuestion(questionAnswer, false);
-    question.setEngdu(engdu);
+    question.setPart(part);
 
     engduRepository.save(engdu);
 
@@ -106,8 +113,9 @@ class SolveQuestionServiceTest {
     byte userAnswer = 1;
     byte questionAnswer = 1;
     Engdu engdu = createEngdu(userId);
+    Part part = Part.of(PartType.INITIAL, engdu);
     Question question = createQuestion(questionAnswer, true);
-    question.setEngdu(engdu);
+    question.setPart(part);
 
     engduRepository.save(engdu);
 

@@ -3,11 +3,15 @@ package com.gyu.engdu.domain.engdu.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
+import com.gyu.engdu.domain.engdu.domain.Article;
+import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
+import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.Question;
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
+import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
@@ -120,11 +124,12 @@ class EngduQueryServiceTest {
     // given
     Long userId = 1L;
     Engdu engdu = createEngdu(userId, "Detailed topic", false);
+    Part part = Part.of(PartType.INITIAL, engdu);
 
-    createArticle(engdu, List.of("Chunk1", "Chunk2"), List.of("한국어청크1", "한국어청크2"));
+    createArticle(part, List.of("Chunk1", "Chunk2"), List.of("한국어청크1", "한국어청크2"));
 
-    Question question1 = createQuestion(engdu, (byte) 1, "Question Content1", Category.GRAMMAR, true);
-    Question question2 = createQuestion(engdu, (byte) 2, "Question Content2", Category.VOCA, false);
+    Question question1 = createQuestion(part, (byte) 1, "Question Content1", Category.GRAMMAR, true);
+    Question question2 = createQuestion(part, (byte) 2, "Question Content2", Category.VOCA, false);
 
     engduRepository.save(engdu);
 
@@ -147,10 +152,10 @@ class EngduQueryServiceTest {
             tuple("Chunk2", "한국어청크2"));
   }
 
-  private void createArticle(Engdu engdu, List<String> ens, List<String> kors) {
-    com.gyu.engdu.domain.engdu.domain.Article article = com.gyu.engdu.domain.engdu.domain.Article.of(engdu);
+  private void createArticle(Part part, List<String> ens, List<String> kors) {
+    Article article = Article.of(part);
     for (int i = 0; i < ens.size(); i++) {
-      com.gyu.engdu.domain.engdu.domain.ArticleChunk.of(ens.get(i), kors.get(i), article);
+      ArticleChunk.of(ens.get(i), kors.get(i), article);
     }
   }
 
@@ -162,14 +167,14 @@ class EngduQueryServiceTest {
         .build();
   }
 
-  private Question createQuestion(Engdu engdu, byte answer, String content, Category category, boolean isCorrected) {
+  private Question createQuestion(Part part, byte answer, String content, Category category, boolean isCorrected) {
     Question question = Question.builder()
         .answer(answer)
         .content(content)
         .category(category)
         .isCorrected(isCorrected)
         .build();
-    question.setEngdu(engdu);
+    question.setPart(part);
     return question;
   }
 }

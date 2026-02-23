@@ -14,10 +14,10 @@ class QuestionTest {
   @Test
   void create() {
     // given
-    Engdu engdu = new Engdu();
+    Part part = new Part();
     byte answer = 1;
     // when
-    Question question = Question.of(answer, "질문 내용", Category.COMPREHENSION, engdu);
+    Question question = Question.of(answer, "질문 내용", Category.COMPREHENSION, part);
 
     // then
     assertThat(question.isCorrected()).isFalse();
