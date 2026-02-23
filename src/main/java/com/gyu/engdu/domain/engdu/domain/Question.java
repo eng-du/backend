@@ -35,8 +35,8 @@ public class Question extends BaseEntity {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "engdu_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-  private Engdu engdu;
+  @JoinColumn(name = "part_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+  private Part part;
 
   private byte answer;
 
@@ -58,20 +58,20 @@ public class Question extends BaseEntity {
     this.isCorrected = isCorrected;
   }
 
-  public static Question of(byte answer, String content, Category category, Engdu engdu) {
+  public static Question of(byte answer, String content, Category category, Part part) {
     Question question = Question.builder()
         .answer(answer)
         .content(content)
         .category(category)
         .isCorrected(false)
         .build();
-    question.setEngdu(engdu);
+    question.setPart(part);
     return question;
   }
 
-  public void setEngdu(Engdu engdu) {
-    this.engdu = engdu;
-    engdu.getQuestions().add(this);
+  public void setPart(Part part) {
+    this.part = part;
+    part.getQuestions().add(this);
   }
 
   public boolean solve(byte userAnswer) {

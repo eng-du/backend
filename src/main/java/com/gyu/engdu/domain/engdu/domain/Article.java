@@ -11,8 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -29,23 +29,23 @@ public class Article extends BaseEntity {
   @Column(name = "article_id")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "engdu_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-  private Engdu engdu;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "part_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+  private Part part;
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ArticleChunk> chunks = new ArrayList<>();
 
-  private Article(Engdu engdu) {
-    setEngdu(engdu);
+  private Article(Part part) {
+    setPart(part);
   }
 
-  public static Article of(Engdu engdu) {
-    return new Article(engdu);
+  public static Article of(Part part) {
+    return new Article(part);
   }
 
-  private void setEngdu(Engdu engdu) {
-    this.engdu = engdu;
-    engdu.getArticles().add(this);
+  private void setPart(Part part) {
+    this.part = part;
+    part.setArticle(this);
   }
 }

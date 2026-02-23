@@ -10,8 +10,7 @@ public record EngduSummaryResponse(
     Integer solvedCount,
     Integer totalCount,
     Boolean isAllSolved,
-    LocalDateTime createdAt
-) {
+    LocalDateTime createdAt) {
 
   public static EngduSummaryResponse from(Engdu engdu) {
     return new EngduSummaryResponse(
@@ -19,9 +18,8 @@ public record EngduSummaryResponse(
         engdu.getTitle(),
         engdu.getTopic(),
         engdu.getSolvedCount(),
-        engdu.getQuestions().size(),
+        (int) engdu.getParts().stream().mapToLong(part -> part.getQuestions().size()).sum(),
         engdu.isAllSolved(),
-        engdu.getCreatedAt()
-    );
+        engdu.getCreatedAt());
   }
 }

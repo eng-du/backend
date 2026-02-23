@@ -7,8 +7,10 @@ import com.gyu.engdu.domain.engdu.domain.Article;
 import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
+import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.Question;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduCreationStep;
+import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,7 @@ public class CreateEngduService {
     GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
 
     engdu.changeTitle(engduResponse.title());
-    return saveAndFlushPart(engdu, engduResponse);
+    return saveAndFlushPart(engdu, engduResponse, PartType.INITIAL);
   }
 
   public EngduPartResponse generateNextPart(Long userId, Long engduId) {
@@ -59,29 +61,32 @@ public class CreateEngduService {
         previousArticleContent);
 
     GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
-    return saveAndFlushPart(engdu, engduResponse);
+    return saveAndFlushPart(engdu, engduResponse, PartType.COMPLETE);
   }
 
-  private EngduPartResponse saveAndFlushPart(Engdu engdu, GeneratedEngduResponse engduResponse) {
-    Article article = engduResponse.article().toEntity(engdu);
+  private EngduPartResponse saveAndFlushPart(Engdu engdu, GeneratedEngduResponse engduResponse, PartType partType) {
+    Part part = Part.of(partType, engdu);
+
+    Article article = engduResponse.article().toEntity(part);
 
     List<Question> questions = engduResponse.questions().stream()
         .map(questionDto -> {
-          Question question = questionDto.toEntity(engdu);
+          Question question = questionDto.toEntity(part);
           questionDto.choices().forEach(choiceDto -> choiceDto.toEntity(question));
           return question;
         })
         .toList();
 
-    //question Id를 받아오기 위해 flush 한다.
+    // question Id를 받아오기 위해 flush 한다.
     engduRepository.flush();
 
     return EngduPartResponse.of(engdu, article, questions);
   }
 
   private String getPreviousArticleContent(Engdu engdu) {
-    return engdu.getArticles().stream()
+    return engdu.getParts().stream()
         .findFirst()
+        .map(Part::getArticle)
         .map(article -> article.getChunks().stream()
             .map(ArticleChunk::getEn)
             .collect(Collectors.joining(" ")))
