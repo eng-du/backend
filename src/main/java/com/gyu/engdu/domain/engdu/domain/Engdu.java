@@ -48,10 +48,7 @@ public class Engdu extends BaseEntity {
   private boolean isAllSolved;
 
   @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
-  private List<Question> questions = new ArrayList<>();
-
-  @OneToMany(mappedBy = "engdu", cascade = CascadeType.ALL)
-  private List<Article> articles = new ArrayList<>();
+  private List<Part> parts = new ArrayList<>();
 
   @Builder
   private Engdu(Long userId, String topic, String level, boolean isAllSolved,
@@ -80,11 +77,14 @@ public class Engdu extends BaseEntity {
   }
 
   public boolean submission(Long questionId, Byte userAnswer) {
-    Question question = findQuestion(questionId);
-    boolean isAnswered = question.solve(userAnswer);
+    Part part = findPartContaining(questionId);
+    boolean isAnswered = part.solveQuestion(questionId, userAnswer);
+
     if (isAnswered) {
-      increaseSolvedCount();
+      this.solvedCount++;
+      checkAndMarkAllSolved();
     }
+
     return isAnswered;
   }
 
@@ -95,17 +95,17 @@ public class Engdu extends BaseEntity {
     this.likeStatus = likeStatus;
   }
 
-  private Question findQuestion(Long questionId) {
-    return getQuestions().stream()
-        .filter(q -> q.getId().equals(questionId))
+  private Part findPartContaining(Long questionId) {
+    return getParts().stream()
+        .filter(part -> part.getQuestions().stream()
+            .anyMatch(q -> q.getId().equals(questionId)))
         .findFirst()
         .orElseThrow(() -> new QuestionForbiddenAccessException(this.id, questionId));
   }
 
-  private void increaseSolvedCount() {
-    this.solvedCount++;
-
-    if (this.solvedCount == this.questions.size()) {
+  private void checkAndMarkAllSolved() {
+    boolean allPartsCompleted = this.parts.stream().allMatch(Part::isAllSolved);
+    if (allPartsCompleted) {
       this.isAllSolved = Boolean.TRUE;
     }
   }

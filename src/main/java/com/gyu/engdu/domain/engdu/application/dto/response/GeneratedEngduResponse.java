@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gyu.engdu.domain.engdu.domain.Article;
 import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Choice;
-import com.gyu.engdu.domain.engdu.domain.Engdu;
+import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.Question;
 
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
@@ -19,8 +19,8 @@ public record GeneratedEngduResponse(
   public record ArticleDto(
       List<List<String>> chunks) {
 
-    public Article toEntity(Engdu engdu) {
-      Article article = Article.of(engdu);
+    public Article toEntity(Part part) {
+      Article article = Article.of(part);
       chunks.forEach(chunk -> ArticleChunk.of(chunk.get(0), chunk.get(1), article));
       return article;
     }
@@ -33,9 +33,9 @@ public record GeneratedEngduResponse(
       List<ChoiceDto> choices,
       Byte answer) {
 
-    public Question toEntity(Engdu engdu) {
+    public Question toEntity(Part part) {
       Category category = Category.valueOf(type);
-      return Question.of(this.answer, this.content, category, engdu);
+      return Question.of(this.answer, this.content, category, part);
     }
 
   }

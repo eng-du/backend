@@ -5,6 +5,8 @@ import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Choice;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.Question;
+import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
+
 import java.util.List;
 
 public record EngduDetailResponse(
@@ -13,26 +15,20 @@ public record EngduDetailResponse(
         List<Part> parts) {
 
     public static EngduDetailResponse fromEntity(Engdu engdu) {
-        List<Part> parts = new java.util.ArrayList<>();
-        List<Article> articles = engdu.getArticles();
-        List<Question> questions = engdu.getQuestions();
-
-        for (int i = 0; i < articles.size(); i++) {
-            Article article = articles.get(i);
-            int firstQuestionIdx = i * 2;
-            int secondQuestionIdx = firstQuestionIdx + 1;
-
-            List<Question> partQuestions = questions.subList(firstQuestionIdx, secondQuestionIdx + 1);
-            parts.add(Part.of(article, partQuestions));
-        }
+        List<Part> parts = engdu.getParts().stream()
+                .map(part -> Part.of(part.getArticle(), part.getQuestions()))
+                .toList();
 
         return new EngduDetailResponse(
                 engdu.getId(),
-                new Meta(engdu.getTitle(), engdu.getTopic()),
+                new Meta(engdu.getTitle(), engdu.getTopic(), engdu.getLikeStatus()),
                 parts);
     }
 
-    public record Meta(String title, String topic) {
+    public record Meta(
+            String title,
+            String topic,
+            LikeStatus likeStatus) {
     }
 
     public record Part(
