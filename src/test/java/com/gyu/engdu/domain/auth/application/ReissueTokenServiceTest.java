@@ -3,6 +3,7 @@ package com.gyu.engdu.domain.auth.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.gyu.engdu.IntegrationTestSupport;
 import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.domain.RefreshToken;
 import com.gyu.engdu.domain.auth.domain.RefreshTokenRepository;
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-class ReissueTokenServiceTest {
+class ReissueTokenServiceTest extends IntegrationTestSupport {
 
   @Autowired
   private ReissueTokenService reissueTokenService;

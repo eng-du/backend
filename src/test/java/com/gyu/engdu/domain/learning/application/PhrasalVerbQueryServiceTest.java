@@ -3,6 +3,7 @@ package com.gyu.engdu.domain.learning.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.gyu.engdu.IntegrationTestSupport;
 import com.gyu.engdu.domain.learning.application.dto.PhrasalVerbResponse;
 import com.gyu.engdu.domain.learning.domain.PhrasalVerb;
 import com.gyu.engdu.domain.learning.domain.PhrasalVerbRepository;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-class PhrasalVerbQueryServiceTest {
+class PhrasalVerbQueryServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private PhrasalVerbQueryService phrasalVerbQueryService;
