@@ -29,6 +29,7 @@ public enum ErrorCode {
   ENGDU_FORBIDDEN_ACCESS("ENGDU-004", "사용자의 잉듀가 아닙니다."),
   ENGDU_LIKE_ALREADY_PROCESSED("ENGDU-005", "이미 좋아요 상태가 결정되었습니다."),
   ENGDU_TITLE_TOO_LONG("ENGDU-006", "제목은 150자를 초과할 수 없습니다."),
+  PART_NOT_FOUND("ENGDU-007", "파트가 존재하지 않습니다."),
 
   // Question
   QUESTION_FORBIDDEN_ACCESS("QUESTION-001", "해당 잉듀가 갖고있는 문제가 아닙니다."),

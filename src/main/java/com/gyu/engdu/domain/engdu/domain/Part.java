@@ -1,6 +1,7 @@
 package com.gyu.engdu.domain.engdu.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
+import com.gyu.engdu.domain.engdu.domain.enums.PartStatus;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.exception.QuestionForbiddenAccessException;
 import jakarta.persistence.CascadeType;
@@ -39,6 +40,10 @@ public class Part extends BaseEntity {
     @Column(name = "part_type", nullable = false)
     private PartType partType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private PartStatus status = PartStatus.PENDING;
+
     private boolean isAllSolved = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,6 +59,25 @@ public class Part extends BaseEntity {
     @Builder
     private Part(PartType partType) {
         this.partType = partType;
+        this.status = PartStatus.PENDING;
+    }
+
+    public void changeStatus(PartStatus status) {
+        this.status = status;
+    }
+
+    // 메시지 발행 가능 여부를 반환합니다.
+    public boolean isPublishable() {
+        return status == PartStatus.PENDING || status == PartStatus.FAILED;
+    }
+
+    // CREATING 또는 DONE 상태로, 이미 처리 중이거나 완료된 파트입니다.
+    public boolean isAlreadyCreating() {
+        return status == PartStatus.CREATING || status == PartStatus.DONE;
+    }
+
+    public void validateOwner(Long userId) {
+        engdu.validateOwner(userId);
     }
 
     public static Part of(PartType partType, Engdu engdu) {

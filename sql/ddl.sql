@@ -26,13 +26,23 @@ CREATE TABLE `engdu` (
     `engdu_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
     `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
     `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-    `is_all_solved` BIT(1) NOT NULL,
-    `solved_count` INT NOT NULL,
-    `like_status` VARCHAR(255),
+    `user_id` BIGINT,
     `title` VARCHAR(255),
-    `level` VARCHAR(255),
     `topic` VARCHAR(255),
-    `user_id` BIGINT
+    `level` VARCHAR(255),
+    `solved_count` INT NOT NULL DEFAULT 0,
+    `like_status` VARCHAR(255),
+    `is_all_solved` BIT(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB;
+
+-- Part Table
+CREATE TABLE `part` (
+    `part_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    `part_type` VARCHAR(255) NOT NULL,
+    `is_all_solved` BIT(1) NOT NULL DEFAULT 0,
+    `engdu_id` BIGINT NOT NULL
 ) ENGINE=InnoDB;
 
 -- Article Table
@@ -40,7 +50,7 @@ CREATE TABLE `article` (
     `article_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
     `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
     `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-    `engdu_id` BIGINT NOT NULL
+    `part_id` BIGINT NOT NULL
 ) ENGINE=InnoDB;
 
 -- ArticleChunk Table
@@ -61,8 +71,8 @@ CREATE TABLE `question` (
     `answer` TINYINT NOT NULL,
     `category` VARCHAR(255),
     `content` VARCHAR(255),
-    `is_corrected` BIT(1) NOT NULL,
-    `engdu_id` BIGINT NOT NULL
+    `is_corrected` BIT(1) NOT NULL DEFAULT 0,
+    `part_id` BIGINT NOT NULL
 ) ENGINE=InnoDB;
 
 -- Choice Table
@@ -90,8 +100,9 @@ CREATE TABLE phrasal_verb (
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
-CREATE INDEX idx_article_engdu_id ON `article` (`engdu_id`);
+CREATE INDEX idx_part_engdu_id ON `part` (`engdu_id`);
+CREATE INDEX idx_article_part_id ON `article` (`part_id`);
 CREATE INDEX idx_article_chunk_article_id ON `article_chunk` (`article_id`);
-CREATE INDEX idx_question_engdu_id ON `question` (`engdu_id`);
+CREATE INDEX idx_question_part_id ON `question` (`part_id`);
 CREATE INDEX idx_choice_question_id ON `choice` (`question_id`);
 -- **************************************** INDEX END ****************************************
