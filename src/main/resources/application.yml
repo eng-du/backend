@@ -32,6 +32,14 @@ spring:
         jdbc:
           batch_size: 100
 
+  cloud:
+    aws:
+      credentials:
+        profile-name: ${AWS_PROFILE_NAME}
+      region:
+        static: ${AWS_REGION}
+      sqs:
+        queue-name: ${AWS_SQS_QUEUE_NAME}
 
   jwt:
     secret-key: ${JWT_SECRET_KEY}
