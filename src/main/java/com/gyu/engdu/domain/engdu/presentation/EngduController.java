@@ -56,21 +56,13 @@ public class EngduController {
     return ResponseEntity.ok(new CreateEngduResponse(engduId));
   }
 
-  // SQS에 INITIAL 메시지를 발행합니다.
-  @PostMapping("/{engduId}/part/initial")
-  public ResponseEntity<Void> createInitialPart(
+  // SQS에 파트(INITIAL 또는 COMPLETE) 생성 메시지를 발행합니다.
+  @PostMapping("/{engduId}/part/{partType}")
+  public ResponseEntity<Void> publishPart(
       @PathVariable("engduId") Long engduId,
+      @PathVariable("partType") PartType partType,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
-    createEngduCommandService.createAndPublish(userId, engduId);
-    return ResponseEntity.accepted().build();
-  }
-
-  // SQS에 COMPLETE 메시지를 발행합니다.
-  @PostMapping("/{engduId}/part/complete")
-  public ResponseEntity<Void> createCompletePart(
-      @PathVariable("engduId") Long engduId,
-      @AuthenticationPrincipal(expression = "userId") Long userId) {
-    createEngduCommandService.publishNextPart(userId, engduId);
+    createEngduCommandService.publishPart(userId, engduId, partType);
     return ResponseEntity.accepted().build();
   }
 

@@ -20,40 +20,20 @@ public class CreateEngduCommandService {
     private final PartQueryService partQueryService;
 
     /**
-     * Part를 생성하고 SQS에 INITIAL 메시지를 발행합니다.
+     * 소유자 검증 후 Part를 조회하고, publishable 상태라면 SQS 메시지를 발행합니다.
      */
-    public void createAndPublish(Long userId, Long engduId) {
+    public void publishPart(Long userId, Long engduId, PartType partType) {
         Engdu engdu = engduQueryService.findExistingEngdu(engduId);
         engdu.validateOwner(userId);
 
-        Part lockedPart = partQueryService.findWithLock(engduId, PartType.INITIAL)
-                .orElseGet(() -> Part.of(PartType.INITIAL, engdu));
+        Part lockedPart = partQueryService.findWithLock(engduId, partType)
+                .orElseGet(() -> Part.of(partType, engdu));
 
         if (lockedPart.isPublishable()) {
             EngduSqsMessage message = EngduSqsMessage.of(
-                    engdu.getId(),
-                    userId,
-                    PartType.INITIAL);
-
-            engduMessagePublisher.publish(message);
-        }
-    }
-
-    /**
-     * 기존 Engdu에 대해 소유자 검증 후 SQS에 COMPLETE 메시지를 발행합니다.
-     */
-    public void publishNextPart(Long userId, Long engduId) {
-        Engdu engdu = engduQueryService.findExistingEngdu(engduId);
-        engdu.validateOwner(userId);
-
-        Part lockedPart = partQueryService.findWithLock(engduId, PartType.COMPLETE)
-                .orElseGet(() -> Part.of(PartType.COMPLETE, engdu));
-
-        if (lockedPart.isPublishable()) {
-            EngduSqsMessage message = EngduSqsMessage.of(
-                    engdu.getId(),
-                    userId,
-                    PartType.COMPLETE);
+                engdu.getId(),
+                userId,
+                partType);
 
             engduMessagePublisher.publish(message);
         }
