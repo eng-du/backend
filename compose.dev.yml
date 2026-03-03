@@ -1,6 +1,33 @@
-# docker compose -f compose.yml -f compose.dev.yml up -d --build 를 사용하여 yml 덮어쓰기 가능
 services:
+  mysql:
+    image: mysql:8.4
+    container_name: engdu-mysql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      TZ: Asia/Seoul
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-time-zone=+09:00
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
   my-server:
+    container_name: engdu-app
+    restart: unless-stopped
     image: ${IMAGE_NAME}:${IMAGE_TAG}
     volumes:
       - ./logs:/logs
@@ -8,6 +35,9 @@ services:
       - "127.0.0.1:8080:8080"
     env_file:
       - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   promtail:
     image: grafana/promtail:latest
@@ -19,3 +49,6 @@ services:
       - ./logs:/logs
       - ./promtail-config.yml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml -config.expand-env=true
+
+volumes:
+  mysql_data:
