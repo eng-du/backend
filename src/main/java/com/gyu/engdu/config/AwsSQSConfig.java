@@ -22,19 +22,4 @@ public class AwsSQSConfig {
         .credentialsProvider(DefaultCredentialsProvider.create())
         .build();
   }
-
-//  @Bean
-//  public SqsAsyncClient sqsAsyncClient() {
-//    var builder = SqsAsyncClient.builder()
-//        .region(Region.of(region));
-//
-//    if (profile != null && !profile.isBlank()) {
-//      builder.credentialsProvider(ProfileCredentialsProvider.create(profile));
-//    } else {
-//      builder.credentialsProvider(DefaultCredentialsProvider.create());
-//    }
-//
-//    return builder.build();
-//  }
-
 }
