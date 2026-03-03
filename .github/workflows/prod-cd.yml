@@ -1,15 +1,15 @@
-name: cd - dev
+name: cd - prod
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/engdu
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/engdu-prod
 
     steps:
       - name: Checkout
