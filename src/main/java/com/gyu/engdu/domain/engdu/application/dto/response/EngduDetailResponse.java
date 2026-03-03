@@ -14,17 +14,25 @@ import java.util.List;
 public record EngduDetailResponse(
         Long engduId,
         Meta meta,
-        List<Part> parts) {
+        Parts parts) {
 
     public static EngduDetailResponse fromEntity(Engdu engdu) {
-        List<Part> parts = engdu.getParts().stream()
+        Part initial = engdu.getParts().stream()
+                .filter(p -> p.getPartType() == PartType.INITIAL && p.getStatus() == PartStatus.DONE)
+                .findFirst()
                 .map(Part::fromEntity)
-                .toList();
+                .orElse(null);
+
+        Part complete = engdu.getParts().stream()
+                .filter(p -> p.getPartType() == PartType.COMPLETE && p.getStatus() == PartStatus.DONE)
+                .findFirst()
+                .map(Part::fromEntity)
+                .orElse(null);
 
         return new EngduDetailResponse(
                 engdu.getId(),
                 new Meta(engdu.getTitle(), engdu.getTopic(), engdu.getLikeStatus()),
-                parts);
+                new Parts(initial, complete));
     }
 
     public record Meta(
@@ -33,25 +41,17 @@ public record EngduDetailResponse(
             LikeStatus likeStatus) {
     }
 
+    public record Parts(
+            Part INITIAL,
+            Part COMPLETE) {
+    }
+
     public record Part(
-            PartType partType,
-            PartStatus status,
             ArticleResponse article,
             List<QuestionResponse> questions) {
 
-        /**
-         * Part 엔티티를 DTO로 변환합니다.
-         * DONE 상태인 경우에만 article/questions를 채우고, 그 외(PENDING/CREATING/FAILED)는 null을
-         * 반환합니다.
-         * 클라이언트는 status 값으로 폴링 여부를 판단합니다.
-         */
         public static Part fromEntity(com.gyu.engdu.domain.engdu.domain.Part part) {
-            if (part.getStatus() != PartStatus.DONE) {
-                return new Part(part.getPartType(), part.getStatus(), null, null);
-            }
             return new Part(
-                    part.getPartType(),
-                    part.getStatus(),
                     ArticleResponse.of(part.getArticle()),
                     part.getQuestions().stream()
                             .map(QuestionResponse::fromEntity)

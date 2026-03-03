@@ -141,14 +141,14 @@ class EngduQueryServiceTest extends IntegrationTestSupport {
 
     // then
     assertThat(response.engduId()).isEqualTo(engdu.getId());
-    assertThat(response.parts()).hasSize(1);
-    assertThat(response.parts().get(0).questions()).hasSize(2)
+    assertThat(response.parts().INITIAL()).isNotNull();
+    assertThat(response.parts().INITIAL().questions()).hasSize(2)
         .extracting("questionId", "answer", "content")
         .containsExactlyInAnyOrder(
             tuple(question1.getId(), (byte) 1, "Question Content1"),
             tuple(question2.getId(), null, "Question Content2"));
 
-    assertThat(response.parts().get(0).article().chunks()).hasSize(2)
+    assertThat(response.parts().INITIAL().article().chunks()).hasSize(2)
         .extracting("en", "kor")
         .containsExactly(
             tuple("Chunk1", "한국어청크1"),
