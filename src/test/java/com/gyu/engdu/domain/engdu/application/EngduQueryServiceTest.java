@@ -3,6 +3,7 @@ package com.gyu.engdu.domain.engdu.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
+import com.gyu.engdu.IntegrationTestSupport;
 import com.gyu.engdu.domain.engdu.domain.Article;
 import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
@@ -11,6 +12,7 @@ import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.Question;
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
+import com.gyu.engdu.domain.engdu.domain.enums.PartStatus;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
@@ -29,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @ActiveProfiles("test")
 @SpringBootTest
-class EngduQueryServiceTest {
+class EngduQueryServiceTest extends IntegrationTestSupport {
 
   @Autowired
   private EngduRepository engduRepository;
@@ -125,6 +127,7 @@ class EngduQueryServiceTest {
     Long userId = 1L;
     Engdu engdu = createEngdu(userId, "Detailed topic", false);
     Part part = Part.of(PartType.INITIAL, engdu);
+    part.changeStatus(PartStatus.DONE);
 
     createArticle(part, List.of("Chunk1", "Chunk2"), List.of("한국어청크1", "한국어청크2"));
 

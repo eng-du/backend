@@ -53,6 +53,10 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	//AWS SQS
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.3.0'
+	implementation 'software.amazon.awssdk:sqs:2.29.52'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

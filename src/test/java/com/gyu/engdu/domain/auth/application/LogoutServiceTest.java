@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.auth.application;
 
+import com.gyu.engdu.IntegrationTestSupport;
 import com.gyu.engdu.domain.auth.domain.RefreshToken;
 import com.gyu.engdu.domain.auth.domain.RefreshTokenRepository;
 import org.assertj.core.api.Assertions;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LogoutServiceTest {
+class LogoutServiceTest extends IntegrationTestSupport {
 
   @Autowired
   LogoutService logoutService;

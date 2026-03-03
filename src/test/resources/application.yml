@@ -19,6 +19,10 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.H2Dialect
 
+  # aws sqs 의존성 자동 생성 방지
+  autoconfigure:
+    exclude: io.awspring.cloud.autoconfigure.sqs.SqsAutoConfiguration
+
   jwt:
     secret-key: dummytestdummytestdummytestdummytestdummytest
 

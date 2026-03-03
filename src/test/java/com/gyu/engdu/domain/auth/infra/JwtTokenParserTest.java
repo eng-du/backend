@@ -3,6 +3,7 @@ package com.gyu.engdu.domain.auth.infra;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.gyu.engdu.IntegrationTestSupport;
 import com.gyu.engdu.domain.auth.application.TokenParser;
 import com.gyu.engdu.domain.auth.application.TokenProvider;
 import com.gyu.engdu.domain.auth.exception.JwtExpiredException;
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JwtTokenParserTest {
+class JwtTokenParserTest extends IntegrationTestSupport {
 
   @Autowired
   TokenParser tokenParser;

@@ -1,19 +1,21 @@
 package com.gyu.engdu.domain.engdu.presentation;
 
+import com.gyu.engdu.domain.engdu.application.CreateEngduCommandService;
 import com.gyu.engdu.domain.engdu.application.CreateEngduService;
 import com.gyu.engdu.domain.engdu.application.DeleteEngduService;
 import com.gyu.engdu.domain.engdu.application.EngduQueryService;
 import com.gyu.engdu.domain.engdu.application.LikeEngduService;
+import com.gyu.engdu.domain.engdu.application.PartQueryService;
 import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
+import com.gyu.engdu.domain.engdu.application.dto.response.CreateEngduResponse;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
+import com.gyu.engdu.domain.engdu.application.dto.response.EngduPartStatusResponse;
+import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
-import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduContentRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.LikeEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.SubmissionEngduRequest;
-import com.gyu.engdu.domain.engdu.application.dto.response.EngduPartResponse;
-import com.gyu.engdu.domain.engdu.application.dto.response.CreateEngduResponse;
-import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduPageResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.EngduSummaryResponse;
 import com.gyu.engdu.domain.engdu.presentation.dto.response.SubmissionEngduResponse;
@@ -38,8 +40,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class EngduController {
 
   private final CreateEngduService createEngduService;
+  private final CreateEngduCommandService createEngduCommandService;
   private final DeleteEngduService deleteEngduService;
   private final EngduQueryService engduQueryService;
+  private final PartQueryService partQueryService;
   private final SolveQuestionService solveQuestionService;
   private final LikeEngduService likeEngduService;
 
@@ -52,18 +56,14 @@ public class EngduController {
     return ResponseEntity.ok(new CreateEngduResponse(engduId));
   }
 
-  @PostMapping("/{engduId}/part")
-  public ResponseEntity<EngduPartResponse> createEngduContent(
+  // SQS에 파트(INITIAL 또는 COMPLETE) 생성 메시지를 발행합니다.
+  @PostMapping("/{engduId}/part/{partType}")
+  public ResponseEntity<Void> publishPart(
       @PathVariable("engduId") Long engduId,
-      @RequestBody CreateEngduContentRequest request,
+      @PathVariable("partType") PartType partType,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
-
-    EngduPartResponse response = switch (request.step()) {
-      case INITIAL -> createEngduService.generateInitialPart(userId, engduId);
-      case COMPLETE -> createEngduService.generateNextPart(userId, engduId);
-    };
-
-    return ResponseEntity.ok(response);
+    createEngduCommandService.publishPart(userId, engduId, partType);
+    return ResponseEntity.accepted().build();
   }
 
   @DeleteMapping("/{engduId}")
@@ -95,6 +95,15 @@ public class EngduController {
       @PathVariable("engduId") Long engduId,
       @AuthenticationPrincipal(expression = "userId") Long userId) {
     return ResponseEntity.ok(engduQueryService.findDetailEngdu(userId, engduId));
+  }
+
+  // 폴링을 위한 특정 파트를 조회하는 API
+  @GetMapping("/{engduId}/part/{partType}")
+  public ResponseEntity<EngduPartStatusResponse> readPartStatus(
+      @PathVariable("engduId") Long engduId,
+      @PathVariable("partType") PartType partType,
+      @AuthenticationPrincipal(expression = "userId") Long userId) {
+    return ResponseEntity.ok(partQueryService.findPartStatus(userId, engduId, partType));
   }
 
   @PostMapping("/{engduId}/question/{questionId}/submission")

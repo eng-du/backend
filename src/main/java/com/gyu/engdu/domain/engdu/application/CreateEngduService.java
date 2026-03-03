@@ -9,7 +9,6 @@ import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
 import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.Question;
-import com.gyu.engdu.domain.engdu.domain.enums.EngduCreationStep;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +23,6 @@ public class CreateEngduService {
 
   private final EngduClient engduClient;
   private final EngduRepository engduRepository;
-  private final EngduQueryService engduQueryService;
 
   public Long create(Long userId, String level, String topic) {
     Engdu engdu = Engdu.of(userId, level, topic);
@@ -32,41 +30,45 @@ public class CreateEngduService {
     return engdu.getId();
   }
 
-  public EngduPartResponse generateInitialPart(Long userId, Long engduId) {
-    Engdu engdu = engduQueryService.findExistingEngdu(engduId);
-    engdu.validateOwner(userId);
+  /**
+   * LLM으로 INITIAL Part의 Article/Question을 생성하고 저장합니다.
+   * Part는 외부(Listener)에서 락으로 조회한 것을 재사용하여 중복 생성을 방지합니다.
+   */
+  public EngduPartResponse generateInitialPart(Part part) {
+    Engdu engdu = part.getEngdu();
 
     GenerateEngduRequest engduRequest = GenerateEngduRequest.of(
         engdu.getTopic(),
         engdu.getLevel(),
-        EngduCreationStep.INITIAL,
+        PartType.INITIAL,
         null);
 
     GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
 
     engdu.changeTitle(engduResponse.title());
-    return saveAndFlushPart(engdu, engduResponse, PartType.INITIAL);
+    return saveAndFlushPart(engdu, part, engduResponse);
   }
 
-  public EngduPartResponse generateNextPart(Long userId, Long engduId) {
-    Engdu engdu = engduQueryService.findExistingEngdu(engduId);
-    engdu.validateOwner(userId);
+  /**
+   * LLM으로 COMPLETE Part의 Article/Question을 생성하고 저장합니다.
+   * Part는 외부(Listener)에서 락으로 조회한 것을 재사용하여 중복 생성을 방지합니다.
+   */
+  public EngduPartResponse generateNextPart(Part part) {
+    Engdu engdu = part.getEngdu();
 
     String previousArticleContent = getPreviousArticleContent(engdu);
 
     GenerateEngduRequest engduRequest = GenerateEngduRequest.of(
         engdu.getTopic(),
         engdu.getLevel(),
-        EngduCreationStep.COMPLETE,
+        PartType.COMPLETE,
         previousArticleContent);
 
     GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
-    return saveAndFlushPart(engdu, engduResponse, PartType.COMPLETE);
+    return saveAndFlushPart(engdu, part, engduResponse);
   }
 
-  private EngduPartResponse saveAndFlushPart(Engdu engdu, GeneratedEngduResponse engduResponse, PartType partType) {
-    Part part = Part.of(partType, engdu);
-
+  private EngduPartResponse saveAndFlushPart(Engdu engdu, Part part, GeneratedEngduResponse engduResponse) {
     Article article = engduResponse.article().toEntity(part);
 
     List<Question> questions = engduResponse.questions().stream()

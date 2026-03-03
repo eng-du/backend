@@ -3,6 +3,7 @@ package com.gyu.engdu.domain.engdu.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.gyu.engdu.IntegrationTestSupport;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
 import com.gyu.engdu.domain.engdu.domain.Part;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class SolveQuestionServiceTest {
+class SolveQuestionServiceTest extends IntegrationTestSupport {
 
   @Autowired
   private SolveQuestionService solveQuestionService;
