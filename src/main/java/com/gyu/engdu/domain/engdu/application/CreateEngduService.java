@@ -1,98 +1,39 @@
 package com.gyu.engdu.domain.engdu.application;
 
 import com.gyu.engdu.domain.engdu.application.dto.request.GenerateEngduRequest;
-import com.gyu.engdu.domain.engdu.application.dto.response.EngduPartResponse;
 import com.gyu.engdu.domain.engdu.application.dto.response.GeneratedEngduResponse;
-import com.gyu.engdu.domain.engdu.domain.Article;
-import com.gyu.engdu.domain.engdu.domain.ArticleChunk;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.EngduRepository;
-import com.gyu.engdu.domain.engdu.domain.Part;
-import com.gyu.engdu.domain.engdu.domain.Question;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CreateEngduService {
 
   private final EngduClient engduClient;
   private final EngduRepository engduRepository;
+  private final PartCommandService partCommandService;
 
+  @Transactional
   public Long create(Long userId, String level, String topic) {
     Engdu engdu = Engdu.of(userId, level, topic);
     engduRepository.save(engdu);
     return engdu.getId();
   }
 
-  /**
-   * LLM으로 INITIAL Part의 Article/Question을 생성하고 저장합니다.
-   * Part는 외부(Listener)에서 락으로 조회한 것을 재사용하여 중복 생성을 방지합니다.
-   */
-  public EngduPartResponse generateInitialPart(Part part) {
-    Engdu engdu = part.getEngdu();
+  public void generatePart(Long partId, PartType step) {
+    // [TX 1]: 짧은 Read-only TX로 LLM 요청 데이터 로드
+    GenerateEngduRequest request = partCommandService.buildLlmRequest(partId, step);
 
-    GenerateEngduRequest engduRequest = GenerateEngduRequest.of(
-        engdu.getTopic(),
-        engdu.getLevel(),
-        PartType.INITIAL,
-        null);
+    // 트랜잭션 없이 LLM API 호출
+    GeneratedEngduResponse response = engduClient.generateEngdu(request);
 
-    GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
-
-    engdu.changeTitle(engduResponse.title());
-    return saveAndFlushPart(engdu, part, engduResponse);
+    // [TX 3]: 파트 디비 영속 및 상태 변경(DONE)을 커밋
+    partCommandService.saveResultAndMarkDone(partId, response);
   }
-
-  /**
-   * LLM으로 COMPLETE Part의 Article/Question을 생성하고 저장합니다.
-   * Part는 외부(Listener)에서 락으로 조회한 것을 재사용하여 중복 생성을 방지합니다.
-   */
-  public EngduPartResponse generateNextPart(Part part) {
-    Engdu engdu = part.getEngdu();
-
-    String previousArticleContent = getPreviousArticleContent(engdu);
-
-    GenerateEngduRequest engduRequest = GenerateEngduRequest.of(
-        engdu.getTopic(),
-        engdu.getLevel(),
-        PartType.COMPLETE,
-        previousArticleContent);
-
-    GeneratedEngduResponse engduResponse = engduClient.generateEngdu(engduRequest);
-    return saveAndFlushPart(engdu, part, engduResponse);
-  }
-
-  private EngduPartResponse saveAndFlushPart(Engdu engdu, Part part, GeneratedEngduResponse engduResponse) {
-    Article article = engduResponse.article().toEntity(part);
-
-    List<Question> questions = engduResponse.questions().stream()
-        .map(questionDto -> {
-          Question question = questionDto.toEntity(part);
-          questionDto.choices().forEach(choiceDto -> choiceDto.toEntity(question));
-          return question;
-        })
-        .toList();
-
-    // question Id를 받아오기 위해 flush 한다.
-    engduRepository.flush();
-
-    return EngduPartResponse.of(engdu, article, questions);
-  }
-
-  private String getPreviousArticleContent(Engdu engdu) {
-    return engdu.getParts().stream()
-        .findFirst()
-        .map(Part::getArticle)
-        .map(article -> article.getChunks().stream()
-            .map(ArticleChunk::getEn)
-            .collect(Collectors.joining(" ")))
-        .orElse("");
-  }
-
 }

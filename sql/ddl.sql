@@ -41,7 +41,8 @@ CREATE TABLE `part` (
     `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
     `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     `part_type` VARCHAR(255) NOT NULL,
-    `part_status` VARCHAR(255) NOT NULL DEFAULT 'PENDING',
+    `status` VARCHAR(255) NOT NULL DEFAULT 'PENDING',
+    `retry_allowed_at` DATETIME(6) NULL,
     `is_all_solved` BIT(1) NOT NULL DEFAULT 0,
     `engdu_id` BIGINT NOT NULL
 ) ENGINE=InnoDB;

@@ -1,5 +1,7 @@
 package com.gyu.engdu.domain.engdu.domain;
 
+import java.time.LocalDateTime;
+
 import com.gyu.engdu.domain.BaseEntity;
 import com.gyu.engdu.domain.engdu.domain.enums.PartStatus;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
@@ -44,6 +46,8 @@ public class Part extends BaseEntity {
     @Column(name = "status", nullable = false)
     private PartStatus status = PartStatus.PENDING;
 
+    private LocalDateTime retryAllowedAt;
+
     private boolean isAllSolved = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,14 +70,35 @@ public class Part extends BaseEntity {
         this.status = status;
     }
 
+    /**
+     * 상태를 CREATING으로 변경하고, 재시도 허용 시각을 기록합니다.
+     * 현재 시각이 retryAllowedAt을 초과하면 이전 워커가 크래시된 것으로 간주합니다.
+     *
+     * @param retryAllowedAt 이 시각 이후에 재시도가 허용됩니다. (= now + visibility timeout)
+     */
+    public void startCreation(LocalDateTime retryAllowedAt) {
+        this.status = PartStatus.CREATING;
+        this.retryAllowedAt = retryAllowedAt;
+    }
+
     // 메시지 발행 가능 여부를 반환합니다.
     public boolean isPublishable() {
         return status == PartStatus.PENDING || status == PartStatus.FAILED;
     }
 
-    // CREATING 또는 DONE 상태로, 이미 처리 중이거나 완료된 파트입니다.
-    public boolean isAlreadyCreating() {
-        return status == PartStatus.CREATING || status == PartStatus.DONE;
+    // DONE 상태로, 이미 완료된 파트입니다.
+    public boolean isDone() {
+        return status == PartStatus.DONE;
+    }
+
+    /**
+     * 현재 다른 워커가 이 파트를 생성 중인지 확인합니다.
+     * CREATING 상태이면서 아직 재시도 허용 시각이 되지 않았을 때 true를 반환합니다.
+     */
+    public boolean isProcessing() {
+        return status == PartStatus.CREATING
+                && retryAllowedAt != null
+                && LocalDateTime.now().isBefore(retryAllowedAt);
     }
 
     public void validateOwner(Long userId) {

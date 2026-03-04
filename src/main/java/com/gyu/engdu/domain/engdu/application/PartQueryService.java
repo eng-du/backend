@@ -21,11 +21,6 @@ public class PartQueryService {
         return partRepository.findByEngduIdAndPartTypeWithLock(engduId, partType);
     }
 
-    public Part findExistingPartWithLock(Long engduId, PartType partType) {
-        return partRepository.findByEngduIdAndPartTypeWithLock(engduId, partType)
-                .orElseThrow(() -> new PartNotFoundException(engduId, partType));
-    }
-
     // 폴링 전용: 락 없이 Part 조회 후 소유자 검증, DTO 변환까지 처리
     public EngduPartStatusResponse findPartStatus(Long userId, Long engduId, PartType partType) {
         Part part = partRepository.findByEngduIdAndPartType(engduId, partType)

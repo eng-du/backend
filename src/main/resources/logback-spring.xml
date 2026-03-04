@@ -6,10 +6,11 @@
   <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
 
   <!-- 로그 포맷 -->
+
   <property name="LOG_PATTERN"
     value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
 
-  <springProfile name="!prod">
+  <springProfile name="local">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
       <encoder>
         <pattern>${LOG_PATTERN}</pattern>
@@ -21,7 +22,7 @@
     </root>
   </springProfile>
 
-  <springProfile name="prod">
+  <springProfile name="dev, prod">
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
       <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
 
