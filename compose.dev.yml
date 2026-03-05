@@ -27,4 +27,5 @@ services:
 
 networks:
   engdu:
+    external: true
     name: engdu-network

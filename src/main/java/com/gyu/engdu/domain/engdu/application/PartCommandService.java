@@ -57,6 +57,11 @@ public class PartCommandService {
         Part part = partRepository.findById(partId)
                 .orElseThrow(() -> new PartNotFoundException(partId));
 
+        // INITIAL 파트 저장 시 LLM이 생성한 타이틀을 Engdu에 반영합니다.
+        if (part.getPartType() == PartType.INITIAL) {
+            part.getEngdu().changeTitle(response.title());
+        }
+
         response.article().toEntity(part);
 
         response.questions().forEach(questionDto -> {
