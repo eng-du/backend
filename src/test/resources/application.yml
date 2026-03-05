@@ -38,6 +38,8 @@ oauth:
     client-secret: dummy
     redirect-uri: dummy
     login-uri: dummy
+    local-redirect-uri: dummy
+    local-login-uri: dummy
 
 logging:
   level:
