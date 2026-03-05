@@ -186,7 +186,10 @@ public class GptEngduClient implements EngduClient {
              - 정보 전달 글(기사)을 1개 만들어라.
              - 난이도(level)에 맞는 어휘와 문장을 사용해라.
              - 본문은 영어 word count로 150words로 작성해라 (±10%).
-             - 본문의 내용은 이전 내용(previousContent)과 연관이 있어야한다. 본문 시작은 자연스럽게 스토리가 이어가며 마지막은 결론부가 있다.
+             - 본문의 내용은 이전 내용(previousContent)과 연관이 있어야한다. 이전 글에서 이미 설명된 사건이나 문제를 다시 설명하면 안된다. 내용이 이어지지만 새로운 스토리로 구성되어야한다.
+             - 이야기는 동일한 주제를 유지하지만 반복적인 설명을 피하고 새로운 관점이나 정보를 포함해야 한다.
+             - 이전 이야기와 연결되지만 새로운 상황이나 인물이 등장할 수 있다.
+             - 등장 인물은 이야기를 발전시키는 역할이어야 한다.
              - 사용자가 독해하기 쉽게 문장을 청크 단위로 나눠야한다. 문장 하나가 청크가 되는 것이 아닌 문장을 이루고있는 단어들을 나누어 청크로 만드는 것에 주의해라. 예를들어, 'Social media platformsemerged as powerful toolsfor connecting individualsacross geographical boundaries.' 문장이 있을 때 'Social media platform', 'emerged as powerful tools', 'for connecting individuals', 'across geographical boundaries.' 이렇게 4개의 청크로 나눌 수 있다.
              - 본문의 해석본도 적는다. 해석본은 한국어로 청크 단위로 작성해야한다. 말투는 서술형 평서문으로 작성해라.
 
