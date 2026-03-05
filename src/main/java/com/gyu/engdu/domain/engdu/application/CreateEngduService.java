@@ -34,6 +34,6 @@ public class CreateEngduService {
     GeneratedEngduResponse response = engduClient.generateEngdu(request);
 
     // [TX 3]: 파트 디비 영속 및 상태 변경(DONE)을 커밋
-    partCommandService.saveResultAndMarkDone(partId, response);
+    partCommandService.saveResultAndMarkDone(partId, step, response);
   }
 }
