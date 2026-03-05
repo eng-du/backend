@@ -33,11 +33,22 @@ public class AuthController {
     @Value("${oauth.google.login-uri}")
     private String loginUri;
 
+    @Value("${oauth.google.local-login-uri}")
+    private String localLoginUri;
+
     @GetMapping("/url")
     public ResponseEntity<Void> redirectGoogleLoginUrl() {
         return ResponseEntity
                 .status(HttpStatus.TEMPORARY_REDIRECT)
                 .location(URI.create(loginUri))
+                .build();
+    }
+
+    @GetMapping("/local/url")
+    public ResponseEntity<Void> redirectLocalGoogleLoginUrl() {
+            return ResponseEntity
+                .status(HttpStatus.TEMPORARY_REDIRECT)
+                .location(URI.create(localLoginUri))
                 .build();
     }
 
