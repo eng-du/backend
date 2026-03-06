@@ -39,6 +39,7 @@ public class AuthController {
   @Value("${oauth.google.redirect-uri}")
   private String redirectUri;
 
+
   @Value("${oauth.google.local-redirect-uri}")
   private String localRedirectUri;
 
