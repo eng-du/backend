@@ -28,9 +28,6 @@ public class GoogleOauthClient implements OAuthClient {
   @Value("${oauth.google.client-secret}")
   private String clientSecret;
 
-  @Value("${oauth.google.redirect-uri}")
-  private String redirectUri;
-
   public GoogleOauthClient(
       @Qualifier("googleCodeClient") RestClient googleCodeClient,
       @Qualifier("googleAccessTokenClient") RestClient googleAccessTokenClient) {
@@ -39,9 +36,9 @@ public class GoogleOauthClient implements OAuthClient {
   }
 
   @Override
-  public GoogleOAuthToken exchangeCodeToOAuthToken(String code) {
+  public GoogleOAuthToken exchangeCodeToOAuthToken(String code, String redirectUri) {
     log.info("구글에 OAuthToken 발급 요청 code: {}", code);
-    GoogleOAuthToken googleOAuthToken = requestOAuthTokenFromGoogle(buildTokenRequestMap(code));
+    GoogleOAuthToken googleOAuthToken = requestOAuthTokenFromGoogle(buildTokenRequestMap(code, redirectUri));
     log.info("구글에 OAuthToken 발급 완료 accessToken: {}", googleOAuthToken.getAccessToken());
     return googleOAuthToken;
   }
@@ -52,7 +49,7 @@ public class GoogleOauthClient implements OAuthClient {
   }
 
   // OAuthToken을 받아오기 위해 정해진 Api 스펙대로 request body를 작성한다.
-  private MultiValueMap<String, String> buildTokenRequestMap(String code) {
+  private MultiValueMap<String, String> buildTokenRequestMap(String code, String redirectUri) {
     MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
     map.add("grant_type", "authorization_code");
     map.add("code", code);
