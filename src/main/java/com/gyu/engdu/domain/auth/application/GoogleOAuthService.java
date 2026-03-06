@@ -26,10 +26,10 @@ public class GoogleOAuthService {
   private final UserQueryService userQueryService;
   private final PersistTokenService persistTokenService;
 
-  public AuthTokenServiceResponse signUp(String code) {
+  public AuthTokenServiceResponse signUp(String code, String redirectUri) {
 
     // sub 받아오고
-    OAuthToken oAuthToken = oAuthClient.exchangeCodeToOAuthToken(code);
+    OAuthToken oAuthToken = oAuthClient.exchangeCodeToOAuthToken(code, redirectUri);
     String sub = extractSubFromIdToken(oAuthToken.getIdToken());
 
     // 유저 Sub으로 조회
