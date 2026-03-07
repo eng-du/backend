@@ -1,0 +1,15 @@
+# 어디에서 로그를 읽었는지 기록하는 파일 (컨테이너 재부팅 시에도 이어서 읽기 위해 필요)
+positions:
+  filename: /tmp/positions/positions.yaml
+clients:
+  # push할 Loki의 주소
+  - url: ${LOKI_URL}
+
+scrape_configs:
+  - job_name: log
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: logs
+          __path__: /logs/*.log

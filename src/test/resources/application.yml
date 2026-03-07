@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=USER;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # aws sqs 의존성 자동 생성 방지
+  autoconfigure:
+    exclude: io.awspring.cloud.autoconfigure.sqs.SqsAutoConfiguration
+
+  jwt:
+    secret-key: dummytestdummytestdummytestdummytestdummytest
+
+  api:
+    gpt-key: test-dummy
+  mvc:
+    async:
+      request-timeout: 90s
+
+oauth:
+  google:
+    client-id: dummy
+    client-secret: dummy
+    redirect-uri: dummy
+    login-uri: dummy
+    local-redirect-uri: dummy
+    local-login-uri: dummy
+
+logging:
+  level:
+    org.springframework: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
