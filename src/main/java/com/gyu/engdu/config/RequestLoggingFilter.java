@@ -23,11 +23,14 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             long elapsed = System.currentTimeMillis() - start;
-            log.info("[{}] {} {} → {}ms",
-                    response.getStatus(),
-                    request.getMethod(),
-                    request.getRequestURI(),
-                    elapsed);
+            String uri = request.getRequestURI();
+            if (!"/actuator/prometheus".equals(uri)) {
+                log.info("[{}] {} {} → {}ms",
+                        response.getStatus(),
+                        request.getMethod(),
+                        uri,
+                        elapsed);
+            }
         }
     }
 }
