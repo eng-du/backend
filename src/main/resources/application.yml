@@ -1,5 +1,8 @@
 server:
   port: 8080
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 spring:
   application:
@@ -51,7 +54,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, info
+        include: "*"
   metrics:
     distribution:
       percentiles-histogram:
