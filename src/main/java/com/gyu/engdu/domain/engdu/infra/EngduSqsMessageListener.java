@@ -5,6 +5,7 @@ import com.gyu.engdu.domain.engdu.application.PartCommandService;
 import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.infra.dto.EngduSqsMessage;
 import io.awspring.cloud.sqs.annotation.SqsListener;
+import io.micrometer.core.annotation.Timed;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ public class EngduSqsMessageListener {
     private final CreateEngduService createEngduService;
     private final PartCommandService partCommandService;
 
+    @Timed("sqs")
     @SqsListener("${spring.cloud.aws.sqs.queue-name}")
     public void listen(EngduSqsMessage message) {
         log.info("SQS 메시지 수신 engduId={}, userId={}, step={}",

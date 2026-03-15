@@ -17,6 +17,11 @@
       </encoder>
     </appender>
 
+    <!-- 슬로우 쿼리 전용 로거 -->
+    <logger name="org.hibernate.SQL_SLOW" level="INFO" additivity="false">
+      <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <root level="DEBUG">
       <appender-ref ref="CONSOLE"/>
     </root>
@@ -38,6 +43,11 @@
         <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
       </rollingPolicy>
     </appender>
+
+    <!-- 슬로우 쿼리 전용 로거 -->
+    <logger name="org.hibernate.SQL_SLOW" level="INFO" additivity="false">
+      <appender-ref ref="FILE"/>
+    </logger>
 
     <root level="INFO">
       <appender-ref ref="FILE"/>

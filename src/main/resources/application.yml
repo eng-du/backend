@@ -1,5 +1,8 @@
 server:
   port: 8080
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 spring:
   application:
@@ -31,6 +34,10 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc:
           batch_size: 100
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 500  # 500ms 이상 쿼리를 슬로우 쿼리로 판정
 
   cloud:
     aws:
@@ -51,7 +58,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, info
+        include: "*"
   metrics:
     distribution:
       percentiles-histogram:
