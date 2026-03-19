@@ -1,21 +1,18 @@
 package com.gyu.engdu.domain.auth.presentation;
 
+import com.gyu.engdu.domain.auth.application.FakeLoginService;
 import com.gyu.engdu.domain.auth.application.GoogleOAuthService;
-import com.gyu.engdu.domain.auth.application.LogoutService;
-import com.gyu.engdu.domain.auth.application.ReissueTokenService;
 import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.presentation.dto.response.AuthTokenResponse;
 import java.net.URI;
-import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,61 +20,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class AuthController {
+@Profile("!prod")
+public class StagingAuthController {
 
   private static final long REFRESH_TOKEN_MAX_AGE_SECONDS = 14 * 24 * 60 * 60;
+  private static final long FAKE_LOGIN_USER_ID = 1L;
   private final GoogleOAuthService googleOAuthService;
-  private final ReissueTokenService reissueTokenService;
-  private final LogoutService logoutService;
+  private final FakeLoginService fakeLoginService;
 
-  @Value("${oauth.google.login-uri}")
-  private String loginUri;
+  @Value("${oauth.google.local-login-uri}")
+  private String localLoginUri;
 
-  @Value("${oauth.google.redirect-uri}")
-  private String redirectUri;
+  @Value("${oauth.google.local-redirect-uri}")
+  private String localRedirectUri;
 
-  @GetMapping("/url")
-  public ResponseEntity<Void> redirectGoogleLoginUrl() {
+  @GetMapping("/local/url")
+  public ResponseEntity<Void> redirectLocalGoogleLoginUrl() {
     return ResponseEntity
         .status(HttpStatus.TEMPORARY_REDIRECT)
-        .location(URI.create(loginUri))
+        .location(URI.create(localLoginUri))
         .build();
   }
 
-  // google OAuth 회원가입을 위한 메서드. 인증을 시도하고 토큰을 발급함.
-  @GetMapping("/signup/oauth")
-  public ResponseEntity<AuthTokenResponse> loginByGoogle(@RequestParam("code") String code) {
+  @GetMapping("/local/signup/oauth")
+  public ResponseEntity<AuthTokenResponse> loginByGoogleLocal(@RequestParam("code") String code) {
     AuthTokenServiceResponse authTokenServiceResponse = googleOAuthService.signUp(code,
-        redirectUri);
+        localRedirectUri);
     ResponseCookie cookie = createCookie(authTokenServiceResponse.refreshToken().getRawToken(),
         REFRESH_TOKEN_MAX_AGE_SECONDS);
-    AuthTokenResponse authTokenResponse = AuthTokenResponse.from(authTokenServiceResponse);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(authTokenResponse);
+        .body(AuthTokenResponse.from(authTokenServiceResponse));
   }
 
-  @GetMapping("/reissue")
-  public ResponseEntity<AuthTokenResponse> reissue(
-      @CookieValue("refresh-token") String refreshToken) {
-    AuthTokenServiceResponse authTokenServiceResponse = reissueTokenService.reissue(refreshToken,
-        new Date());
+  @GetMapping("/fake/signup/oauth")
+  public ResponseEntity<AuthTokenResponse> fakeLogin() {
+    AuthTokenServiceResponse authTokenServiceResponse = fakeLoginService.fakeLogin(
+        FAKE_LOGIN_USER_ID);
     ResponseCookie cookie = createCookie(authTokenServiceResponse.refreshToken().getRawToken(),
         REFRESH_TOKEN_MAX_AGE_SECONDS);
-    AuthTokenResponse authTokenResponse = AuthTokenResponse.from(authTokenServiceResponse);
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(authTokenResponse);
-  }
-
-  @PostMapping("/logout")
-  public ResponseEntity<Void> logout(
-      @CookieValue("refresh-token") String refreshToken) {
-    logoutService.logout(refreshToken);
-    ResponseCookie deletedCookie = createCookie(refreshToken, 0);
-    return ResponseEntity.noContent()
-        .header(HttpHeaders.SET_COOKIE, deletedCookie.toString())
-        .build();
+        .body(AuthTokenResponse.from(authTokenServiceResponse));
   }
 
   private ResponseCookie createCookie(String rawRefreshToken, long maxAgeSeconds) {
