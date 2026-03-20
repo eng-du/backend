@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.engdu.infra;
 
 import com.gyu.engdu.domain.engdu.application.EngduMessagePublisher;
-import com.gyu.engdu.domain.engdu.infra.dto.EngduSqsMessage;
+import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class EngduSqsMessagePublisher implements EngduMessagePublisher {
     private String queueName;
 
     @Timed("sqs")
-    public void publish(EngduSqsMessage message) {
+    public void publish(GenerateEngduPartMessage message) {
         log.info("SQS 메시지 발행 engduId={}, userId={}, step={}",
                 message.engduId(), message.userId(), message.step());
         sqsTemplate.send(queueName, message);

@@ -3,7 +3,7 @@ package com.gyu.engdu.domain.engdu.application;
 import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
-import com.gyu.engdu.domain.engdu.infra.dto.EngduSqsMessage;
+import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class CreateEngduCommandService {
                 .orElseGet(() -> Part.of(partType, engdu));
 
         if (lockedPart.isPublishable()) {
-            EngduSqsMessage message = EngduSqsMessage.of(
+            GenerateEngduPartMessage message = GenerateEngduPartMessage.of(
                 engdu.getId(),
                 userId,
                 partType);
