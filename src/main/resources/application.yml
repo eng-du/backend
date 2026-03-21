@@ -54,6 +54,10 @@ spring:
   api:
     gpt-key: ${GPT_KEY}
 
+  message:
+    relay:
+      delay: 1000
+
 management:
   endpoints:
     web:
