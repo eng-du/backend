@@ -4,6 +4,8 @@ import com.gyu.engdu.domain.engdu.domain.Engdu;
 import com.gyu.engdu.domain.engdu.domain.Part;
 import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
+import com.gyu.engdu.message.application.CreateMessageService;
+import com.gyu.engdu.message.domain.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateEngduCommandService {
 
     private final EngduQueryService engduQueryService;
-    private final EngduMessagePublisher engduMessagePublisher;
     private final PartQueryService partQueryService;
+    private final CreateMessageService createMessageService;
 
     /**
-     * 소유자 검증 후 Part를 조회하고, publishable 상태라면 SQS 메시지를 발행합니다.
+     * 소유자 검증 후 Part를 조회하고, publishable 상태라면 아웃박스 메시지를 저장합니다.
      */
     public void publishPart(Long userId, Long engduId, PartType partType) {
         Engdu engdu = engduQueryService.findExistingEngdu(engduId);
@@ -30,12 +32,12 @@ public class CreateEngduCommandService {
                 .orElseGet(() -> Part.of(partType, engdu));
 
         if (lockedPart.isPublishable()) {
-            GenerateEngduPartMessage message = GenerateEngduPartMessage.of(
-                engdu.getId(),
-                userId,
-                partType);
+            GenerateEngduPartMessage event = GenerateEngduPartMessage.of(
+                    engdu.getId(),
+                    userId,
+                    partType);
 
-            engduMessagePublisher.publish(message);
+            createMessageService.save(MessageType.GENERATE_ENGDU_PART, event);
         }
     }
 }
