@@ -7,6 +7,7 @@ import com.gyu.engdu.message.domain.MessageRepository;
 import com.gyu.engdu.message.domain.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateMessageService {
 
-    private final MessageRepository messageRepository;
-    private final ObjectMapper objectMapper;
+  private final MessageRepository messageRepository;
+  private final ObjectMapper objectMapper;
 
-    // 아웃박스 메시지를 생성하고 DB에 저장합니다.
-    public void save(MessageType type, Object event) {
-        Message message = Message.of(type, objectMapper.convertValue(event, JsonNode.class));
-        messageRepository.save(message);
-        log.info("아웃박스 메시지 저장 성공 type={}"   , type);
-    }
+  // 아웃박스 메시지를 생성하고 DB에 저장합니다.
+  public void save(MessageType type, Object event) {
+    String traceId = MDC.get("traceId");
+    Message message = Message.of(type, objectMapper.convertValue(event, JsonNode.class), traceId);
+    messageRepository.save(message);
+  }
 }

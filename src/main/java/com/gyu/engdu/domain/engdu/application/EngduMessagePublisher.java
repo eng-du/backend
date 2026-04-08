@@ -4,5 +4,5 @@ import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 
 public interface EngduMessagePublisher {
 
-    void publish(GenerateEngduPartMessage message);
+    void publish(GenerateEngduPartMessage message, String traceId);
 }
