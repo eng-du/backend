@@ -5,10 +5,20 @@
 
   <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
 
+  <!-- MDC 키가 suppressSql=true 인 경우 전체 로그 레벨을 INFO 이상으로만 강제 허용 (DEBUG, TRACE 차단) -->
+  <turboFilter class="ch.qos.logback.classic.turbo.DynamicThresholdFilter">
+    <Key>suppressSql</Key>
+    <DefaultThreshold>DEBUG</DefaultThreshold>
+    <MDCValueLevelPair>
+      <value>true</value>
+      <level>INFO</level>
+    </MDCValueLevelPair>
+  </turboFilter>
+
   <!-- 로그 포맷 -->
 
   <property name="LOG_PATTERN"
-    value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
+    value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) [%X{traceId}] %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
 
   <springProfile name="local">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
