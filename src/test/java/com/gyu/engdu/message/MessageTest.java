@@ -23,7 +23,7 @@ class MessageTest {
         GenerateEngduPartMessage event = GenerateEngduPartMessage.of(1L, 1L, PartType.INITIAL);
 
         // when
-        Message message = Message.of(MessageType.GENERATE_ENGDU_PART, objectMapper.valueToTree(event));
+        Message message = Message.of(MessageType.GENERATE_ENGDU_PART, objectMapper.valueToTree(event), "test-trace-id");
 
         // then
         assertThat(message.getStatus()).isEqualTo(MessageStatus.NEW);
@@ -36,7 +36,7 @@ class MessageTest {
     void markPublished_statusAndPublishedAt() {
         // given
         GenerateEngduPartMessage event = GenerateEngduPartMessage.of(1L, 1L, PartType.INITIAL);
-        Message message = Message.of(MessageType.GENERATE_ENGDU_PART, objectMapper.valueToTree(event));
+        Message message = Message.of(MessageType.GENERATE_ENGDU_PART, objectMapper.valueToTree(event), "test-trace-id");
         LocalDateTime publishedAt = LocalDateTime.of(2026, 3, 20, 12, 0);
 
         // when
