@@ -107,7 +107,8 @@ CREATE TABLE `message` (
     `published_at` DATETIME(6) NULL,
     `status` VARCHAR(255) NOT NULL,
     `type` VARCHAR(255) NOT NULL,
-    `payload` JSON NOT NULL
+    `payload` JSON NOT NULL,
+    `trace_id` VARCHAR(255) NULL
 ) ENGINE=InnoDB;
 
 -- **************************************** TABLE END****************************************

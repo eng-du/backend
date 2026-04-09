@@ -41,19 +41,22 @@ public class Message {
     @Column(columnDefinition = "JSON", nullable = false)
     private JsonNode payload;
 
+    private String traceId;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
     private LocalDateTime publishedAt;
 
-    private Message(MessageType type, JsonNode payload) {
+    private Message(MessageType type, JsonNode payload, String traceId) {
         this.type = type;
         this.payload = payload;
+        this.traceId = traceId;
         this.status = MessageStatus.NEW;
     }
 
-    public static Message of(MessageType type, JsonNode payload) {
-        return new Message(type, payload);
+    public static Message of(MessageType type, JsonNode payload, String traceId) {
+        return new Message(type, payload, traceId);
     }
 
     public void markPublished(LocalDateTime publishedAt) {

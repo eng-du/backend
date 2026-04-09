@@ -6,6 +6,7 @@ import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +15,25 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EngduSqsMessagePublisher implements EngduMessagePublisher {
 
-    private final SqsTemplate sqsTemplate;
+  private final SqsTemplate sqsTemplate;
 
-    @Value("${spring.cloud.aws.sqs.queue-name}")
-    private String queueName;
+  @Value("${spring.cloud.aws.sqs.queue-name}")
+  private String queueName;
 
-    @Timed("sqs")
-    public void publish(GenerateEngduPartMessage message) {
-        log.info("SQS 메시지 발행 engduId={}, userId={}, step={}",
-                message.engduId(), message.userId(), message.step());
-        sqsTemplate.send(queueName, message);
+  @Timed("sqs")
+  public void publish(GenerateEngduPartMessage message, String traceId) {
+    MDC.put("traceId", traceId);
+
+    try {
+      sqsTemplate.send(to -> to
+          .queue(queueName)
+          .payload(message)
+          .header("traceId", traceId));
+
+      log.info("[SQS 메시지 발행] 메시지 발행에 성공했습니다. engduId={}, userId={}, step={}",
+          message.engduId(), message.userId(), message.step());
+    } finally {
+      MDC.remove("traceId");
     }
+  }
 }
