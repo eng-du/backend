@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,18 +27,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final TokenParser tokenParser;
   private final JwtAuthenticationProvider jwtAuthenticationProvider;
+  private static final String MDC_USER_ID = "userId";
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain) throws ServletException, IOException {
 
     // 로그인 관련 요청은 JWT 검증을 하지 않음
     String requestPath = request.getRequestURI();
-
-    // 액츄에이터 엔드포인트는 로깅 제외
-    if (!requestPath.startsWith("/actuator")) {
-      log.info("{} {}", request.getMethod(), requestPath);
-    }
 
     if (requestPath.startsWith("/api/v1/login") || requestPath.startsWith("/favicon.ico")) {
       filterChain.doFilter(request, response);
@@ -49,7 +49,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       Role role = tokenParser.parseRoleFromAccessToken(token);
       Long userId = tokenParser.parseUserIdFromToken(token);
 
-      log.info("userId = {}, role = {} ", userId.toString(), role.name());
+      MDC.put(MDC_USER_ID, userId.toString());
+
       Authentication authentication = jwtAuthenticationProvider.authenticate(userId, role);
       SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy()
           .getContext();
@@ -60,7 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // 다음 필터로 넘어가기 위해 필수이다.
-    filterChain.doFilter(request, response);
+    try {
+      filterChain.doFilter(request, response);
+    } finally {
+      MDC.remove(MDC_USER_ID);
+    }
   }
 
   private String getTokenAndValidateJwtRequest(HttpServletRequest request) {
