@@ -2,6 +2,7 @@ package com.gyu.engdu.message.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gyu.engdu.config.MdcContext;
 import com.gyu.engdu.domain.engdu.application.EngduMessagePublisher;
 import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 import com.gyu.engdu.message.domain.Message;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,27 +27,23 @@ public class MessageRelayService {
   private final ObjectMapper objectMapper;
 
   // 주기마다 NEW 상태의 메시지를 SQS로 발행하고 PUBLISHED로 변경합니다.
+  @MdcContext(key = "suppressSql", value = "true")
   @Scheduled(fixedDelayString = "${spring.message.relay.delay}")
   @Transactional
   public void relayMessages() {
-    MDC.put("suppressSql", "true");
-    try {
-      List<Message> newMessages = messageRepository.findAllByStatus(MessageStatus.NEW);
+    List<Message> newMessages = messageRepository.findAllByStatus(MessageStatus.NEW);
 
-      for (Message message : newMessages) {
-        try {
-          if (message.getType() == MessageType.GENERATE_ENGDU_PART) {
-            GenerateEngduPartMessage event = objectMapper.treeToValue(message.getPayload(),
-                GenerateEngduPartMessage.class);
-            engduMessagePublisher.publish(event, message.getTraceId());
-            message.markPublished(LocalDateTime.now());
-          }
-        } catch (JsonProcessingException e) {
-          log.error("메시지 역직렬화에 실패했습니다. messageId={}", message.getId(), e);
+    for (Message message : newMessages) {
+      try {
+        if (message.getType() == MessageType.GENERATE_ENGDU_PART) {
+          GenerateEngduPartMessage event = objectMapper.treeToValue(message.getPayload(),
+              GenerateEngduPartMessage.class);
+          engduMessagePublisher.publish(event, message.getTraceId());
+          message.markPublished(LocalDateTime.now());
         }
+      } catch (JsonProcessingException e) {
+        log.error("메시지 역직렬화에 실패했습니다. messageId={}", message.getId(), e);
       }
-    } finally {
-      MDC.remove("suppressSql");
     }
   }
 }
