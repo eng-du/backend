@@ -1,8 +1,8 @@
 package com.gyu.engdu.domain.engdu.exception;
 
 import com.gyu.engdu.domain.engdu.domain.enums.LikeStatus;
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ValidationException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ValidationException;
 
 public class EngduLikeAlreadyProcessedException extends ValidationException {
     public EngduLikeAlreadyProcessedException(Long userId, Long engduId, LikeStatus currentLikeStatus) {

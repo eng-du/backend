@@ -1,8 +1,8 @@
 package com.gyu.engdu.domain.engdu.application;
 
-import com.gyu.engdu.domain.engdu.infra.dto.EngduSqsMessage;
+import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 
 public interface EngduMessagePublisher {
 
-    void publish(EngduSqsMessage message);
+    void publish(GenerateEngduPartMessage message, String traceId);
 }

@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.engdu.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ExternalServiceException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ExternalServiceException;
 
 public class EngduGenerate4xxException extends ExternalServiceException {
     public EngduGenerate4xxException(int statusCode) {

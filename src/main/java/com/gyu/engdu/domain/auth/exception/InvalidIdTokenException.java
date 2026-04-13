@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.auth.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.InternalServerException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.InternalServerException;
 
 public class InvalidIdTokenException extends InternalServerException {
     public InvalidIdTokenException(String reason) {

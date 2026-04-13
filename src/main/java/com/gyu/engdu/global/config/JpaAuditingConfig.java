@@ -1,4 +1,4 @@
-package com.gyu.engdu.config;
+package com.gyu.engdu.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

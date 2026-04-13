@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.engdu.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.NotFoundException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.NotFoundException;
 
 public class EngduNotFoundException extends NotFoundException {
     public EngduNotFoundException(Long engduId) {

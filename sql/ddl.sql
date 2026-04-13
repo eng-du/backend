@@ -99,6 +99,18 @@ CREATE TABLE phrasal_verb (
 
   CONSTRAINT unique_phrasalverb_en UNIQUE (en)
 ) ENGINE=InnoDB;
+
+-- Message Table
+CREATE TABLE `message` (
+    `message_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    `published_at` DATETIME(6) NULL,
+    `status` VARCHAR(255) NOT NULL,
+    `type` VARCHAR(255) NOT NULL,
+    `payload` JSON NOT NULL,
+    `trace_id` VARCHAR(255) NULL
+) ENGINE=InnoDB;
+
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
@@ -107,4 +119,5 @@ CREATE INDEX idx_article_part_id ON `article` (`part_id`);
 CREATE INDEX idx_article_chunk_article_id ON `article_chunk` (`article_id`);
 CREATE INDEX idx_question_part_id ON `question` (`part_id`);
 CREATE INDEX idx_choice_question_id ON `choice` (`question_id`);
+CREATE INDEX idx_message_status ON `message` (`status`);
 -- **************************************** INDEX END ****************************************

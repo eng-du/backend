@@ -1,4 +1,4 @@
-package com.gyu.engdu.exception;
+package com.gyu.engdu.global.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

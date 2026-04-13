@@ -1,4 +1,4 @@
-package com.gyu.engdu.exception;
+package com.gyu.engdu.global.exception;
 
 public abstract class InternalServerException extends CustomException {
 

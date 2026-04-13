@@ -1,4 +1,4 @@
-package com.gyu.engdu.config;
+package com.gyu.engdu.global.config;
 
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;

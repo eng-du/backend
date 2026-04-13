@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.auth.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ExternalServiceException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ExternalServiceException;
 
 public class GoogleOAuth4xxException extends ExternalServiceException {
     public GoogleOAuth4xxException(int statusCode) {

@@ -1,8 +1,8 @@
 package com.gyu.engdu.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ErrorResponseEntity;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ErrorResponseEntity;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,7 +1,8 @@
 package com.gyu.engdu.domain.engdu.infra;
 
+import com.gyu.engdu.global.aop.MdcContext;
 import com.gyu.engdu.domain.engdu.application.EngduMessagePublisher;
-import com.gyu.engdu.domain.engdu.infra.dto.EngduSqsMessage;
+import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
@@ -14,15 +15,20 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EngduSqsMessagePublisher implements EngduMessagePublisher {
 
-    private final SqsTemplate sqsTemplate;
+  private final SqsTemplate sqsTemplate;
 
-    @Value("${spring.cloud.aws.sqs.queue-name}")
-    private String queueName;
+  @Value("${spring.cloud.aws.sqs.queue-name}")
+  private String queueName;
 
-    @Timed("sqs")
-    public void publish(EngduSqsMessage message) {
-        log.info("SQS 메시지 발행 engduId={}, userId={}, step={}",
-                message.engduId(), message.userId(), message.step());
-        sqsTemplate.send(queueName, message);
-    }
+  @MdcContext(key = "traceId", paramName = "traceId")
+  @Timed("sqs")
+  public void publish(GenerateEngduPartMessage message, String traceId) {
+    sqsTemplate.send(to -> to
+        .queue(queueName)
+        .payload(message)
+        .header("traceId", traceId));
+
+    log.info("[SQS 메시지 발행] 메시지 발행에 성공했습니다. engduId={}, userId={}, step={}",
+        message.engduId(), message.userId(), message.step());
+  }
 }

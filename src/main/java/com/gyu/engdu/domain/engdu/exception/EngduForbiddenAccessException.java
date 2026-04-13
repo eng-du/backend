@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.engdu.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ForbiddenException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ForbiddenException;
 
 public class EngduForbiddenAccessException extends ForbiddenException {
     public EngduForbiddenAccessException(Long userId, Long engduId, Long ownerId) {
