@@ -1,6 +1,6 @@
 package com.gyu.engdu.domain.engdu.infra;
 
-import com.gyu.engdu.config.MdcContext;
+import com.gyu.engdu.global.aop.MdcContext;
 import com.gyu.engdu.domain.engdu.application.EngduMessagePublisher;
 import com.gyu.engdu.domain.engdu.infra.dto.GenerateEngduPartMessage;
 import io.awspring.cloud.sqs.operations.SqsTemplate;

@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.user.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ValidationException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ValidationException;
 
 public class UserNameTooLongException extends ValidationException {
     public UserNameTooLongException(Long userId, String inputName) {
