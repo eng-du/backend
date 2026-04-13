@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.auth.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.NotFoundException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.NotFoundException;
 
 public class RefreshTokenNotFoundException extends NotFoundException {
     public RefreshTokenNotFoundException(String rawToken) {

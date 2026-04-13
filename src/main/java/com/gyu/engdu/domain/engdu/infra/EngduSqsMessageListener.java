@@ -1,6 +1,6 @@
 package com.gyu.engdu.domain.engdu.infra;
 
-import com.gyu.engdu.config.MdcContext;
+import com.gyu.engdu.global.aop.MdcContext;
 import com.gyu.engdu.domain.engdu.application.CreateEngduService;
 import com.gyu.engdu.domain.engdu.application.PartCommandService;
 import com.gyu.engdu.domain.engdu.domain.Part;

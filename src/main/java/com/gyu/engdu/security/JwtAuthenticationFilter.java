@@ -2,8 +2,8 @@ package com.gyu.engdu.security;
 
 import com.gyu.engdu.domain.auth.application.TokenParser;
 import com.gyu.engdu.domain.user.domain.Role;
-import com.gyu.engdu.exception.CustomException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.global.exception.CustomException;
+import com.gyu.engdu.global.exception.ErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

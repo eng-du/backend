@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.engdu.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.InternalServerException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.InternalServerException;
 
 public class EngduGenerate5xxException extends InternalServerException {
     public EngduGenerate5xxException(int statusCode) {

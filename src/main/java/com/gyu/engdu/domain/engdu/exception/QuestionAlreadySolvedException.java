@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.engdu.exception;
 
-import com.gyu.engdu.exception.ErrorCode;
-import com.gyu.engdu.exception.ValidationException;
+import com.gyu.engdu.global.exception.ErrorCode;
+import com.gyu.engdu.global.exception.ValidationException;
 
 public class QuestionAlreadySolvedException extends ValidationException {
     public QuestionAlreadySolvedException(Long questionId) {

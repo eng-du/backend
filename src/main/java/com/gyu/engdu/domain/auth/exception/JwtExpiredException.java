@@ -1,7 +1,7 @@
 package com.gyu.engdu.domain.auth.exception;
 
-import com.gyu.engdu.exception.AuthException;
-import com.gyu.engdu.exception.ErrorCode;
+import com.gyu.engdu.global.exception.AuthException;
+import com.gyu.engdu.global.exception.ErrorCode;
 
 public class JwtExpiredException extends AuthException {
     public JwtExpiredException() {
