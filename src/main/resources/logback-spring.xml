@@ -18,8 +18,7 @@
   <!-- 로그 포맷 -->
 
   <property name="LOG_PATTERN"
-    value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) [%X{traceId}] %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
-
+    value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) %replace([traceId=%X{traceId}]){'^.traceId=.$',''} %replace([userId=%X{userId}]){'^.userId=.$',''} %boldWhite([%C.%M:%yellow(%L)]) - %msg%n"/>
   <springProfile name="local">
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
       <encoder>
