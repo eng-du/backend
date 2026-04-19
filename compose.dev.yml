@@ -1,5 +1,7 @@
 services:
   my-server:
+    mem_limit: 500m
+    cpus: 0.5
     container_name: engdu-app
     restart: unless-stopped
     image: ${IMAGE_NAME}:${IMAGE_TAG}
@@ -13,6 +15,8 @@ services:
       - engdu
 
   promtail:
+    mem_limit: 100m
+    cpus: 0.2
     image: grafana/promtail:latest
     env_file:
       - .env

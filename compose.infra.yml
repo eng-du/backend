@@ -1,6 +1,8 @@
 services:
   mysql:
     image: mysql:8.4
+    mem_limit: 300m
+    cpus: 0.5
     container_name: engdu-mysql
     restart: unless-stopped
     env_file:
@@ -19,6 +21,24 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "127.0.0.1:3306:3306"
+    networks:
+      - engdu
+
+  nginx:
+    image: nginx:1.24.0
+    mem_limit: 100m
+    cpus: 0.2
+    container_name: engdu-nginx
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - ./nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/logs:/var/log/nginx
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
     networks:
       - engdu
 
