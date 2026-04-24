@@ -114,7 +114,6 @@ CREATE TABLE `message` (
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
-CREATE INDEX idx_engdu_user_id ON `engdu` (`user_id`);
 CREATE INDEX idx_engdu_user_id_is_all_solved_created_at ON `engdu` (`user_id` ASC, `is_all_solved` ASC, `created_at` DESC);
 CREATE INDEX idx_engdu_user_id_created_at ON `engdu` (`user_id` ASC, `created_at` DESC);
 CREATE INDEX idx_part_engdu_id ON `part` (`engdu_id`);
