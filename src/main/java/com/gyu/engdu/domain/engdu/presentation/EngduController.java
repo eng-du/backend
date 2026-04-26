@@ -10,8 +10,8 @@ import com.gyu.engdu.domain.engdu.application.SolveQuestionService;
 import com.gyu.engdu.domain.engdu.application.dto.response.CreateEngduResponse;
 import com.gyu.engdu.domain.engdu.application.dto.response.EngduDetailResponse;
 import com.gyu.engdu.domain.engdu.application.dto.response.EngduPartStatusResponse;
-import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.domain.enums.EngduSortKey;
+import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.domain.enums.SolvedFilter;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.CreateEngduRequest;
 import com.gyu.engdu.domain.engdu.presentation.dto.request.LikeEngduRequest;
@@ -84,8 +84,14 @@ public class EngduController {
       @AuthenticationPrincipal(expression = "userId") Long userId) {
     // 클라이언트가 1번 페이지 조회하면 백엔드는 0번 페이지를 조회하도록 하기 위함.
     int adjustedPage = Math.max(0, pageNum - 1);
-    Page<EngduSummaryResponse> responses = engduQueryService.searchEngdu(userId, adjustedPage, size,
-        sortKey, direction, solvedFilter);
+    Page<EngduSummaryResponse> responses = engduQueryService.paginationEngdu(
+        userId,
+        adjustedPage,
+        size,
+        sortKey,
+        direction,
+        solvedFilter
+    );
     boolean hasEngdu = engduQueryService.existsEngduByUserId(userId);
     return ResponseEntity.ok(EngduPageResponse.from(responses, hasEngdu));
   }

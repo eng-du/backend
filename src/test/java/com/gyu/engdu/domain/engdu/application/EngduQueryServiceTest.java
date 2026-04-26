@@ -57,8 +57,14 @@ class EngduQueryServiceTest extends IntegrationTestSupport {
     engduRepository.saveAll(List.of(engdu1, engdu2, engdu3));
 
     // when
-    Page<EngduSummaryResponse> result = engduQueryService.searchEngdu(userId, pageNum, size,
-        engduSortKey, direction, solvedFilter);
+    Page<EngduSummaryResponse> result = engduQueryService.paginationEngdu(
+        userId,
+        pageNum,
+        size,
+        engduSortKey,
+        direction,
+        solvedFilter
+    );
 
     // then
     assertThat(result.getContent()).hasSize(2);
@@ -85,8 +91,14 @@ class EngduQueryServiceTest extends IntegrationTestSupport {
     engduRepository.saveAll(List.of(engdu1, engdu2, engdu3));
 
     // when
-    Page<EngduSummaryResponse> result = engduQueryService.searchEngdu(userId, pageNum, size,
-        engduSortKey, direction, solvedFilter);
+    Page<EngduSummaryResponse> result = engduQueryService.paginationEngdu(
+        userId,
+        pageNum,
+        size,
+        engduSortKey,
+        direction,
+        solvedFilter
+    );
 
     // then
     assertThat(result.getContent()).hasSize(2);
@@ -112,8 +124,14 @@ class EngduQueryServiceTest extends IntegrationTestSupport {
     engduRepository.saveAll(List.of(engdu1, engdu2, engdu3));
 
     // when
-    Page<EngduSummaryResponse> result = engduQueryService.searchEngdu(userId, pageNum, size,
-        engduSortKey, direction, solvedFilter);
+    Page<EngduSummaryResponse> result = engduQueryService.paginationEngdu(
+        userId,
+        pageNum,
+        size,
+        engduSortKey,
+        direction,
+        solvedFilter
+    );
 
     // then
     assertThat(result.getContent()).hasSize(1);
