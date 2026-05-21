@@ -17,6 +17,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -48,6 +50,7 @@ public class Question extends BaseEntity {
   private Category category;
 
   @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+  @OrderBy("seq ASC")
   private List<Choice> choices = new ArrayList<>();
 
   @Builder
@@ -92,5 +95,21 @@ public class Question extends BaseEntity {
 
   private void markCorrected() {
     this.isCorrected = true;
+  }
+
+  public void shuffleChoices(List<Byte> seqs) {
+    Choice correctChoice = this.choices.stream()
+        .filter(c -> c.getSeq().equals(this.answer))
+        .findFirst()
+        .orElse(null);
+
+    for (int i = 0; i < this.choices.size(); i++) {
+      Choice choice = this.choices.get(i);
+      byte newSeq = seqs.get(i);
+      choice.changeSeq(newSeq);
+      if (choice == correctChoice) {
+        this.answer = newSeq;
+      }
+    }
   }
 }
