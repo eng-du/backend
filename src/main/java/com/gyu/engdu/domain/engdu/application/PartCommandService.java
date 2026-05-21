@@ -12,6 +12,9 @@ import com.gyu.engdu.domain.engdu.domain.enums.PartType;
 import com.gyu.engdu.domain.engdu.exception.PartNotFoundException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +70,12 @@ public class PartCommandService {
         response.questions().forEach(questionDto -> {
             Question question = questionDto.toEntity(part);
             questionDto.choices().forEach(choiceDto -> choiceDto.toEntity(question));
+        });
+
+        part.getQuestions().forEach(question -> {
+            List<Byte> seqs = new ArrayList<>(List.of((byte) 1, (byte) 2, (byte) 3, (byte) 4));
+            Collections.shuffle(seqs);
+            question.shuffleChoices(seqs);
         });
 
         part.changeStatus(PartStatus.DONE);
