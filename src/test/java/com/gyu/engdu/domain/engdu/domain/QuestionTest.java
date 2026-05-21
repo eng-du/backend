@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.gyu.engdu.domain.engdu.domain.enums.Category;
 import com.gyu.engdu.domain.engdu.exception.QuestionAlreadySolvedException;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -77,6 +78,31 @@ class QuestionTest {
         .answer(answer)
         .isCorrected(isCorrected)
         .build();
+  }
+
+  @DisplayName("shuffleChoices를 호출 시 전달받은 순서대로 선택지들의 seq가 갱신되며 정답 번호도 그에 맞게 갱신된다.")
+  @Test
+  void shuffleChoices() {
+    // given
+    byte correctAnswerSeq = 1;
+    Part part = Part.builder().build();
+    Question question = Question.of(correctAnswerSeq, "질문", Category.COMPREHENSION, part);
+    Choice correctChoice = Choice.of("정답 내용", "정답 해설", correctAnswerSeq, question);
+    Choice wrongChoice1 = Choice.of("오답 내용1", "오답 해설1", (byte) 2, question);
+    Choice wrongChoice2 = Choice.of("오답 내용2", "오답 해설2", (byte) 3, question);
+    Choice wrongChoice3 = Choice.of("오답 내용3", "오답 해설3", (byte) 4, question);
+
+    List<Byte> randomSeqs = List.of((byte) 4, (byte) 1, (byte) 2, (byte) 3);
+
+    // when
+    question.shuffleChoices(randomSeqs);
+
+    // then
+    assertThat(correctChoice.getSeq()).isEqualTo((byte) 4);
+    assertThat(wrongChoice1.getSeq()).isEqualTo((byte) 1);
+    assertThat(wrongChoice2.getSeq()).isEqualTo((byte) 2);
+    assertThat(wrongChoice3.getSeq()).isEqualTo((byte) 3);
+    assertThat(question.getAnswer()).isEqualTo((byte) 4);
   }
 
 }
