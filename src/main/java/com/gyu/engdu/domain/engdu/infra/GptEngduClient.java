@@ -122,6 +122,7 @@ public class GptEngduClient implements EngduClient {
               - 질문의 선택지(choices)는 반드시 4개여야한다.
               - 질문의 문제 유형을 COMPREHENSION, VOCA, GRAMMAR 중 하나를 선택한다.
               - 해설은 본문의 내용을 기반으로해라. 정답:, 오답:과 같이 불필요한 말들은 제외한다.
+              - 각 선택지의 해설(explanation)에는 특정 보기의 번호나 순서(예: '1번은...', '첫 번째 보기는...')를 지칭하는 표현을 절대 포함하지 말고, 오직 해당 선택지 내용 자체에 대한 해설만 작성해라.
 
           4. 전체 결과는 다음과 같은 JSON 포맷을 따른다:
               응답에는 불필요한 것을 제외하고 순수 JSON으로 준다.
@@ -199,6 +200,7 @@ public class GptEngduClient implements EngduClient {
              - 질문의 선택지(choices)는 반드시 4개여야한다.
              - 질문의 문제 유형을 COMPREHENSION, VOCA, GRAMMAR 중 하나를 선택한다.
              - 해설은 본문의 내용을 기반으로해라. 정답:, 오답:과 같이 불필요한 말들은 제외한다.
+             - 각 선택지의 해설(explanation)에는 특정 번호나 순서(예: '1번은...', '첫 번째 보기는...')를 지칭하는 표현을 절대 포함하지 말고, 오직 해당 선택지 내용 자체에 대한 해설만 작성해라.
 
           3. 전체 결과는 다음과 같은 JSON 포맷을 따른다:
              응답에는 불필요한 것을 제외하고 순수 JSON으로 준다.

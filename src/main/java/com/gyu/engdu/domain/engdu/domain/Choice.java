@@ -50,4 +50,8 @@ public class Choice extends BaseEntity {
     this.question = question;
     question.getChoices().add(this);
   }
+
+  public void changeSeq(Byte seq) {
+    this.seq = seq;
+  }
 }
