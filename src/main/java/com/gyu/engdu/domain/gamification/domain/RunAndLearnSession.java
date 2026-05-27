@@ -27,7 +27,7 @@ public class RunAndLearnSession extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "speed_quiz_session_id")
+    @Column(name = "run_and_learn_session_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

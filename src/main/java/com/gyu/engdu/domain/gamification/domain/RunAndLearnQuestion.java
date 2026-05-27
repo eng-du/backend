@@ -16,17 +16,22 @@ public class RunAndLearnQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "speed_quiz_question_id")
+    @Column(name = "run_and_learn_question_id")
     private Long id;
 
+    @Column(nullable = false)
     private String question;
 
+    @Column(nullable = false)
     private Integer answer;
 
+    @Column(nullable = false)
     private String choice1;
 
+    @Column(nullable = false)
     private String choice2;
 
+    @Column(nullable = false)
     private String choice3;
 
     private String explanation;
