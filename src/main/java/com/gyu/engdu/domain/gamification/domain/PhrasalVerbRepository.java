@@ -1,4 +1,4 @@
-package com.gyu.engdu.domain.learning.domain;
+package com.gyu.engdu.domain.gamification.domain;
 
 import java.util.Collection;
 import org.springframework.data.jpa.repository.JpaRepository;

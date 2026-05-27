@@ -1,6 +1,6 @@
-package com.gyu.engdu.domain.learning.application.dto;
+package com.gyu.engdu.domain.gamification.application.dto.response;
 
-import com.gyu.engdu.domain.learning.domain.PhrasalVerb;
+import com.gyu.engdu.domain.gamification.domain.PhrasalVerb;
 
 public record PhrasalVerbResponse(
         Long id,

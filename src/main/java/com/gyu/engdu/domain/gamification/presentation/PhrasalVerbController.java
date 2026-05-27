@@ -1,16 +1,14 @@
-package com.gyu.engdu.domain.learning.presentation;
+package com.gyu.engdu.domain.gamification.presentation;
 
-import com.gyu.engdu.domain.learning.application.PhrasalVerbQueryService;
-import com.gyu.engdu.domain.learning.application.dto.PhrasalVerbResponse;
+import com.gyu.engdu.domain.gamification.application.PhrasalVerbQueryService;
+import com.gyu.engdu.domain.gamification.application.dto.response.PhrasalVerbResponse;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequiredArgsConstructor

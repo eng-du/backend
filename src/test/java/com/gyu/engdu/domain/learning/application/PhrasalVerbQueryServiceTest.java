@@ -4,10 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.gyu.engdu.IntegrationTestSupport;
-import com.gyu.engdu.domain.learning.application.dto.PhrasalVerbResponse;
-import com.gyu.engdu.domain.learning.domain.PhrasalVerb;
-import com.gyu.engdu.domain.learning.domain.PhrasalVerbRepository;
-import com.gyu.engdu.domain.learning.exception.PhrasalVerbNotFoundException;
+import com.gyu.engdu.domain.gamification.application.PhrasalVerbQueryService;
+import com.gyu.engdu.domain.gamification.application.dto.response.PhrasalVerbResponse;
+import com.gyu.engdu.domain.gamification.domain.PhrasalVerb;
+import com.gyu.engdu.domain.gamification.domain.PhrasalVerbRepository;
+import com.gyu.engdu.domain.gamification.exception.PhrasalVerbNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
