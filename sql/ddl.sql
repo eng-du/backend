@@ -111,6 +111,29 @@ CREATE TABLE `message` (
     `trace_id` VARCHAR(255) NULL
 ) ENGINE=InnoDB;
 
+-- RunAndLearnSession Table
+CREATE TABLE `run_and_learn_session` (
+    `run_and_learn_session_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT,
+    `seed` INT NOT NULL,
+    `score` INT NOT NULL,
+    `started_at` DATETIME(6) NULL,
+    `ended_at` DATETIME(6) NULL,
+    `created_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updated_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+) ENGINE=InnoDB;
+
+-- RunAndLearnQuestion Table
+CREATE TABLE `run_and_learn_question` (
+    `run_and_learn_question_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `question` VARCHAR(255) NOT NULL,
+    `answer` INT NOT NULL,
+    `choice1` VARCHAR(255) NOT NULL,
+    `choice2` VARCHAR(255) NOT NULL,
+    `choice3` VARCHAR(255) NOT NULL,
+    `explanation` VARCHAR(255) NULL
+) ENGINE=InnoDB;
+
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
@@ -122,4 +145,5 @@ CREATE INDEX idx_article_chunk_article_id ON `article_chunk` (`article_id`);
 CREATE INDEX idx_question_part_id ON `question` (`part_id`);
 CREATE INDEX idx_choice_question_id ON `choice` (`question_id`);
 CREATE INDEX idx_message_status ON `message` (`status`);
+CREATE INDEX idx_run_and_learn_session_user_id ON `run_and_learn_session` (`user_id`);
 -- **************************************** INDEX END ****************************************
