@@ -1,9 +1,9 @@
-package com.gyu.engdu.domain.learning.application;
+package com.gyu.engdu.domain.gamification.application;
 
-import com.gyu.engdu.domain.learning.application.dto.PhrasalVerbResponse;
-import com.gyu.engdu.domain.learning.domain.PhrasalVerb;
-import com.gyu.engdu.domain.learning.domain.PhrasalVerbRepository;
-import com.gyu.engdu.domain.learning.exception.PhrasalVerbNotFoundException;
+import com.gyu.engdu.domain.gamification.application.dto.response.PhrasalVerbResponse;
+import com.gyu.engdu.domain.gamification.domain.PhrasalVerb;
+import com.gyu.engdu.domain.gamification.domain.PhrasalVerbRepository;
+import com.gyu.engdu.domain.gamification.exception.PhrasalVerbNotFoundException;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,8 +30,10 @@ public class PhrasalVerbQueryService {
         return PhrasalVerbResponse.fromEntity(phrasalVerb);
     }
 
-    public PhrasalVerbResponse getPhrasalVerbByPivotAndExclusion(long pivot, Collection<Long> excludedIds) {
-        PhrasalVerb phrasalVerb = phrasalVerbRepository.findFirstByIdGreaterThanEqualAndIdNotIn(pivot, excludedIds);
+    public PhrasalVerbResponse getPhrasalVerbByPivotAndExclusion(long pivot,
+            Collection<Long> excludedIds) {
+        PhrasalVerb phrasalVerb = phrasalVerbRepository.findFirstByIdGreaterThanEqualAndIdNotIn(
+                pivot, excludedIds);
 
         return PhrasalVerbResponse.fromEntity(phrasalVerb);
     }

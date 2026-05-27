@@ -1,4 +1,4 @@
-package com.gyu.engdu.domain.learning.domain;
+package com.gyu.engdu.domain.gamification.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,21 +19,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-    @UniqueConstraint(name = "unique_phrasalverb_en", columnNames = { "en" })
+        @UniqueConstraint(name = "unique_phrasalverb_en", columnNames = {"en"})
 })
 public class PhrasalVerb {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "phrasal_verb_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "phrasal_verb_id")
+    private Long id;
 
-  private String en;
+    private String en;
 
-  private String kor;
+    private String kor;
 
-  private String exampleSentenceEn;
+    private String exampleSentenceEn;
 
-  private String exampleSentenceKor;
+    private String exampleSentenceKor;
 
 }

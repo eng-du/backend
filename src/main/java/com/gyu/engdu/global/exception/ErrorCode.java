@@ -35,8 +35,11 @@ public enum ErrorCode {
   QUESTION_FORBIDDEN_ACCESS("QUESTION-001", "해당 잉듀가 갖고있는 문제가 아닙니다."),
   QUESTION_ALREADY_SOLVED("QUESTION-002", "이미 해결한 문제입니다."),
 
-  // Learning
-  PHRASAL_NOT_FOUND("LEARNING-001", "구동사가 존재하지 않습니다."),
+  // Gamification
+  PHRASAL_NOT_FOUND("GAMIFICATION-001", "구동사가 존재하지 않습니다."),
+  RUN_AND_LEARN_NOT_FOUND("GAMIFICATION-002", "스피드 퀴즈 세션이 존재하지 않습니다."),
+  RUN_AND_LEARN_FORBIDDEN_ACCESS("GAMIFICATION-003", "사용자의 스피드 퀴즈 세션이 아닙니다."),
+  RUN_AND_LEARN_ALREADY_STARTED("GAMIFICATION-004", "이미 시작된 스피드 퀴즈 세션입니다."),
 
   // Spring Standard Errors
   INVALID_INPUT_VALUE("COMMON-001", "잘못된 입력값입니다."),
