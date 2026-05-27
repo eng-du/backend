@@ -1,4 +1,4 @@
-package com.gyu.engdu.message;
+package com.gyu.engdu.domain.message;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

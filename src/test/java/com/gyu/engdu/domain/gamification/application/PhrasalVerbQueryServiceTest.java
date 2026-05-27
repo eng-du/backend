@@ -1,4 +1,4 @@
-package com.gyu.engdu.domain.learning.application;
+package com.gyu.engdu.domain.gamification.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
