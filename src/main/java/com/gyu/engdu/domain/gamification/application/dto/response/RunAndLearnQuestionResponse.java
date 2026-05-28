@@ -9,9 +9,8 @@ public record RunAndLearnQuestionResponse(
         String choice1,
         String choice2,
         String choice3,
-        String explanation
-) {
-    public static RunAndLearnQuestionResponse of(RunAndLearnQuestion question) {
+        String explanation) {
+    public static RunAndLearnQuestionResponse from(RunAndLearnQuestion question) {
         return new RunAndLearnQuestionResponse(
                 question.getId(),
                 question.getQuestion(),
@@ -19,7 +18,6 @@ public record RunAndLearnQuestionResponse(
                 question.getChoice1(),
                 question.getChoice2(),
                 question.getChoice3(),
-                question.getExplanation()
-        );
+                question.getExplanation());
     }
 }
