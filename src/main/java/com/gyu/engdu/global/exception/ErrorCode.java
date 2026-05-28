@@ -40,6 +40,8 @@ public enum ErrorCode {
   RUN_AND_LEARN_NOT_FOUND("GAMIFICATION-002", "스피드 퀴즈 세션이 존재하지 않습니다."),
   RUN_AND_LEARN_FORBIDDEN_ACCESS("GAMIFICATION-003", "사용자의 스피드 퀴즈 세션이 아닙니다."),
   RUN_AND_LEARN_ALREADY_STARTED("GAMIFICATION-004", "이미 시작된 스피드 퀴즈 세션입니다."),
+  RUN_AND_LEARN_QUESTION_NOT_FOUND("GAMIFICATION-005", "런앤런 문제가 존재하지 않습니다."),
+  RUN_AND_LEARN_QUESTION_EXHAUSTED("GAMIFICATION-006", "더 이상 런앤런 문제가 남아있지 않습니다."),
 
   // Spring Standard Errors
   INVALID_INPUT_VALUE("COMMON-001", "잘못된 입력값입니다."),
