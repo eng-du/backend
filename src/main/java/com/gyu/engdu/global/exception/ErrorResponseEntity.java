@@ -9,17 +9,29 @@ import org.springframework.http.ResponseEntity;
 @Getter
 // TODO: ProblemDetail로 개선하기
 public class ErrorResponseEntity {
-  private int status;
-  private String code;
-  private String message;
 
-  public static ResponseEntity<ErrorResponseEntity> toResponseEntity(ErrorCode errorCode, HttpStatus httpStatus) {
-    return ResponseEntity
-        .status(httpStatus)
-        .body(ErrorResponseEntity.of(errorCode, httpStatus));
-  }
+    private int status;
+    private String code;
+    private String message;
 
-  public static ErrorResponseEntity of(ErrorCode errorCode, HttpStatus httpStatus) {
-    return new ErrorResponseEntity(httpStatus.value(), errorCode.getCode(), errorCode.getMessage());
-  }
+    public static ResponseEntity<ErrorResponseEntity> toResponseEntity(ErrorCode errorCode,
+            HttpStatus httpStatus) {
+        return ResponseEntity
+                .status(httpStatus)
+                .body(ErrorResponseEntity.of(errorCode, httpStatus));
+    }
+
+    public static ResponseEntity<ErrorResponseEntity> toResponseEntity(ErrorCode errorCode,
+            String customMessage,
+            HttpStatus httpStatus) {
+        return ResponseEntity
+                .status(httpStatus)
+                .body(new ErrorResponseEntity(httpStatus.value(), errorCode.getCode(),
+                        customMessage));
+    }
+
+    public static ErrorResponseEntity of(ErrorCode errorCode, HttpStatus httpStatus) {
+        return new ErrorResponseEntity(httpStatus.value(), errorCode.getCode(),
+                errorCode.getMessage());
+    }
 }
