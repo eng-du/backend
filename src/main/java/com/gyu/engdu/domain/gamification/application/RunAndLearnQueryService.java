@@ -10,7 +10,9 @@ import com.gyu.engdu.domain.gamification.exception.RunAndLearnQuestionNotFoundEx
 import com.gyu.engdu.domain.gamification.exception.RunAndLearnSessionNotFoundException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +55,14 @@ public class RunAndLearnQueryService {
 
         List<RunAndLearnQuestion> questions = runAndLearnQuestionRepository.findAllById(questionIds);
 
-        // 오름차순 정렬
-        questions.sort((a, b) -> a.getId().compareTo(b.getId()));
+        // 난수 시퀀스 순서에 맞게 재배치
+        Map<Long, RunAndLearnQuestion> questionMap = questions.stream()
+                .collect(Collectors.toMap(RunAndLearnQuestion::getId, Function.identity()));
 
-        return questions.stream()
-                .map(RunAndLearnQuestionResponse::of)
-                .collect(Collectors.toList());
+        return questionIds.stream()
+                .filter(questionMap::containsKey)
+                .map(id -> RunAndLearnQuestionResponse.from(questionMap.get(id)))
+                .toList();
     }
 
     // 문제의 최대 id를 가져오고 검증
