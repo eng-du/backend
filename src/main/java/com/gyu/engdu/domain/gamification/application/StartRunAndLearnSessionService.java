@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.gamification.application;
 
+import com.gyu.engdu.domain.gamification.application.dto.response.StartRunAndLearnSessionResponse;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnSession;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,13 @@ public class StartRunAndLearnSessionService {
     private final RunAndLearnQueryService runAndLearnQueryService;
 
     @Transactional
-    public void start(Long userId, Long sessionId, LocalDateTime startTime) {
+    public StartRunAndLearnSessionResponse start(Long userId, Long sessionId,
+            LocalDateTime startTime) {
         RunAndLearnSession session = runAndLearnQueryService.findExistingSession(sessionId);
 
         session.validateOwner(userId);
         session.start(startTime);
+
+        return StartRunAndLearnSessionResponse.of(startTime);
     }
 }
