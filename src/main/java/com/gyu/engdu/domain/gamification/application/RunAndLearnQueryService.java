@@ -32,7 +32,9 @@ public class RunAndLearnQueryService {
                 .orElseThrow(() -> new RunAndLearnSessionNotFoundException(sessionId));
     }
 
-    public List<RunAndLearnQuestionResponse> getQuestions(Long userId, Long sessionId,
+    public List<RunAndLearnQuestionResponse> getQuestions(
+            Long userId,
+            Long sessionId,
             int startIndex,
             int count) {
         // 세션 조회 후 사용자 검증
@@ -53,15 +55,10 @@ public class RunAndLearnQueryService {
         int endIndex = Math.min(startIndex + count, maxId.intValue());
         List<Long> questionIds = allIds.subList(startIndex, endIndex);
 
-        List<RunAndLearnQuestion> questions = runAndLearnQuestionRepository.findAllById(questionIds);
+        List<RunAndLearnQuestion> questions = getQuestionAndRestoreOrder(questionIds);
 
-        // 난수 시퀀스 순서에 맞게 재배치
-        Map<Long, RunAndLearnQuestion> questionMap = questions.stream()
-                .collect(Collectors.toMap(RunAndLearnQuestion::getId, Function.identity()));
-
-        return questionIds.stream()
-                .filter(questionMap::containsKey)
-                .map(id -> RunAndLearnQuestionResponse.from(questionMap.get(id)))
+        return questions.stream()
+                .map(RunAndLearnQuestionResponse::from)
                 .toList();
     }
 
@@ -75,5 +72,20 @@ public class RunAndLearnQueryService {
         }
 
         return maxId;
+    }
+
+    /**
+     * questionId 순서에 맞게 가져오기. findAllById는 순서를 보장하지 않기 때문에 Map을 사용해서 정렬
+     */
+    public List<RunAndLearnQuestion> getQuestionAndRestoreOrder(List<Long> questionIds) {
+        List<RunAndLearnQuestion> questions = runAndLearnQuestionRepository.findAllById(
+                questionIds);
+        Map<Long, RunAndLearnQuestion> questionMap = questions.stream()
+                .collect(Collectors.toMap(RunAndLearnQuestion::getId, Function.identity()));
+
+        return questionIds.stream()
+                .filter(questionMap::containsKey)
+                .map(questionMap::get)
+                .toList();
     }
 }
