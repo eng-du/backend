@@ -20,7 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 class RunAndLearnEndValidationServiceTest {
 
-    private final Long MAX_QUESTION_ID = 5L;
+    private final int TOTAL_QUESTIONS = 5;
     private RunAndLearnEndValidationService validationService;
     private RunAndLearnSession session;
 
@@ -51,7 +51,7 @@ class RunAndLearnEndValidationServiceTest {
 
         // when & then
         assertThatCode(
-                () -> validationService.validate(session, MAX_QUESTION_ID, submissions, questions,
+                () -> validationService.validate(session, TOTAL_QUESTIONS, submissions, questions,
                         clientTotalScore))
                 .doesNotThrowAnyException();
     }
@@ -70,7 +70,7 @@ class RunAndLearnEndValidationServiceTest {
 
         // when & then
         assertThatThrownBy(
-                () -> validationService.validate(session, MAX_QUESTION_ID, submissions, questions,
+                () -> validationService.validate(session, TOTAL_QUESTIONS, submissions, questions,
                         clientTotalScore))
                 .isInstanceOf(RunAndLearnSequenceMismatchException.class);
     }
@@ -91,7 +91,7 @@ class RunAndLearnEndValidationServiceTest {
 
         // when & then
         assertThatThrownBy(
-                () -> validationService.validate(session, MAX_QUESTION_ID, submissions, questions,
+                () -> validationService.validate(session, TOTAL_QUESTIONS, submissions, questions,
                         clientTotalScore))
                 .isInstanceOf(RunAndLearnWrongAnswerBeforeEndException.class);
     }
@@ -103,7 +103,7 @@ class RunAndLearnEndValidationServiceTest {
         List<RunAndLearnQuestion> questions = new ArrayList<>();
         List<SubmittedAnswer> submissions = new ArrayList<>();
 
-        for (long i = 1; i <= MAX_QUESTION_ID; i++) {
+        for (long i = 1; i <= TOTAL_QUESTIONS; i++) {
             questions.add(createRunAndLearnQuestion(i, (int) i));
             submissions.add(new SubmittedAnswer(i, (int) i));
         }
@@ -112,7 +112,7 @@ class RunAndLearnEndValidationServiceTest {
 
         // when & then
         assertThatThrownBy(
-                () -> validationService.validate(session, MAX_QUESTION_ID, submissions, questions,
+                () -> validationService.validate(session, TOTAL_QUESTIONS, submissions, questions,
                         allCorrectScore))
                 .isInstanceOf(RunAndLearnAllCorrectException.class);
     }
@@ -135,7 +135,7 @@ class RunAndLearnEndValidationServiceTest {
 
         // when & then
         assertThatThrownBy(
-                () -> validationService.validate(session, MAX_QUESTION_ID, submissions, questions,
+                () -> validationService.validate(session, TOTAL_QUESTIONS, submissions, questions,
                         clientTotalScore))
                 .isInstanceOf(RunAndLearnInvalidEndException.class);
     }
@@ -156,7 +156,7 @@ class RunAndLearnEndValidationServiceTest {
 
         // when & then
         assertThatThrownBy(
-                () -> validationService.validate(session, MAX_QUESTION_ID, submissions, questions,
+                () -> validationService.validate(session, TOTAL_QUESTIONS, submissions, questions,
                         wrongClientScore))
                 .isInstanceOf(RunAndLearnScoreMismatchException.class);
     }

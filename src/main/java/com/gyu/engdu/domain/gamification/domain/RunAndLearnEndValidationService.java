@@ -21,14 +21,14 @@ public class RunAndLearnEndValidationService {
      **/
     public void validate(
             RunAndLearnSession session,
-            Long maxQuestionId,
+            int totalQuestions,
             List<SubmittedAnswer> submittedAnswers,
             List<RunAndLearnQuestion> expectedQuestions,
             int clientTotalScore) {
 
         validateQuestionSequence(submittedAnswers, expectedQuestions);
 
-        validateAnswers(submittedAnswers, expectedQuestions, maxQuestionId);
+        validateAnswers(submittedAnswers, expectedQuestions, totalQuestions);
 
         int correctCount = submittedAnswers.size() - 1;
         validateTotalScore(clientTotalScore, correctCount);
@@ -51,7 +51,7 @@ public class RunAndLearnEndValidationService {
     // 사용자가 푼 답안들이 올바른 답인지 검증. 단, 마지막 문제는 오답만 가능
     private void validateAnswers(List<SubmittedAnswer> submittedAnswers,
             List<RunAndLearnQuestion> expectedQuestions,
-            Long maxQuestionId) {
+            int totalQuestions) {
         int submitCount = submittedAnswers.size();
 
         for (int i = 0; i < submitCount - 1; i++) {
@@ -72,7 +72,7 @@ public class RunAndLearnEndValidationService {
 
         // 마지막 문제가 맞다면 정상적인 게임 종료 방법이 아님
         if (isLastCorrect) {
-            if (submitCount == maxQuestionId.intValue()) {
+            if (submitCount == totalQuestions) {
                 throw new RunAndLearnAllCorrectException();
             }
             throw new RunAndLearnInvalidEndException();
