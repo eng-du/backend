@@ -53,6 +53,10 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+	//카페인 캐시
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'com.github.ben-manes.caffeine:caffeine'
+
 	//AWS SQS
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.3.0'
 	implementation 'software.amazon.awssdk:sqs:2.29.52'
