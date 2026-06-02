@@ -8,6 +8,7 @@ public record EngduSummaryResponse(
     String title,
     String topic,
     Integer solvedCount,
+    Integer totalCount,
     Boolean isAllSolved,
     LocalDateTime createdAt) {
 
@@ -17,6 +18,7 @@ public record EngduSummaryResponse(
         engdu.getTitle(),
         engdu.getTopic(),
         engdu.getSolvedCount(),
+        4,
         engdu.isAllSolved(),
         engdu.getCreatedAt());
   }

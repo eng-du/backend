@@ -134,6 +134,19 @@ CREATE TABLE `run_and_learn_question` (
     `explanation` VARCHAR(255) NULL
 ) ENGINE=InnoDB;
 
+-- RunAndLearnRanking Table
+CREATE TABLE `run_and_learn_ranking` (
+    `run_and_learn_ranking_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `ranking_type` VARCHAR(255) NOT NULL,
+    `season` INT NOT NULL,
+    `best_score` INT NOT NULL,
+    `achieved_at` DATETIME(6) NOT NULL,
+    `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT `unique_user_ranking_season` UNIQUE (`user_id`, `ranking_type`, `season`)
+) ENGINE=InnoDB;
+
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
@@ -146,4 +159,5 @@ CREATE INDEX idx_question_part_id ON `question` (`part_id`);
 CREATE INDEX idx_choice_question_id ON `choice` (`question_id`);
 CREATE INDEX idx_message_status ON `message` (`status`);
 CREATE INDEX idx_run_and_learn_session_user_id ON `run_and_learn_session` (`user_id`);
+CREATE INDEX idx_run_and_learn_ranking_lookup ON `run_and_learn_ranking` (`ranking_type`, `season`, `best_score` DESC, `achieved_at` ASC);
 -- **************************************** INDEX END ****************************************
