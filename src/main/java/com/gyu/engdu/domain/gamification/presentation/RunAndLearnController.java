@@ -6,6 +6,7 @@ import com.gyu.engdu.domain.gamification.application.RunAndLearnQueryService;
 import com.gyu.engdu.domain.gamification.application.StartRunAndLearnSessionService;
 import com.gyu.engdu.domain.gamification.application.dto.request.EndRunAndLearnSessionRequest;
 import com.gyu.engdu.domain.gamification.application.dto.response.CreateRunAndLearnSessionResponse;
+import com.gyu.engdu.domain.gamification.application.dto.response.EndRunAndLearnSessionResponse;
 import com.gyu.engdu.domain.gamification.application.dto.response.RunAndLearnQuestionResponse;
 import com.gyu.engdu.domain.gamification.application.dto.response.StartRunAndLearnSessionResponse;
 import com.gyu.engdu.domain.gamification.presentation.dto.request.RunAndLearnQuestionRequest;
@@ -65,12 +66,12 @@ public class RunAndLearnController {
     }
 
     @PostMapping("/{sessionId}/end")
-    public ResponseEntity<Void> endSession(@PathVariable("sessionId") Long sessionId,
+    public ResponseEntity<EndRunAndLearnSessionResponse> endSession(@PathVariable("sessionId") Long sessionId,
             @AuthenticationPrincipal(expression = "userId") Long userId,
             @Valid @RequestBody EndRunAndLearnSessionRequest request) {
 
-        endRunAndLearnSessionService.endSession(userId, sessionId, request, LocalDateTime.now());
+        EndRunAndLearnSessionResponse response = endRunAndLearnSessionService.endSession(userId, sessionId, request, LocalDateTime.now());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 }
