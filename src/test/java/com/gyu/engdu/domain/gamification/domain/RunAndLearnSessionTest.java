@@ -149,6 +149,34 @@ class RunAndLearnSessionTest {
                 .hasMessage(ErrorCode.RUN_AND_LEARN_INVALID_PLAY.getMessage());
     }
 
+    @Test
+    @DisplayName("종료 상태인 세션을 검증하면 통과한다.")
+    void validateEndedStatus1() {
+        // given
+        User user = createUser(1L);
+        RunAndLearnSession session = RunAndLearnSession.of(user, 12345);
+        session.start(LocalDateTime.now());
+        session.end(50, LocalDateTime.now());
+
+        // when & then
+        assertThatCode(session::validateEndedStatus)
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("종료 상태가 아닌 세션을 검증하면 예외가 발생한다.")
+    void validateEndedStatus2() {
+        // given
+        User user = createUser(1L);
+        RunAndLearnSession session = RunAndLearnSession.of(user, 12345);
+        session.start(LocalDateTime.now());
+
+        // when & then
+        assertThatThrownBy(session::validateEndedStatus)
+                .isInstanceOf(InvalidRunAndLearnStatusException.class)
+                .hasMessage(ErrorCode.RUN_AND_LEARN_INVALID_PLAY.getMessage());
+    }
+
     private User createUser(Long id) {
         User user = User.builder()
                 .email("test@test.com")

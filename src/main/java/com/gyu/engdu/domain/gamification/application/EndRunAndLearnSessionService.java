@@ -26,14 +26,17 @@ public class EndRunAndLearnSessionService {
     private final RunAndLearnEndValidationService runAndLearnEndValidationService;
     private final UpdateRunAndLearnRankingService updateRunAndLearnRankingService;
 
-    public EndRunAndLearnSessionResponse endSession(Long userId, Long sessionId, EndRunAndLearnSessionRequest request,
-            LocalDateTime endTime) {
+    public void endSession(
+            Long userId, Long sessionId, EndRunAndLearnSessionRequest request,
+            LocalDateTime endTime
+    ) {
         // 세션 조회 및 소유자 검증
         RunAndLearnSession session = runAndLearnQueryService.findExistingSession(sessionId);
         session.validateOwner(userId);
 
         // 캐시에서 세션의 문제 순서 가져오기
-        List<Long> expectedSessionQuestionIds = runAndLearnCacheService.getSessionQuestionIds(sessionId,
+        List<Long> expectedSessionQuestionIds = runAndLearnCacheService.getSessionQuestionIds(
+                sessionId,
                 session.getSeed());
 
         int totalQuestions = expectedSessionQuestionIds.size();
@@ -56,11 +59,7 @@ public class EndRunAndLearnSessionService {
 
         session.end(request.clientTotalScore(), endTime);
         runAndLearnCacheService.removeSessionQuestionIds(sessionId);
-
-        RunAndLearnRankingResult ranks = updateRunAndLearnRankingService.updateAndGetRanks(
-                session.getUser(), request.clientTotalScore(), endTime);
-
-        return EndRunAndLearnSessionResponse.of(ranks.weeklyRank(), ranks.allTimeRank());
+        updateRunAndLearnRankingService.updateRanking(session.getUser(), request.clientTotalScore(), endTime);
     }
 
     private void validateSubmitCount(int submitCount, int totalQuestions) {
