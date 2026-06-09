@@ -51,13 +51,33 @@ public class RunAndLearnRanking extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime achievedAt;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private RunAndLearnRanking(User user, RankingType rankingType, int season, int bestScore, LocalDateTime achievedAt) {
         this.user = user;
         this.rankingType = rankingType;
         this.season = season;
         this.bestScore = bestScore;
         this.achievedAt = achievedAt;
+    }
+
+    public static RunAndLearnRanking createWeeklyRanking(User user, int season, int bestScore, LocalDateTime achievedAt) {
+        return RunAndLearnRanking.builder()
+                .user(user)
+                .rankingType(RankingType.WEEKLY)
+                .season(season)
+                .bestScore(bestScore)
+                .achievedAt(achievedAt)
+                .build();
+    }
+
+    public static RunAndLearnRanking createAllTimeRanking(User user, int bestScore, LocalDateTime achievedAt) {
+        return RunAndLearnRanking.builder()
+                .user(user)
+                .rankingType(RankingType.ALL_TIME)
+                .season(0) // 역대 랭킹은 시즌을 0으로 고정
+                .bestScore(bestScore)
+                .achievedAt(achievedAt)
+                .build();
     }
 
     public void updateScoreIfHigher(int newScore, LocalDateTime achievedAt) {

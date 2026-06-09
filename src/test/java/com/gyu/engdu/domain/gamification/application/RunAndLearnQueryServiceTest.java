@@ -11,10 +11,18 @@ import com.gyu.engdu.domain.gamification.domain.RunAndLearnQuestion;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnQuestionRepository;
 import com.gyu.engdu.domain.gamification.exception.RunAndLearnQuestionExhaustedException;
 import com.gyu.engdu.domain.gamification.exception.RunAndLearnQuestionNotFoundException;
+import com.gyu.engdu.domain.gamification.exception.InvalidRunAndLearnStatusException;
 import com.gyu.engdu.domain.gamification.application.dto.response.RunAndLearnQuestionResponse;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.gamification.domain.RunAndLearnRanking;
+import com.gyu.engdu.domain.gamification.domain.RunAndLearnRankingRepository;
+import com.gyu.engdu.domain.gamification.domain.RunAndLearnSeasonCalculator;
+import com.gyu.engdu.domain.gamification.domain.enums.RankingType;
+import com.gyu.engdu.domain.gamification.application.dto.response.SessionRankingDto;
+import com.gyu.engdu.domain.gamification.application.dto.response.LeaderboardEntryDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,6 +44,9 @@ class RunAndLearnQueryServiceTest extends IntegrationTestSupport {
 
         @Autowired
         private RunAndLearnQuestionRepository runAndLearnQuestionRepository;
+
+        @Autowired
+        private RunAndLearnRankingRepository runAndLearnRankingRepository;
 
         @Autowired
         private UserRepository userRepository;
@@ -184,4 +195,85 @@ class RunAndLearnQueryServiceTest extends IntegrationTestSupport {
                                 .collect(Collectors.toList());
                 runAndLearnQuestionRepository.saveAll(questions);
         }
+
+        @Test
+        @DisplayName("주간 리더보드 Top K를 조회할 수 있다.")
+        void getTopKRanking() {
+                // given
+                int lowerScore = 100;
+                int higherScore = 200;
+                int topK = 5;
+                int currentSeason = RunAndLearnSeasonCalculator.calculateSeason(LocalDateTime.now());
+                User user1 = userRepository.save(createUser("email1", "sub1", "user1"));
+                User user2 = userRepository.save(createUser("email2", "sub2", "user2"));
+
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user1, currentSeason, lowerScore,
+                                                LocalDateTime.now()));
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user2, currentSeason, higherScore,
+                                                LocalDateTime.now()));
+
+                // when
+                List<LeaderboardEntryDto> result = runAndLearnQueryService.getTopKRanking(RankingType.WEEKLY, topK);
+
+                // then
+                assertThat(result).hasSize(2);
+                assertThat(result.get(0).rankingInfo().userName()).isEqualTo("user2");
+                assertThat(result.get(0).rankingInfo().bestScore()).isEqualTo(higherScore);
+                assertThat(result.get(1).rankingInfo().userName()).isEqualTo("user1");
+                assertThat(result.get(1).rankingInfo().bestScore()).isEqualTo(lowerScore);
+        }
+
+        @Test
+        @DisplayName("내 최고 랭킹 정보를 조회할 수 있다.")
+        void getMyRanking() {
+                // given
+                int lowerScore = 100;
+                int higherScore = 200;
+                int expectedRank = 2;
+                int currentSeason = RunAndLearnSeasonCalculator.calculateSeason(LocalDateTime.now());
+                User user1 = userRepository.save(createUser("myEmail@test.com", "mySub", "myName"));
+                User user2 = userRepository.save(createUser("other@test.com", "otherSub", "otherName"));
+
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user1, currentSeason, lowerScore,
+                                                LocalDateTime.now()));
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user2, currentSeason, higherScore,
+                                                LocalDateTime.now()));
+
+                // when
+                LeaderboardEntryDto result = runAndLearnQueryService.getMyRanking(user1.getId(), RankingType.WEEKLY);
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.rank()).isEqualTo(expectedRank);
+                assertThat(result.rankingInfo().userName()).isEqualTo("myName");
+                assertThat(result.rankingInfo().bestScore()).isEqualTo(lowerScore);
+        }
+
+        @Test
+        @DisplayName("특정 점수를 기반으로 예상 등수를 조회할 수 있다.")
+        void getExpectedRanking() {
+                // given
+                int myScore = 300;
+                int higherScore = 500;
+                int expectedRank = 2;
+                int currentSeason = RunAndLearnSeasonCalculator.calculateSeason(LocalDateTime.now());
+                User otherUser = userRepository.save(createUser("email4", "sub4", "otherUser"));
+
+                // 나보다 높은 점수를 가진 유저 1명 저장
+                runAndLearnRankingRepository
+                                .save(RunAndLearnRanking.createWeeklyRanking(otherUser, currentSeason, higherScore,
+                                                LocalDateTime.now()));
+
+                // when
+                SessionRankingDto result = runAndLearnQueryService.getExpectedRanking(myScore, RankingType.WEEKLY);
+
+                // then
+                assertThat(result.score()).isEqualTo(myScore);
+                assertThat(result.rank()).isEqualTo(expectedRank);
+        }
+
 }

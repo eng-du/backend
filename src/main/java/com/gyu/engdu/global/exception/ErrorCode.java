@@ -48,6 +48,7 @@ public enum ErrorCode {
   RUN_AND_LEARN_WRONG_ANSWER_BEFORE_END("GAMIFICATION-010", "오답이 발생했지만 게임이 종료되지 않았습니다."),
   RUN_AND_LEARN_INVALID_END("GAMIFICATION-011", "마지막 문제를 맞추었으나 게임이 비정상적으로 종료되었습니다."),
   RUN_AND_LEARN_SCORE_MISMATCH("GAMIFICATION-012", "클라이언트 점수와 서버에서 계산된 점수가 일치하지 않습니다."),
+  RUN_AND_LEARN_INVALID_SEASON_DATE("GAMIFICATION-013", "유효하지 않은 런앤런 시즌 날짜입니다."),
 
   // Spring Standard Errors
   INVALID_INPUT_VALUE("COMMON-001", "잘못된 입력값입니다."),
