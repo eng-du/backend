@@ -25,7 +25,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "run_and_learn_ranking", uniqueConstraints = {
-        @UniqueConstraint(name = "unique_user_ranking_season", columnNames = {"user_id", "ranking_type", "season"})
+        @UniqueConstraint(name = "unique_user_ranking_season", columnNames = {"user_id",
+                "ranking_type", "season"})
 })
 public class RunAndLearnRanking extends BaseEntity {
 
@@ -52,7 +53,13 @@ public class RunAndLearnRanking extends BaseEntity {
     private LocalDateTime achievedAt;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private RunAndLearnRanking(User user, RankingType rankingType, int season, int bestScore, LocalDateTime achievedAt) {
+    private RunAndLearnRanking(
+            User user,
+            RankingType rankingType,
+            int season,
+            int bestScore,
+            LocalDateTime achievedAt
+    ) {
         this.user = user;
         this.rankingType = rankingType;
         this.season = season;
@@ -60,7 +67,12 @@ public class RunAndLearnRanking extends BaseEntity {
         this.achievedAt = achievedAt;
     }
 
-    public static RunAndLearnRanking createWeeklyRanking(User user, int season, int bestScore, LocalDateTime achievedAt) {
+    public static RunAndLearnRanking createWeeklyRanking(
+            User user,
+            int season,
+            int bestScore,
+            LocalDateTime achievedAt
+    ) {
         return RunAndLearnRanking.builder()
                 .user(user)
                 .rankingType(RankingType.WEEKLY)
@@ -70,7 +82,11 @@ public class RunAndLearnRanking extends BaseEntity {
                 .build();
     }
 
-    public static RunAndLearnRanking createAllTimeRanking(User user, int bestScore, LocalDateTime achievedAt) {
+    public static RunAndLearnRanking createAllTimeRanking(
+            User user,
+            int bestScore,
+            LocalDateTime achievedAt
+    ) {
         return RunAndLearnRanking.builder()
                 .user(user)
                 .rankingType(RankingType.ALL_TIME)

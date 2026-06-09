@@ -45,7 +45,8 @@ public class RunAndLearnQueryService {
             Long userId,
             Long sessionId,
             int startIndex,
-            int count) {
+            int count
+    ) {
         // 세션 조회 후 사용자 검증
         RunAndLearnSession session = findExistingSession(sessionId);
         session.validateOwner(userId);

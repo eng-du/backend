@@ -3,7 +3,6 @@ package com.gyu.engdu.domain.gamification.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.gyu.engdu.IntegrationTestSupport;
-import com.gyu.engdu.domain.gamification.application.dto.response.RunAndLearnRankingResult;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnRanking;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnRankingRepository;
 import com.gyu.engdu.domain.gamification.domain.enums.RankingType;
@@ -36,10 +35,10 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         LocalDateTime endedAt = LocalDateTime.of(2026, 6, 1, 10, 0);
         int season1 = 1;
         int score = 100;
+        int expectedRank = 1;
 
         // when
-        RunAndLearnRankingResult result = updateRunAndLearnRankingService.updateAndGetRanks(user,
-                score, endedAt);
+        updateRunAndLearnRankingService.updateRanking(user, score, endedAt);
 
         // then
         RunAndLearnRanking weeklyRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
@@ -47,8 +46,13 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         RunAndLearnRanking allTimeRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
                 user.getId(), RankingType.ALL_TIME, 0).orElseThrow();
 
-        assertThat(result.weeklyRank()).isEqualTo(1);
-        assertThat(result.allTimeRank()).isEqualTo(1);
+        int weeklyRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.WEEKLY, season1, weeklyRanking.getBestScore()) + 1;
+        int allTimeRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.ALL_TIME, 0, allTimeRanking.getBestScore()) + 1;
+
+        assertThat(weeklyRank).isEqualTo(expectedRank);
+        assertThat(allTimeRank).isEqualTo(expectedRank);
         assertThat(weeklyRanking.getBestScore()).isEqualTo(score);
         assertThat(allTimeRanking.getBestScore()).isEqualTo(score);
     }
@@ -63,24 +67,34 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         User targetUser = userRepository.save(createUser("target@test.com", "target", "target"));
 
         LocalDateTime endedAt = LocalDateTime.of(2026, 6, 1, 10, 0);
+        int season1 = 1;
 
         int user1Score = 200;
         int user2Score = 200;
         int user3Score = 150;
         int targetScore = 100;
+        int expectedRank = 4;
 
-        updateRunAndLearnRankingService.updateAndGetRanks(user1, user1Score, endedAt);
-        updateRunAndLearnRankingService.updateAndGetRanks(user2, user2Score, endedAt);
-        updateRunAndLearnRankingService.updateAndGetRanks(user3, user3Score, endedAt);
+        updateRunAndLearnRankingService.updateRanking(user1, user1Score, endedAt);
+        updateRunAndLearnRankingService.updateRanking(user2, user2Score, endedAt);
+        updateRunAndLearnRankingService.updateRanking(user3, user3Score, endedAt);
 
         // when
-        RunAndLearnRankingResult result = updateRunAndLearnRankingService.updateAndGetRanks(
-                targetUser, targetScore,
-                endedAt);
+        updateRunAndLearnRankingService.updateRanking(targetUser, targetScore, endedAt);
 
         // then
-        assertThat(result.weeklyRank()).isEqualTo(4);
-        assertThat(result.allTimeRank()).isEqualTo(4);
+        RunAndLearnRanking weeklyRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
+                targetUser.getId(), RankingType.WEEKLY, season1).orElseThrow();
+        RunAndLearnRanking allTimeRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
+                targetUser.getId(), RankingType.ALL_TIME, 0).orElseThrow();
+
+        int weeklyRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.WEEKLY, season1, weeklyRanking.getBestScore()) + 1;
+        int allTimeRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.ALL_TIME, 0, allTimeRanking.getBestScore()) + 1;
+
+        assertThat(weeklyRank).isEqualTo(expectedRank);
+        assertThat(allTimeRank).isEqualTo(expectedRank);
     }
 
     @Test
@@ -93,17 +107,17 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         int initialScore = 100;
         int lowerScore = 50;
 
-        updateRunAndLearnRankingService.updateAndGetRanks(user, initialScore, endedAt);
+        updateRunAndLearnRankingService.updateRanking(user, initialScore, endedAt);
 
         // when
         LocalDateTime later = endedAt.plusMinutes(10);
-        updateRunAndLearnRankingService.updateAndGetRanks(user, lowerScore, later);
+        updateRunAndLearnRankingService.updateRanking(user, lowerScore, later);
 
         // then
         RunAndLearnRanking weeklyRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
                 user.getId(), RankingType.WEEKLY, season1).orElseThrow();
 
-        assertThat(weeklyRanking.getBestScore()).isEqualTo(100); // 50점으로 갱신되지 않음
+        assertThat(weeklyRanking.getBestScore()).isEqualTo(initialScore); // 50점으로 갱신되지 않음
         assertThat(weeklyRanking.getAchievedAt()).isEqualTo(endedAt); // 처음 달성한 시간 유지
     }
 
@@ -119,16 +133,14 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         int user1InitialScore = 100;
         int user2Score = 150;
         int user1HigherScore = 200;
+        int expectedRank = 1;
 
-        updateRunAndLearnRankingService.updateAndGetRanks(user1, user1InitialScore, endedAt);
-        updateRunAndLearnRankingService.updateAndGetRanks(user2, user2Score,
-                endedAt); // user2가 1등, user1이 2등
+        updateRunAndLearnRankingService.updateRanking(user1, user1InitialScore, endedAt);
+        updateRunAndLearnRankingService.updateRanking(user2, user2Score, endedAt); // user2가 1등, user1이 2등
 
         // when
         LocalDateTime later = endedAt.plusMinutes(10);
-        RunAndLearnRankingResult result = updateRunAndLearnRankingService.updateAndGetRanks(user1,
-                user1HigherScore,
-                later);
+        updateRunAndLearnRankingService.updateRanking(user1, user1HigherScore, later);
 
         // then
         RunAndLearnRanking weeklyRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
@@ -136,9 +148,14 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         RunAndLearnRanking allTimeRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
                 user1.getId(), RankingType.ALL_TIME, 0).orElseThrow();
 
-        assertThat(result.weeklyRank()).isEqualTo(1);
-        assertThat(result.allTimeRank()).isEqualTo(1);
-        assertThat(weeklyRanking.getBestScore()).isEqualTo(200);
+        int weeklyRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.WEEKLY, season1, weeklyRanking.getBestScore()) + 1;
+        int allTimeRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.ALL_TIME, 0, allTimeRanking.getBestScore()) + 1;
+
+        assertThat(weeklyRank).isEqualTo(expectedRank);
+        assertThat(allTimeRank).isEqualTo(expectedRank);
+        assertThat(weeklyRanking.getBestScore()).isEqualTo(user1HigherScore);
         assertThat(weeklyRanking.getAchievedAt()).isEqualTo(later);
     }
 
@@ -151,15 +168,14 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         User user = userRepository.save(createUser("user1@test.com", "sub1", "user1"));
         LocalDateTime season1Date = LocalDateTime.of(2026, 6, 1, 10, 0); // 시즌 1
         int season1Score = 100;
+        int expectedRank = 1;
 
-        updateRunAndLearnRankingService.updateAndGetRanks(user, season1Score, season1Date);
+        updateRunAndLearnRankingService.updateRanking(user, season1Score, season1Date);
 
         // when
         LocalDateTime season2Date = LocalDateTime.of(2026, 6, 8, 10, 0); // 시즌 2
         int season2HigherScore = 150;
-        RunAndLearnRankingResult result = updateRunAndLearnRankingService.updateAndGetRanks(user,
-                season2HigherScore,
-                season2Date);
+        updateRunAndLearnRankingService.updateRanking(user, season2HigherScore, season2Date);
 
         // then
         RunAndLearnRanking weeklyRankingSeason2 = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
@@ -168,10 +184,15 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         RunAndLearnRanking allTimeRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
                 user.getId(), RankingType.ALL_TIME, allTimeSeason).orElseThrow();
 
-        assertThat(result.weeklyRank()).isEqualTo(1);
-        assertThat(result.allTimeRank()).isEqualTo(1);
-        assertThat(weeklyRankingSeason2.getBestScore()).isEqualTo(150);
-        assertThat(allTimeRanking.getBestScore()).isEqualTo(150);
+        int weeklyRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.WEEKLY, season2, weeklyRankingSeason2.getBestScore()) + 1;
+        int allTimeRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.ALL_TIME, allTimeSeason, allTimeRanking.getBestScore()) + 1;
+
+        assertThat(weeklyRank).isEqualTo(expectedRank);
+        assertThat(allTimeRank).isEqualTo(expectedRank);
+        assertThat(weeklyRankingSeason2.getBestScore()).isEqualTo(season2HigherScore);
+        assertThat(allTimeRanking.getBestScore()).isEqualTo(season2HigherScore);
     }
 
     @Test
@@ -182,15 +203,14 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         LocalDateTime season1Date = LocalDateTime.of(2026, 6, 1, 10, 0); // 시즌 1
         int season1Score = 100;
         int season2 = 2;
+        int expectedRank = 1;
 
-        updateRunAndLearnRankingService.updateAndGetRanks(user, season1Score, season1Date);
+        updateRunAndLearnRankingService.updateRanking(user, season1Score, season1Date);
 
         // when
         LocalDateTime season2Date = LocalDateTime.of(2026, 6, 8, 10, 0); // 시즌 2 (1주일 뒤)
         int season2LowerScore = 50;
-        RunAndLearnRankingResult result = updateRunAndLearnRankingService.updateAndGetRanks(user,
-                season2LowerScore,
-                season2Date);
+        updateRunAndLearnRankingService.updateRanking(user, season2LowerScore, season2Date);
 
         // then
         RunAndLearnRanking weeklyRankingSeason2 = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
@@ -199,10 +219,15 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
         RunAndLearnRanking allTimeRanking = runAndLearnRankingRepository.findByUserIdAndRankingTypeAndSeason(
                 user.getId(), RankingType.ALL_TIME, 0).orElseThrow();
 
-        assertThat(result.weeklyRank()).isEqualTo(1); // 시즌 2에서는 50점이라도 혼자이므로 1등
-        assertThat(result.allTimeRank()).isEqualTo(1); // 역대 100점 기준으로 1등
-        assertThat(weeklyRankingSeason2.getBestScore()).isEqualTo(50); // 주간은 50점
-        assertThat(allTimeRanking.getBestScore()).isEqualTo(100); // 역대는 100점 유지
+        int weeklyRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.WEEKLY, season2, weeklyRankingSeason2.getBestScore()) + 1;
+        int allTimeRank = runAndLearnRankingRepository.countByRankingTypeAndSeasonAndBestScoreGreaterThan(
+                RankingType.ALL_TIME, 0, allTimeRanking.getBestScore()) + 1;
+
+        assertThat(weeklyRank).isEqualTo(expectedRank);
+        assertThat(allTimeRank).isEqualTo(expectedRank);
+        assertThat(weeklyRankingSeason2.getBestScore()).isEqualTo(season2LowerScore);
+        assertThat(allTimeRanking.getBestScore()).isEqualTo(season1Score); // 역대는 100점 유지
     }
 
     private User createUser(String email, String sub, String name) {
