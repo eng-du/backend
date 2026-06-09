@@ -105,18 +105,16 @@ public class RunAndLearnQueryService {
         List<LeaderboardEntryDto> leaderboard = new ArrayList<>();
 
         // 동점자는 같은 순위, 점수가 낮아지면 다음 순위로 갱신
-        int previousScore = -1;
         int displayRank = 1;
 
         for (int i = 0; i < dtos.size(); i++) {
             RankingInfoDto dto = dtos.get(i);
 
-            if (previousScore != -1 && dto.bestScore() < previousScore) {
+            if (i > 0 && dto.bestScore() < dtos.get(i - 1).bestScore()) {
                 displayRank = i + 1;
             }
 
             leaderboard.add(LeaderboardEntryDto.of(displayRank, dto));
-            previousScore = dto.bestScore();
         }
 
         return leaderboard;

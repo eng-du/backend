@@ -226,6 +226,53 @@ class RunAndLearnQueryServiceTest extends IntegrationTestSupport {
         }
 
         @Test
+        @DisplayName("주간 리더보드 조회 시 동점자가 존재하면, 공동 순위를 부여하고 다음 순위는 건너뛴다.")
+        void getTopKRankingWithTies() {
+                // given
+                int firstPlaceScore = 200;
+                int thirdPlaceScore = 100;
+                int topK = 5;
+                int currentSeason = RunAndLearnSeasonCalculator.calculateSeason(LocalDateTime.now());
+
+                User user1 = userRepository.save(createUser("email1", "sub1", "user1"));
+                User user2 = userRepository.save(createUser("email2", "sub2", "user2"));
+                User user3 = userRepository.save(createUser("email3", "sub3", "user3"));
+
+                // user1과 user2는 동일한 최고 점수(200), user3은 더 낮은 점수(100)
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user1, currentSeason, firstPlaceScore,
+                                                LocalDateTime.now()));
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user2, currentSeason, firstPlaceScore,
+                                                LocalDateTime.now()));
+                runAndLearnRankingRepository.save(
+                                RunAndLearnRanking.createWeeklyRanking(user3, currentSeason, thirdPlaceScore,
+                                                LocalDateTime.now()));
+
+                // when
+                List<LeaderboardEntryDto> result = runAndLearnQueryService.getTopKRanking(RankingType.WEEKLY, topK);
+
+                // then
+                int expectedSize = 3;
+                int expectedFirstRank = 1;
+                int expectedThirdRank = 3;
+
+                assertThat(result).hasSize(expectedSize);
+
+                // 첫 번째 유저 (1등, 200점)
+                assertThat(result.get(0).rank()).isEqualTo(expectedFirstRank);
+                assertThat(result.get(0).rankingInfo().bestScore()).isEqualTo(firstPlaceScore);
+
+                // 두 번째 유저 (1등, 200점 - 동점)
+                assertThat(result.get(1).rank()).isEqualTo(expectedFirstRank);
+                assertThat(result.get(1).rankingInfo().bestScore()).isEqualTo(firstPlaceScore);
+
+                // 세 번째 유저 (3등, 100점 - 순위 건너뜀)
+                assertThat(result.get(2).rank()).isEqualTo(expectedThirdRank);
+                assertThat(result.get(2).rankingInfo().bestScore()).isEqualTo(thirdPlaceScore);
+        }
+
+        @Test
         @DisplayName("내 최고 랭킹 정보를 조회할 수 있다.")
         void getMyRanking() {
                 // given
