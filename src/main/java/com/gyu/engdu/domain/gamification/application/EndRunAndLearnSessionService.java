@@ -2,6 +2,8 @@ package com.gyu.engdu.domain.gamification.application;
 
 import com.gyu.engdu.domain.gamification.application.cache.RunAndLearnCacheService;
 import com.gyu.engdu.domain.gamification.application.dto.request.EndRunAndLearnSessionRequest;
+import com.gyu.engdu.domain.gamification.application.dto.response.EndRunAndLearnSessionResponse;
+import com.gyu.engdu.domain.gamification.application.dto.response.RunAndLearnRankingResult;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnEndValidationService;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnQuestion;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnSession;

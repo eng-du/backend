@@ -82,9 +82,9 @@ public class RunAndLearnController {
             @Valid @RequestBody EndRunAndLearnSessionRequest request
     ) {
 
-        endRunAndLearnSessionService.endSession(userId, sessionId, request, LocalDateTime.now());
+        EndRunAndLearnSessionResponse response = endRunAndLearnSessionService.endSession(userId, sessionId, request, LocalDateTime.now());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/leaderboard")
