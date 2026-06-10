@@ -21,6 +21,6 @@ public class StartRunAndLearnSessionService {
         session.validateOwner(userId);
         session.start(startTime);
 
-        return StartRunAndLearnSessionResponse.of(startTime);
+        return StartRunAndLearnSessionResponse.of(sessionId, startTime);
     }
 }
