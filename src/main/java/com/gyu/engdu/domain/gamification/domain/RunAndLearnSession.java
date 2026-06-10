@@ -91,4 +91,9 @@ public class RunAndLearnSession extends BaseEntity {
         this.status = RunAndLearnSessionStatus.ENDED;
     }
 
+    public void validateEndedStatus() {
+        if (this.status != RunAndLearnSessionStatus.ENDED) {
+            throw new InvalidRunAndLearnStatusException(this.status);
+        }
+    }
 }
