@@ -111,6 +111,42 @@ CREATE TABLE `message` (
     `trace_id` VARCHAR(255) NULL
 ) ENGINE=InnoDB;
 
+-- RunAndLearnSession Table
+CREATE TABLE `run_and_learn_session` (
+    `run_and_learn_session_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT,
+    `seed` INT NOT NULL,
+    `score` INT NOT NULL,
+    `started_at` DATETIME(6) NULL,
+    `ended_at` DATETIME(6) NULL,
+    `created_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updated_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+) ENGINE=InnoDB;
+
+-- RunAndLearnQuestion Table
+CREATE TABLE `run_and_learn_question` (
+    `run_and_learn_question_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `question` VARCHAR(255) NOT NULL,
+    `answer` INT NOT NULL,
+    `choice1` VARCHAR(255) NOT NULL,
+    `choice2` VARCHAR(255) NOT NULL,
+    `choice3` VARCHAR(255) NOT NULL,
+    `explanation` VARCHAR(255) NULL
+) ENGINE=InnoDB;
+
+-- RunAndLearnRanking Table
+CREATE TABLE `run_and_learn_ranking` (
+    `run_and_learn_ranking_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` BIGINT NOT NULL,
+    `ranking_type` VARCHAR(255) NOT NULL,
+    `season` INT NOT NULL,
+    `best_score` INT NOT NULL,
+    `achieved_at` DATETIME(6) NOT NULL,
+    `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    CONSTRAINT `unique_user_ranking_season` UNIQUE (`user_id`, `ranking_type`, `season`)
+) ENGINE=InnoDB;
+
 -- **************************************** TABLE END****************************************
 
 -- **************************************** INDEX START ****************************************
@@ -122,4 +158,6 @@ CREATE INDEX idx_article_chunk_article_id ON `article_chunk` (`article_id`);
 CREATE INDEX idx_question_part_id ON `question` (`part_id`);
 CREATE INDEX idx_choice_question_id ON `choice` (`question_id`);
 CREATE INDEX idx_message_status ON `message` (`status`);
+CREATE INDEX idx_run_and_learn_session_user_id ON `run_and_learn_session` (`user_id`);
+CREATE INDEX idx_run_and_learn_ranking_lookup ON `run_and_learn_ranking` (`ranking_type`, `season`, `best_score` DESC, `achieved_at` ASC);
 -- **************************************** INDEX END ****************************************

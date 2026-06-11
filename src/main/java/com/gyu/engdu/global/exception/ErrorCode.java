@@ -35,8 +35,20 @@ public enum ErrorCode {
   QUESTION_FORBIDDEN_ACCESS("QUESTION-001", "해당 잉듀가 갖고있는 문제가 아닙니다."),
   QUESTION_ALREADY_SOLVED("QUESTION-002", "이미 해결한 문제입니다."),
 
-  // Learning
-  PHRASAL_NOT_FOUND("LEARNING-001", "구동사가 존재하지 않습니다."),
+  // Gamification
+  PHRASAL_NOT_FOUND("GAMIFICATION-001", "구동사가 존재하지 않습니다."),
+  RUN_AND_LEARN_NOT_FOUND("GAMIFICATION-002", "스피드 퀴즈 세션이 존재하지 않습니다."),
+  RUN_AND_LEARN_FORBIDDEN_ACCESS("GAMIFICATION-003", "사용자의 스피드 퀴즈 세션이 아닙니다."),
+  RUN_AND_LEARN_ALREADY_STARTED("GAMIFICATION-004", "이미 시작된 스피드 퀴즈 세션입니다."),
+  RUN_AND_LEARN_QUESTION_NOT_FOUND("GAMIFICATION-005", "런앤런 문제가 존재하지 않습니다."),
+  RUN_AND_LEARN_QUESTION_EXHAUSTED("GAMIFICATION-006", "더 이상 런앤런 문제가 남아있지 않습니다."),
+  RUN_AND_LEARN_INVALID_PLAY("GAMIFICATION-007", "비정상적인 런앤런 플레이가 감지되었습니다."),
+  RUN_AND_LEARN_ALL_CORRECT("GAMIFICATION-008", "모든 런앤런 문제를 맞추었습니다."),
+  RUN_AND_LEARN_SEQUENCE_MISMATCH("GAMIFICATION-009", "문제의 순서가 올바르지 않습니다."),
+  RUN_AND_LEARN_WRONG_ANSWER_BEFORE_END("GAMIFICATION-010", "오답이 발생했지만 게임이 종료되지 않았습니다."),
+  RUN_AND_LEARN_INVALID_END("GAMIFICATION-011", "마지막 문제를 맞추었으나 게임이 비정상적으로 종료되었습니다."),
+  RUN_AND_LEARN_SCORE_MISMATCH("GAMIFICATION-012", "클라이언트 점수와 서버에서 계산된 점수가 일치하지 않습니다."),
+  RUN_AND_LEARN_INVALID_SEASON_DATE("GAMIFICATION-013", "유효하지 않은 런앤런 시즌 날짜입니다."),
 
   // Spring Standard Errors
   INVALID_INPUT_VALUE("COMMON-001", "잘못된 입력값입니다."),

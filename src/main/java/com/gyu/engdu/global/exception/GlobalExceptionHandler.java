@@ -50,8 +50,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
   protected ResponseEntity<ErrorResponseEntity> handleMethodArgumentNotValid(
       org.springframework.web.bind.MethodArgumentNotValidException e) {
-    log.warn("Validation 에러: {}", e.getBindingResult().getAllErrors());
-    return ErrorResponseEntity.toResponseEntity(ErrorCode.INVALID_INPUT_VALUE, HttpStatus.BAD_REQUEST);
+    // 첫번째 에러의 메시지를 사용자에게 반환
+    String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+    log.warn("Validation 에러: {}", errorMessage);
+    return ErrorResponseEntity.toResponseEntity(ErrorCode.INVALID_INPUT_VALUE, errorMessage, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(org.springframework.web.servlet.NoHandlerFoundException.class)
