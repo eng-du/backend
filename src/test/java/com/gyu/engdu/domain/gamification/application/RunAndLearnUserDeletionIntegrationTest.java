@@ -11,12 +11,15 @@ import com.gyu.engdu.domain.user.application.DeleteUserService;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 class RunAndLearnUserDeletionIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
@@ -30,6 +33,9 @@ class RunAndLearnUserDeletionIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private RunAndLearnSessionRepository runAndLearnSessionRepository;
+
+    @Autowired
+    private EntityManager em;
 
     @Test
     @DisplayName("회원 탈퇴 시 RunAndLearnRanking과 RunAndLearnSession이 삭제된다")
@@ -51,6 +57,8 @@ class RunAndLearnUserDeletionIntegrationTest extends IntegrationTestSupport {
                 RunAndLearnRanking.createWeeklyRanking(otherUser, 1, 200, LocalDateTime.now()));
         runAndLearnSessionRepository.save(RunAndLearnSession.of(otherUser, 456));
 
+        em.flush();
+        em.clear();
         // when
         deleteUserService.delete(targetUser.getId());
 
