@@ -7,9 +7,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
+@Transactional
 class LogoutServiceTest extends IntegrationTestSupport {
 
   @Autowired
@@ -21,15 +21,15 @@ class LogoutServiceTest extends IntegrationTestSupport {
   @DisplayName("로그아웃시 사용자 기기의 리프레시 토큰 엔티티가 삭제된다.")
   @Test
   void logout() {
-    //given
+    // given
     String rawRefreshToken = "test_token";
     RefreshToken refreshToken = createRefreshToken(1L, rawRefreshToken);
     refreshTokenRepository.save(refreshToken);
 
-    //when
+    // when
     logoutService.logout(rawRefreshToken);
 
-    //then
+    // then
     boolean isDeleted = refreshTokenRepository.findByRawToken(rawRefreshToken).isEmpty();
     Assertions.assertThat(isDeleted).isTrue();
 

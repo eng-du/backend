@@ -33,4 +33,8 @@ public interface RunAndLearnRankingRepository extends JpaRepository<RunAndLearnR
             RankingType rankingType,
             int season, Pageable pageable
     );
+
+    void deleteByUserId(Long userId);
+
+    List<RunAndLearnRanking> findAllByUserId(Long userId);
 }
