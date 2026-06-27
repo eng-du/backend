@@ -65,7 +65,7 @@ public class GptEngduClient implements EngduClient {
         })
         .body(OpenAiResponse.class);
 
-    String json = response.output().get(1).content().get(0).text();
+    String json = response.output().get(0).content().get(0).text();
 
     if (response.usage() != null) {
       log.debug("GPT Token Usage - Total: {}, Prompt: {}, Completion: {}",
@@ -79,7 +79,7 @@ public class GptEngduClient implements EngduClient {
 
   private Map<String, Object> buildRequestBody(GenerateEngduRequest request) {
     Map<String, Object> requestBody = new HashMap<>();
-    requestBody.put("model", "gpt-5-mini");
+    requestBody.put("model", "gpt-5.1");
 
     PromptGenerator generator = promptGeneratorMap.get(request.step());
     if (generator == null) {
