@@ -31,18 +31,20 @@ public class InitialPromptGenerator implements PromptGenerator {
         return """
           ### 글 구조 요구사항
 
-          1. 기사(article)를 작성해라.
-              - 정보 전달 글(기사)을 1개 만들어라.
-              - 주제는 입력된 `topic`을 중심으로 하되,
-                **주제를 단순 정의하거나 전반적 설명을 하는 것이 아니라 현실 세계의 실제 사례를 선택해 다뤄라.**
-                예시: topic이 `game`이라면 "How Video Games Inspire Problem-Solving Skills",
-                "The Chemistry Behind Choclate's Smooth Texture"처럼 구체적 사례를 서술해라.
-                **이 예시는 본문의 방향을 보여줄 뿐이며, 내용을 그대로 출력하지 마라. 출력할 사례는 당신이 다채롭게 생각해야한다.**
-              - 난이도(level)에 맞는 어휘와 문장을 사용해라.
-              - 본문은 영어 word count로 150words로 작성해라 (±10%).
-              - 본문의 내용 마지막은 문장 형태로 끝이 나되 다음 본문과 스토리를 이어 나갈 수 있게 해라.
-              - 사용자가 독해하기 쉽게 문장을 청크 단위로 나눠야한다. 문장 하나가 청크가 되는 것이 아닌 문장을 이루고있는 단어들을 나누어 청크로 만드는 것에 주의해라. 예를들어, 'Social media platformsemerged as powerful toolsfor connecting individualsacross geographical boundaries.' 문장이 있을 때 'Social media platform', 'emerged as powerful tools', 'for connecting individuals', 'across geographical boundaries.' 이렇게 4개의 청크로 나눌 수 있다.
-              - 본문의 해석본도 적는다. 해석본은 한국어로 청크 단위로 작성해야한다. 말투는 서술형 평서문으로 작성해라.
+          1. 기사(article)를 작성한다.
+              - 영어 독해 학습을 위한 정보 전달형 글을 1개 작성한다.
+              - topic을 중심으로 내용을 작성한다.
+                - topic이 일반적인 개념이라면, 하나의 구체적인 사례·상황·현상·기술 적용 사례 등을 중심으로 내용을 전개한다.
+                - topic이 이미 구체적인 질문이나 사례라면, topic 자체를 중심으로 내용을 전개한다.
+              - 백과사전식 정의나 개념 나열이 아니라, 하나의 중심 흐름을 따라 자연스럽게 내용을 전개한다.
+              - level에 맞는 어휘와 문장을 사용한다.
+              - 본문은 영어 기준 145~155 단어로 작성한다.
+              - 마지막 문장은 다음 이야기를 자연스럽게 이어갈 수 있는 형태로 마무리한다.
+              - 본문은 문장 단위가 아닌 청크(chunk) 단위로 분리한다.
+                - 청크는 의미 단위로 분리한다.
+                - 하나의 문장은 일반적으로 2~5개의 청크로 나눈다.
+                - 명사구, 구동사, 전치사구, 관용 표현은 가능한 한 분리하지 않는다.
+              - 모든 청크는 영어와 이에 대응하는 한국어 번역을 함께 작성하며, 번역은 서술형 평서문으로 작성한다.
 
           2. 제목(title)을 작성해라.
               - 본문의 내용에 알맞은 제목을 영어로 작성해라.
@@ -64,7 +66,7 @@ public class InitialPromptGenerator implements PromptGenerator {
                 "article": {
                     "chunks": [
                       ["영어 청크1", "한국어 청크1"],
-                      ["영어 청크2", "한국어 청크2"],
+                      ["영어 청크2", "한국어 청크2"]
                     ]
                 },
                 "questions": [
