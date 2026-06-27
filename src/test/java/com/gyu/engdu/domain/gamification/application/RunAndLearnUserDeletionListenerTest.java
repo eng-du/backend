@@ -2,6 +2,7 @@ package com.gyu.engdu.domain.gamification.application;
 
 import static org.mockito.Mockito.verify;
 
+import com.gyu.engdu.domain.gamification.application.listener.RunAndLearnUserDeletionListener;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnRankingRepository;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnSessionRepository;
 import com.gyu.engdu.domain.user.domain.event.UserDeletedEvent;
