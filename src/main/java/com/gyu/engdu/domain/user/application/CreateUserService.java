@@ -3,7 +3,9 @@ package com.gyu.engdu.domain.user.application;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.user.domain.event.UserRegisteredEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +16,15 @@ public class CreateUserService {
 
   private final UserRepository userRepository;
   private final NameUserService nameUserService;
+  private final ApplicationEventPublisher eventPublisher;
+
   public User create(String sub, String email) {
     String name= nameUserService.getRandomName();
     User user = User.of(email, Role.ROLE_USER, sub, name);
     userRepository.save(user);
+
+    eventPublisher.publishEvent(new UserRegisteredEvent(user.getId(), user.getName()));
+
     return user;
   }
 }

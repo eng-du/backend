@@ -114,13 +114,14 @@ CREATE TABLE `message` (
 -- RunAndLearnSession Table
 CREATE TABLE `run_and_learn_session` (
     `run_and_learn_session_id` BIGINT AUTO_INCREMENT PRIMARY KEY,
+    `created_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    `modified_at` DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     `user_id` BIGINT,
     `seed` INT NOT NULL,
     `score` INT NOT NULL,
     `started_at` DATETIME(6) NULL,
     `ended_at` DATETIME(6) NULL,
-    `created_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-    `updated_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+    `status` VARCHAR(255) NOT NULL
 ) ENGINE=InnoDB;
 
 -- RunAndLearnQuestion Table
