@@ -9,6 +9,7 @@ import com.gyu.engdu.domain.gamification.domain.RunAndLearnSessionRepository;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,7 @@ class CreateRunAndLearnSessionServiceTest extends IntegrationTestSupport {
                 .role(Role.ROLE_USER)
                 .sub(sub)
                 .name(name)
+                .provider(OAuthProvider.GOOGLE)
                 .build();
     }
 }

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.domain.user.domain.event.UserDeletedEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,7 @@ class DeleteUserServiceTest {
                 .role(Role.ROLE_USER)
                 .sub(sub)
                 .name(name)
+                .provider(OAuthProvider.GOOGLE)
                 .build();
     }
 }

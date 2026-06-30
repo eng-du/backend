@@ -11,6 +11,7 @@ import com.gyu.engdu.domain.user.application.DeleteUserService;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -91,6 +92,7 @@ class RunAndLearnUserDeletionIntegrationTest extends IntegrationTestSupport {
                 .role(Role.ROLE_USER)
                 .sub(sub)
                 .name(name)
+                .provider(OAuthProvider.GOOGLE)
                 .build();
     }
 }
