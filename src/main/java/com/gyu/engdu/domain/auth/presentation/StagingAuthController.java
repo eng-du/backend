@@ -1,9 +1,10 @@
 package com.gyu.engdu.domain.auth.presentation;
 
 import com.gyu.engdu.domain.auth.application.FakeLoginService;
-import com.gyu.engdu.domain.auth.application.GoogleOAuthService;
+import com.gyu.engdu.domain.auth.application.OAuthLoginService;
 import com.gyu.engdu.domain.auth.application.dto.response.AuthTokenServiceResponse;
 import com.gyu.engdu.domain.auth.presentation.dto.response.AuthTokenResponse;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ public class StagingAuthController {
 
   private static final long REFRESH_TOKEN_MAX_AGE_SECONDS = 14 * 24 * 60 * 60;
   private static final long FAKE_LOGIN_USER_ID = 1L;
-  private final GoogleOAuthService googleOAuthService;
+  private final OAuthLoginService oauthLoginService;
   private final FakeLoginService fakeLoginService;
 
   @Value("${oauth.google.local-login-uri}")
@@ -44,7 +45,8 @@ public class StagingAuthController {
 
   @GetMapping("/local/signup/oauth")
   public ResponseEntity<AuthTokenResponse> loginByGoogleLocal(@RequestParam("code") String code) {
-    AuthTokenServiceResponse authTokenServiceResponse = googleOAuthService.signUp(code,
+    OAuthProvider provider = OAuthProvider.GOOGLE;
+    AuthTokenServiceResponse authTokenServiceResponse = oauthLoginService.login(provider, code,
         localRedirectUri);
     ResponseCookie cookie = createCookie(authTokenServiceResponse.refreshToken().getRawToken(),
         REFRESH_TOKEN_MAX_AGE_SECONDS);
