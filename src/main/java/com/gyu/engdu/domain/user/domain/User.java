@@ -1,6 +1,7 @@
 package com.gyu.engdu.domain.user.domain;
 
 import com.gyu.engdu.domain.BaseEntity;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.domain.user.exception.UserNameTooLongException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
-    @UniqueConstraint(name = "unique_sub", columnNames = { "sub" }) })
+    @UniqueConstraint(name = "unique_provider_sub", columnNames = { "provider", "sub" }) })
 
 public class User extends BaseEntity {
 
@@ -39,20 +40,26 @@ public class User extends BaseEntity {
   @Enumerated(value = EnumType.STRING)
   private Role role;
 
+  @Enumerated(value = EnumType.STRING)
+  @Column(nullable = false)
+  private OAuthProvider provider;
+
   @Builder
-  private User(String email, Role role, String sub, String name) {
+  private User(String email, Role role, String sub, String name, OAuthProvider provider) {
     this.email = email;
     this.role = role;
     this.sub = sub;
     this.name = name;
+    this.provider = provider;
   }
 
-  public static User of(String email, Role role, String sub, String name) {
+  public static User of(String email, Role role, String sub, String name, OAuthProvider provider) {
     return User.builder()
         .email(email)
         .role(role)
         .sub(sub)
         .name(name)
+        .provider(provider)
         .build();
   }
 

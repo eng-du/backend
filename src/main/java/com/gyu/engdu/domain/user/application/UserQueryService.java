@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.user.application;
 
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.domain.user.application.dto.response.UserDetailResponse;
 import com.gyu.engdu.domain.user.application.dto.response.UserSummaryResponse;
 import com.gyu.engdu.domain.user.domain.User;
@@ -15,8 +16,8 @@ public class UserQueryService {
 
   private final UserRepository userRepository;
 
-  public Optional<User> findUserBySub(String sub) {
-    return userRepository.findBySub(sub);
+  public Optional<User> findByProviderAndSub(OAuthProvider provider, String sub) {
+    return userRepository.findByProviderAndSub(provider, sub);
   }
 
   public User findExistingUser(Long userId) {

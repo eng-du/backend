@@ -1,5 +1,6 @@
 package com.gyu.engdu.domain.user.application;
 
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
@@ -14,9 +15,9 @@ public class CreateUserService {
 
   private final UserRepository userRepository;
   private final NameUserService nameUserService;
-  public User create(String sub, String email) {
-    String name= nameUserService.getRandomName();
-    User user = User.of(email, Role.ROLE_USER, sub, name);
+  public User create(OAuthProvider provider, String sub, String email) {
+    String name = nameUserService.getRandomName();
+    User user = User.of(email, Role.ROLE_USER, sub, name, provider);
     userRepository.save(user);
     return user;
   }
