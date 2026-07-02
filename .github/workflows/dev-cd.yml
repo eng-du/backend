@@ -45,15 +45,15 @@ jobs:
           docker push $IMAGE_NAME:$TAG
           docker push $IMAGE_NAME:latest
 
-      - name: NCP에 배포
+      - name: EC2에 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.NCP_HOST }}
-          username: ${{ secrets.NCP_USER }}
-          password: ${{ secrets.NCP_PASSWORD }}
+          host: ${{ secrets.EC2_HOST_STAGING }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY_STAGING }}
           script: |
             set -e
-            cd /monitoring/engdu-dev
+            cd /home/${{ secrets.EC2_USER }}/engdu
 
             # (옵션) 레지스트리 로그인 필요 시
             sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
