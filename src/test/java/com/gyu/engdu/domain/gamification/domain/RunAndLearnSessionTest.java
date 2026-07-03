@@ -10,6 +10,7 @@ import com.gyu.engdu.domain.gamification.exception.RunAndLearnSessionAlreadyStar
 import com.gyu.engdu.domain.gamification.exception.RunAndLearnSessionForbiddenAccessException;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.global.exception.ErrorCode;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -183,6 +184,7 @@ class RunAndLearnSessionTest {
                 .role(Role.ROLE_USER)
                 .sub("sub123")
                 .name("testUser")
+                .provider(OAuthProvider.GOOGLE)
                 .build();
         ReflectionTestUtils.setField(user, "id", id);
         return user;

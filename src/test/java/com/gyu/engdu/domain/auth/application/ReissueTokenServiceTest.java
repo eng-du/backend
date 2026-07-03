@@ -12,6 +12,7 @@ import com.gyu.engdu.domain.auth.exception.RefreshTokenNotFoundException;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -131,6 +132,7 @@ class ReissueTokenServiceTest extends IntegrationTestSupport {
         .name("test")
         .role(role)
         .sub(sub)
+        .provider(OAuthProvider.GOOGLE)
         .build();
   }
 }

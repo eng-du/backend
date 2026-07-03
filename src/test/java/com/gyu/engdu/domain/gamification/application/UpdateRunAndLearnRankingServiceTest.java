@@ -9,6 +9,7 @@ import com.gyu.engdu.domain.gamification.domain.enums.RankingType;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
 import com.gyu.engdu.domain.user.domain.UserRepository;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -236,6 +237,7 @@ class UpdateRunAndLearnRankingServiceTest extends IntegrationTestSupport {
                 .role(Role.ROLE_USER)
                 .sub(sub)
                 .name(name)
+                .provider(OAuthProvider.GOOGLE)
                 .build();
     }
 }

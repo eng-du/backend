@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.gyu.engdu.domain.gamification.domain.enums.RankingType;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -111,6 +112,7 @@ class RunAndLearnRankingTest {
                 .role(Role.ROLE_USER)
                 .sub("sub123")
                 .name("testUser")
+                .provider(OAuthProvider.GOOGLE)
                 .build();
     }
 }

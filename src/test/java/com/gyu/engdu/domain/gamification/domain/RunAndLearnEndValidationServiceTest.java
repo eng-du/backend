@@ -11,6 +11,7 @@ import com.gyu.engdu.domain.gamification.exception.RunAndLearnSequenceMismatchEx
 import com.gyu.engdu.domain.gamification.exception.RunAndLearnWrongAnswerBeforeEndException;
 import com.gyu.engdu.domain.user.domain.Role;
 import com.gyu.engdu.domain.user.domain.User;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ class RunAndLearnEndValidationServiceTest {
     void setUp() {
         validationService = new RunAndLearnEndValidationService();
         User user = User.builder().email("test@test.com").role(Role.ROLE_USER).sub("sub123")
-                .name("user").build();
+                .name("user").provider(OAuthProvider.GOOGLE).build();
         ReflectionTestUtils.setField(user, "id", 1L);
         session = RunAndLearnSession.of(user, 12345);
     }

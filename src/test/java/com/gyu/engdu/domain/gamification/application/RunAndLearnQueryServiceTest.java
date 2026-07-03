@@ -21,6 +21,7 @@ import com.gyu.engdu.domain.gamification.domain.RunAndLearnRankingRepository;
 import com.gyu.engdu.domain.gamification.domain.RunAndLearnSeasonCalculator;
 import com.gyu.engdu.domain.gamification.domain.enums.RankingType;
 import com.gyu.engdu.domain.gamification.application.dto.response.SessionRankingDto;
+import com.gyu.engdu.domain.auth.domain.OAuthProvider;
 import com.gyu.engdu.domain.gamification.application.dto.response.LeaderboardEntryDto;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -86,6 +87,7 @@ class RunAndLearnQueryServiceTest extends IntegrationTestSupport {
                                 .role(Role.ROLE_USER)
                                 .sub(sub)
                                 .name(name)
+                                .provider(OAuthProvider.GOOGLE)
                                 .build();
         }
 
