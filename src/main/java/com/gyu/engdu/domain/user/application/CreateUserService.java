@@ -19,9 +19,9 @@ public class CreateUserService {
   private final NameUserService nameUserService;
   private final ApplicationEventPublisher eventPublisher;
 
-  public User create(String sub, String email) {
+  public User create(OAuthProvider provider, String sub, String email) {
     String name= nameUserService.getRandomName();
-    User user = User.of(email, Role.ROLE_USER, sub, name);
+    User user = User.of(email, Role.ROLE_USER, sub, name, provider);
     userRepository.save(user);
 
     eventPublisher.publishEvent(new UserRegisteredEvent(user.getId(), user.getName()));
