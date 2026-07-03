@@ -78,3 +78,8 @@ oauth:
     login-uri: https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&response_type=code&access_type=offline&redirect_uri=${oauth.google.redirect-uri}&client_id=${oauth.google.client-id}
     local-redirect-uri: https://localhost:5173/oauth/callback/google
     local-login-uri: https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&response_type=code&access_type=offline&redirect_uri=${oauth.google.local-redirect-uri}&client_id=${oauth.google.client-id}
+
+discord:
+  webhook:
+    signup:
+      url: ${DISCORD_SIGNUP_WEBHOOK_URL:}

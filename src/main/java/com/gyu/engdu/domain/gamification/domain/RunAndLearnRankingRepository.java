@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface RunAndLearnRankingRepository extends JpaRepository<RunAndLearnRanking, Long> {
 
@@ -34,7 +37,9 @@ public interface RunAndLearnRankingRepository extends JpaRepository<RunAndLearnR
             int season, Pageable pageable
     );
 
-    void deleteByUserId(Long userId);
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("delete from RunAndLearnRanking r where r.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
 
     List<RunAndLearnRanking> findAllByUserId(Long userId);
 }

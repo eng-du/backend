@@ -60,6 +60,7 @@ class RunAndLearnUserDeletionIntegrationTest extends IntegrationTestSupport {
 
         em.flush();
         em.clear();
+
         // when
         deleteUserService.delete(targetUser.getId());
 
