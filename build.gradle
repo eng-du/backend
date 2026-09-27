@@ -58,8 +58,7 @@ dependencies {
 	implementation 'com.github.ben-manes.caffeine:caffeine'
 
 	//AWS SQS
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.3.0'
-	implementation 'software.amazon.awssdk:sqs:2.29.52'
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.4.1'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
